@@ -1,0 +1,80 @@
+package my.fa250.furniture4u;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+
+import android.os.Bundle;
+import android.util.Log;
+
+import com.example.furniture4u.R;
+import com.google.cloud.vision.v1.AnnotateImageRequest;
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
+import com.google.cloud.vision.v1.EntityAnnotation;
+import com.google.cloud.vision.v1.Feature;
+import com.google.cloud.vision.v1.Image;
+import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.firebase.FirebaseApp;
+import com.google.protobuf.ByteString;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        FirebaseApp.initializeApp(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        tryGetImage();
+    }
+
+    private void tryGetImage()
+    {
+        try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
+
+            // The path to the image file to annotate
+            String fileName = "./resources/wakeupcat.jpg";
+
+            // Reads the image file into memory
+            Path path = Paths.get(fileName);
+            byte[] data = Files.readAllBytes(path);
+            ByteString imgBytes = ByteString.copyFrom(data);
+
+            // Builds the image annotation request
+            List<AnnotateImageRequest> requests = new ArrayList<>();
+            Image img = Image.newBuilder().setContent(imgBytes).build();
+            Feature feat = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
+            AnnotateImageRequest request =
+                    AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
+            requests.add(request);
+
+            // Performs label detection on the image file
+            BatchAnnotateImagesResponse response = vision.batchAnnotateImages(requests);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    System.out.format("Error: %s%n", res.getError().getMessage());
+                    return;
+                }
+
+                for (EntityAnnotation annotation : res.getLabelAnnotationsList()) {
+                    annotation
+                            .getAllFields()
+                            .forEach((k, v) -> System.out.format("%s : %s%n", k, v.toString()));
+                }
+            }
+        } catch (IOException e) {
+            Log.e("ERROR","CATCH");
+            e.printStackTrace();
+        }
+    }
+    }
+
