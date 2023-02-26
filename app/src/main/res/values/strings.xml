@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Furniture4U</string>
+
+    <!--TEST PHASE-->
+    <string name="e_commerce">M-Commerce</string>
+    <string name="ar">Augmented Reality</string>
+    <string name="personalised">Context-Based</string>
+    <string name="billplz">BillPlz</string>
 </resources>
