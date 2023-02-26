@@ -2,6 +2,7 @@ package my.fa250.furniture4u.ar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,7 +19,8 @@ import com.google.ar.core.exceptions.UnavailableException;
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException;
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException;
 
-import my.fa250.furniture4u.helper.CameraPermissionHelper;
+import my.fa250.furniture4u.ar.helper.CameraPermissionHelper;
+import my.fa250.furniture4u.test;
 
 public class checkARSupported extends AppCompatActivity {
 
@@ -56,7 +58,8 @@ public class checkARSupported extends AppCompatActivity {
         switch (availability) {
             case SUPPORTED_INSTALLED:
                 Toast.makeText(this, "ARCORE INSTALLED AND SUPPORTED", Toast.LENGTH_SHORT).show();
-                createSession();
+                Intent intent = new Intent(checkARSupported.this , testAR.class);
+                startActivity(intent);
                 return true;
 
             case SUPPORTED_APK_TOO_OLD:
