@@ -9,6 +9,7 @@ import android.view.View;
 import com.example.furniture4u.R;
 
 import my.fa250.furniture4u.ar.checkARSupported;
+import my.fa250.furniture4u.auth.MultipleSignInActivity;
 
 public class test extends AppCompatActivity {
 
@@ -21,6 +22,12 @@ public class test extends AppCompatActivity {
     public void goToAR(View v)
     {
         Intent intent = new Intent(test.this , checkARSupported.class);
+        startActivity(intent);
+    }
+
+    public void goToECom(View v)
+    {
+        Intent intent = new Intent(test.this , MultipleSignInActivity.class);
         startActivity(intent);
     }
 }

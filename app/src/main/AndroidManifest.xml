@@ -16,6 +16,13 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name="my.fa250.furniture4u.auth.MultipleSignInActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name="my.fa250.furniture4u.ar.testAR"
             android:exported="false">
             <meta-data
