@@ -72,6 +72,12 @@ public class MultipleSignInActivity extends AppCompatActivity {
         SignInTwitter();
     }
 
+    public void BtnSignInEmail(View v)
+    {
+        Log.d("Auth","Login with Email");
+        SignInEmail();
+    }
+
     //Private Method
 
     private void SignInFacebook()
@@ -123,6 +129,12 @@ public class MultipleSignInActivity extends AppCompatActivity {
     private void SignInTwitter()
     {
 
+    }
+
+    private void SignInEmail()
+    {
+        Intent intent = new Intent(this, EmailLoginActivity.class);
+        startActivity(intent);
     }
 
     //Protected

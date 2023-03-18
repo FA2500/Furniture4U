@@ -16,6 +16,15 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name="my.fa250.furniture4u.com.HomePageActivity"
+            android:exported="false" />
+        <activity
+            android:name="my.fa250.furniture4u.auth.EmailRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name="my.fa250.furniture4u.auth.EmailLoginActivity"
+            android:exported="false" />
+        <activity
             android:name="my.fa250.furniture4u.auth.MultipleSignInActivity"
             android:exported="false">
             <meta-data

@@ -77,6 +77,7 @@
         android:layout_marginStart="161dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="156dp"
+        android:onClick="BtnSignInEmail"
         android:text="Email"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

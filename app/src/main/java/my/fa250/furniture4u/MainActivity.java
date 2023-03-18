@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.furniture4u.R;
-import com.google.cloud.vision.v1.AnnotateImageRequest;
+/*import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.AnnotateImageResponse;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.Feature;
 import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.cloud.vision.v1.ImageAnnotatorClient;*/
 import com.google.firebase.FirebaseApp;
 import com.google.protobuf.ByteString;
 
@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
         //FirebaseApp.initializeApp(this);
 
 
-        tryGetImage();
+        //tryGetImage();
     }
 
-    private void tryGetImage()
+    /*private void tryGetImage()
     {
         try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
 
@@ -76,6 +76,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("ERROR","CATCH");
             e.printStackTrace();
         }
-    }
+    }*/
     }
 
