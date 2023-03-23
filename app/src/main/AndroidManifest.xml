@@ -82,9 +82,21 @@
                 android:value="" />
         </activity>
 
+        <activity
+            android:name="my.fa250.furniture4u.ml.MlActivity"
+            android:screenOrientation="fullSensor"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden">
+        </activity>
+
         <meta-data
             android:name="com.google.ar.core"
             android:value="required" />
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ica" />
+
+        
     </application>
 
 </manifest>

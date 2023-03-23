@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1052577895815",
+    "firebase_url": "https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "furniture4u-93724",
     "storage_bucket": "furniture4u-93724.appspot.com"
   },
@@ -14,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1052577895815-c1d3rladutkp68762rsksjmffqcqt92n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "my.fa250.furniture4u",
+            "certificate_hash": "228063da3f7a4c77ce6348d8038fc059d24a177d"
+          }
+        },
+        {
           "client_id": "1052577895815-m8v42ibckmgs90ejvumuqn58p3nl6klh.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +31,7 @@
           }
         },
         {
-          "client_id": "1052577895815-47je528agk2rmaqpveq822104m2l060d.apps.googleusercontent.com",
+          "client_id": "1052577895815-36geogs6iqr70c8ng2ngh5qes42k8m45.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,7 +44,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1052577895815-47je528agk2rmaqpveq822104m2l060d.apps.googleusercontent.com",
+              "client_id": "1052577895815-36geogs6iqr70c8ng2ngh5qes42k8m45.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -10,6 +10,7 @@ import com.example.furniture4u.R;
 
 import my.fa250.furniture4u.ar.checkARSupported;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
+import my.fa250.furniture4u.ml.MlActivity;
 
 public class test extends AppCompatActivity {
 
@@ -28,6 +29,12 @@ public class test extends AppCompatActivity {
     public void goToECom(View v)
     {
         Intent intent = new Intent(test.this , MultipleSignInActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToML(View v)
+    {
+        Intent intent = new Intent(test.this, MlActivity.class);
         startActivity(intent);
     }
 }

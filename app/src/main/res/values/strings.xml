@@ -10,6 +10,12 @@
     <string name="personalised">Context-Based</string>
     <string name="billplz">BillPlz</string>
 
+    <!--ML Kit-->
+    <string name="scan_busy">Scanning…</string>
+    <string name="scan_available">Scan</string>
+    <string name="clear">Clear</string>
+    <string name="use_cloud_ml">Use Cloud ML</string>
+
     <!--TEST AR-->
     <string name="depth_use_explanation" translatable="false">When Depth is enabled on supported devices, virtual objects adapt to the environment by blending in with the real world.</string>
     <string name="button_text_enable_depth" translatable="false">Enable</string>
