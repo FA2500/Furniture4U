@@ -30,7 +30,7 @@ class AppRenderer(val activity: MlActivity) : DefaultLifecycleObserver, SampleRe
         val TAG = "HelloArRenderer"
     }
 
-    lateinit var view: MainActivityView
+    lateinit var view: MlActivityView
 
     val displayRotationHelper = DisplayRotationHelper(activity)
     lateinit var backgroundRenderer: BackgroundRenderer
@@ -57,7 +57,7 @@ class AppRenderer(val activity: MlActivity) : DefaultLifecycleObserver, SampleRe
         displayRotationHelper.onPause()
     }
 
-    fun bindView(view: MainActivityView) {
+    fun bindView(view: MlActivityView) {
         this.view = view
 
         view.scanButton.setOnClickListener {

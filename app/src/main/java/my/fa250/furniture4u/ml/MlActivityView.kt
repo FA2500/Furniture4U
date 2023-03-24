@@ -12,7 +12,7 @@ import my.fa250.furniture4u.ar.render.SampleRender
 
 
 class MlActivityView(val activity: MlActivity, renderer: AppRenderer) : DefaultLifecycleObserver {
-    val root = View.inflate(activity, R.layout.activity_main, null)
+    val root = View.inflate(activity, R.layout.activity_ml, null)
     val surfaceView = root.findViewById<GLSurfaceView>(R.id.surfaceview).apply {
         SampleRender(this, renderer, activity.assets)
     }
