@@ -5,12 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
-import com.example.furniture4u.R;
-
 import my.fa250.furniture4u.ar.checkARSupported;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
-import my.fa250.furniture4u.ml.MlActivity;
+
 
 
 public class test extends AppCompatActivity {
@@ -35,7 +32,7 @@ public class test extends AppCompatActivity {
 
     public void goToML(View v)
     {
-        Intent intent = new Intent(test.this, MlActivity.class);
-        startActivity(intent);
+       // Intent intent = new Intent(test.this, MlActivity.class);
+        //startActivity(intent);
     }
 }

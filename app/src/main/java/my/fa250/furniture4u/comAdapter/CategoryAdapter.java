@@ -1,7 +1,7 @@
 package my.fa250.furniture4u.comAdapter;
 
 import android.content.Context;
-import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.furniture4u.R;
 
 import java.util.List;
 
+import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.model.CategoryModel;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder>{
 
-    private Context context;
-    private List<CategoryModel> list;
+    private final Context context;
+    private final List<CategoryModel> list;
 
     public CategoryAdapter(Context context, List<CategoryModel> list)
     {
@@ -32,12 +32,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @NonNull
     @Override
     public CategoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list,parent,false)) ;
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.category_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder holder, int position) {
-        Glide.with(context).load(list.get(position).getImg_url()).into(holder.catImg);
+        Log.d("Cat", String.valueOf(holder.catTV.getId()));
+        Glide.with(context)
+                .load(list.get(position).getImg_url())
+                .into(holder.catImg);
         holder.catTV.setText(list.get(position).getName());
     }
 
@@ -46,7 +49,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         ImageView catImg;
         TextView catTV;
@@ -55,6 +58,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         public ViewHolder(@NonNull View itemView)
         {
             super(itemView);
+            catImg = itemView.findViewById(R.id.cat_img);
+            catTV = itemView.findViewById(R.id.cat_name);
         }
     }
 }

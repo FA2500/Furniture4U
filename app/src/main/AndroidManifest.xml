@@ -82,11 +82,11 @@
                 android:value="" />
         </activity>
 
-        <activity
+        <!--<activity
             android:name="my.fa250.furniture4u.ml.MlActivity"
             android:screenOrientation="fullSensor"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden">
-        </activity>
+        </activity>-->
 
         <meta-data
             android:name="com.google.ar.core"

@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.furniture4u.R;
+import my.fa250.furniture4u.R;
 
 public class Login extends AppCompatActivity {
 

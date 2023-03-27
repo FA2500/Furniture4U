@@ -19,8 +19,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.Toast;
-
-import com.example.furniture4u.R;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.ArCoreApk;
 import com.google.ar.core.Camera;
@@ -52,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.ar.helper.CameraPermissionHelper;
 import my.fa250.furniture4u.ar.helper.DepthSettings;
 import my.fa250.furniture4u.ar.helper.DisplayRotationHelper;

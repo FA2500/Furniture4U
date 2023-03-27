@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
-import com.example.furniture4u.R;
 import com.google.firebase.auth.FirebaseAuth;
+
+import my.fa250.furniture4u.R;
 
 public class EmailLoginActivity extends AppCompatActivity {
 
