@@ -3,6 +3,7 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,8 +38,10 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
+import my.fa250.furniture4u.comAdapter.PopAdapter;
 import my.fa250.furniture4u.comAdapter.ProductAdapter;
 import my.fa250.furniture4u.model.CategoryModel;
+import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
 
 public class HomePageActivity extends AppCompatActivity {
@@ -54,6 +57,11 @@ public class HomePageActivity extends AppCompatActivity {
     RecyclerView prodRecyclerview;
     ProductAdapter productAdapter;
     List<ProductModel> productModelList;
+
+    //Popular
+    RecyclerView popRecyclerview;
+    PopAdapter popAdapter;
+    List<PopModel> popModelList;
 
 
     //Database
@@ -75,16 +83,18 @@ public class HomePageActivity extends AppCompatActivity {
         List<SlideModel> slideModels = new ArrayList<>();
 
         //Banner Data
-        slideModels.add(new SlideModel(R.drawable.wakeupcat,"TEST", ScaleTypes.CENTER_CROP));
+        slideModels.add(new SlideModel(R.drawable.banner,"TEST", ScaleTypes.FIT));
         imgSlider.setImageList(slideModels);
 
         //Recycler View
         catRecyclerview = findViewById(R.id.rec_category);
         prodRecyclerview = findViewById(R.id.new_product_rec);
+        popRecyclerview = findViewById(R.id.popular_rec);
 
-        //Recycler View Manager
+        //Recycler View Manager`
         catRecyclerview.setLayoutManager(new LinearLayoutManager(HomePageActivity.this,RecyclerView.HORIZONTAL,false));
         prodRecyclerview.setLayoutManager(new LinearLayoutManager(HomePageActivity.this,RecyclerView.HORIZONTAL,false));
+        popRecyclerview.setLayoutManager(new GridLayoutManager(HomePageActivity.this,2));
 
         //Category UI init
         categoryModelList = new ArrayList<>();
@@ -96,6 +106,10 @@ public class HomePageActivity extends AppCompatActivity {
         productAdapter = new ProductAdapter(HomePageActivity.this, productModelList);
         prodRecyclerview.setAdapter(productAdapter);
 
+        //Pop UI Init
+        popModelList = new ArrayList<>();
+        popAdapter = new PopAdapter(HomePageActivity.this, popModelList);
+        popRecyclerview.setAdapter(popAdapter);
     }
 
     /*private void writeData() {
@@ -241,6 +255,10 @@ public class HomePageActivity extends AppCompatActivity {
                                 ProductModel productModel = doc.toObject(ProductModel.class);
                                 productModelList.add(productModel);
                                 productAdapter.notifyDataSetChanged();
+
+                                PopModel popModel = doc.toObject(PopModel.class);
+                                popModelList.add(popModel);
+                                popAdapter.notifyDataSetChanged();
                             }
                         }
                     }
