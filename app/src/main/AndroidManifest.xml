@@ -16,10 +16,10 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
-            android:name=".ProductDetailActivity"
+            android:name="my.fa250.furniture4u.com.ProductDetailActivity"
             android:exported="false" />
         <activity
-            android:name=".HomePageActivity"
+            android:name="my.fa250.furniture4u.com.HomePageActivity"
             android:exported="false" />
         <activity
             android:name="my.fa250.furniture4u.auth.EmailRegisterActivity"

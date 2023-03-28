@@ -2,6 +2,7 @@ package my.fa250.furniture4u.comAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.ProductDetailActivity;
 import my.fa250.furniture4u.model.ProductModel;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
@@ -40,6 +42,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Glide.with(context).load(list.get(position).getImg_url()).into(holder.prodImg);
         holder.prodText.setText(list.get(position).getName());
         holder.prodPrice.setText(String.format("%.2f", list.get(position).getPrice()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("details",list.get(holder.getAdapterPosition()));
+                context.startActivity(intent);
+
+            }
+        });
     }
 
     @Override

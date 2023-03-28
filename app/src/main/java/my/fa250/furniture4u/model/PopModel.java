@@ -1,6 +1,8 @@
 package my.fa250.furniture4u.model;
 
-public class PopModel {
+import java.io.Serializable;
+
+public class PopModel implements Serializable {
 
     String description;
     String name;

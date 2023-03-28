@@ -2,6 +2,7 @@ package my.fa250.furniture4u.comAdapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import org.w3c.dom.Text;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.ProductDetailActivity;
 import my.fa250.furniture4u.model.PopModel;
 
 public class PopAdapter extends RecyclerView.Adapter<PopAdapter.Viewholder> {
@@ -42,6 +44,16 @@ public class PopAdapter extends RecyclerView.Adapter<PopAdapter.Viewholder> {
         Glide.with(context).load(popModelList.get(position).getImg_url()).into(holder.popImg);
         holder.popTv.setText(popModelList.get(position).getName());
         holder.popPrice.setText(String.format("%.2f", popModelList.get(position).getPrice()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("details",popModelList.get(holder.getAdapterPosition()));
+                context.startActivity(intent);
+
+            }
+        });
     }
 
     @Override

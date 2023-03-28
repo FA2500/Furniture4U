@@ -1,6 +1,8 @@
 package my.fa250.furniture4u.model;
 
-public class ProductModel {
+import java.io.Serializable;
+
+public class ProductModel implements Serializable {
 
     String description;
     String name;
