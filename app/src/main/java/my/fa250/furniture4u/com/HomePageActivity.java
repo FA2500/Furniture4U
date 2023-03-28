@@ -3,13 +3,18 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.denzcoskun.imageslider.ImageSlider;
@@ -48,6 +53,10 @@ public class HomePageActivity extends AppCompatActivity {
 
     List<String> c = new ArrayList<String>();
 
+    //ProgressBar
+    ProgressBar progressBar;
+    LinearLayout LL;
+
     //Category
     RecyclerView catRecyclerview;
     CategoryAdapter categoryAdapter;
@@ -74,10 +83,18 @@ public class HomePageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         initUI();
         readData();
+
     }
 
     private void initUI()
     {
+        //Progress Bar
+        LL = findViewById(R.id.home_layout);
+        progressBar = new ProgressBar(HomePageActivity.this,null, android.R.attr.progressBarStyle);
+        LL.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+
         //Image Slider
         ImageSlider imgSlider = findViewById(R.id.image_slider);
         List<SlideModel> slideModels = new ArrayList<>();
@@ -85,6 +102,8 @@ public class HomePageActivity extends AppCompatActivity {
         //Banner Data
         slideModels.add(new SlideModel(R.drawable.banner,"TEST", ScaleTypes.FIT));
         imgSlider.setImageList(slideModels);
+
+
 
         //Recycler View
         catRecyclerview = findViewById(R.id.rec_category);
@@ -305,6 +324,9 @@ public class HomePageActivity extends AppCompatActivity {
                 }
             });
         }
+        progressBar.setVisibility(View.GONE);
+        LL.setVisibility(View.VISIBLE);
+
     }
 
 
