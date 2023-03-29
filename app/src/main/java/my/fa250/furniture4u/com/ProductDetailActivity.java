@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
+import my.fa250.furniture4u.model.ShowAllModel;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
@@ -23,8 +24,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     Object productInfo;
+
+    //Info Model
     ProductModel productModel;
     PopModel popModel;
+    ShowAllModel allModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         {
             popModel = (PopModel) productInfo;
         }
+        else if(productInfo instanceof ShowAllModel)
+        {
+            allModel = (ShowAllModel) productInfo;
+        }
         if(productModel != null)
         {
             Glide.with(this).load(productModel.getImg_url()).into(detailImage);
@@ -73,6 +81,14 @@ public class ProductDetailActivity extends AppCompatActivity {
             price.setText(String.valueOf(popModel.getPrice()));
             rating.setText(String.valueOf(popModel.getRating()));
             desc.setText(popModel.getDescription());
+        }
+        if(allModel != null)
+        {
+            Glide.with(this).load(allModel.getImg_url()).into(detailImage);
+            name.setText(allModel.getName());
+            price.setText(String.valueOf(allModel.getPrice()));
+            rating.setText(String.valueOf(allModel.getRating()));
+            desc.setText(allModel.getDescription());
         }
     }
 

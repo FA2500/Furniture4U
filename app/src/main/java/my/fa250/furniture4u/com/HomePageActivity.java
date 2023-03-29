@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -77,6 +78,9 @@ public class HomePageActivity extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
+    //TextView
+    TextView catShowAll, productShowAll, popShowAll;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +98,35 @@ public class HomePageActivity extends AppCompatActivity {
         LL.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
+        //TextView
+        catShowAll = findViewById(R.id.category_see_all);
+        productShowAll = findViewById(R.id.newProducts_see_all);
+        popShowAll = findViewById(R.id.popular_see_all);
+
+        //TV setOnClickListener
+        catShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, ShowAllActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        productShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, ShowAllActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        popShowAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, ShowAllActivity.class);
+                startActivity(intent);
+            }
+        });
 
         //Image Slider
         ImageSlider imgSlider = findViewById(R.id.image_slider);
