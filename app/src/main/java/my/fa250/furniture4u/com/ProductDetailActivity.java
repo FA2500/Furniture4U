@@ -30,7 +30,7 @@ import my.fa250.furniture4u.model.ShowAllModel;
 public class ProductDetailActivity extends AppCompatActivity {
 
     ImageView detailImage,addItem,removeItem;
-    TextView rating,desc,price,name;
+    TextView rating,desc,price,name,quantity;
     Button addToCart,buyNow;
 
     //Firebase
@@ -44,6 +44,11 @@ public class ProductDetailActivity extends AppCompatActivity {
     PopModel popModel;
     ShowAllModel allModel;
 
+    //var
+    int totalQuantity = 1;
+    double totalprice = 0;
+    double baseprice = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void initUI()
     {
+        quantity = findViewById(R.id.product_detail_quantity);
         detailImage = findViewById(R.id.product_detail_img);
         addItem = findViewById(R.id.product_detail_increase);
         removeItem = findViewById(R.id.product_detail_decrease);
@@ -71,6 +77,32 @@ public class ProductDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 addToCart();
+            }
+        });
+
+        addItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(totalQuantity >= 1)
+                {
+                    totalQuantity++;
+                    quantity.setText(String.valueOf(totalQuantity));
+                    totalprice = baseprice*totalQuantity;
+                    price.setText(String.valueOf(totalprice));
+                }
+            }
+        });
+
+        removeItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(totalQuantity > 1)
+                {
+                    totalQuantity--;
+                    quantity.setText(String.valueOf(totalQuantity));
+                    totalprice = baseprice*totalQuantity;
+                    price.setText(String.valueOf(totalprice));
+                }
             }
         });
     }
@@ -96,6 +128,8 @@ public class ProductDetailActivity extends AppCompatActivity {
             price.setText(String.valueOf(productModel.getPrice()));
             rating.setText(String.valueOf(productModel.getRating()));
             desc.setText(productModel.getDescription());
+
+            baseprice = productModel.getPrice();
         }
         else if(popModel != null)
         {
@@ -104,6 +138,8 @@ public class ProductDetailActivity extends AppCompatActivity {
             price.setText(String.valueOf(popModel.getPrice()));
             rating.setText(String.valueOf(popModel.getRating()));
             desc.setText(popModel.getDescription());
+
+            baseprice = popModel.getPrice() ;
         }
         else if(allModel != null)
         {
@@ -112,6 +148,8 @@ public class ProductDetailActivity extends AppCompatActivity {
             price.setText(String.valueOf(allModel.getPrice()));
             rating.setText(String.valueOf(allModel.getRating()));
             desc.setText(allModel.getDescription());
+
+            baseprice = allModel.getPrice();
         }
 
     }
@@ -130,9 +168,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         final HashMap<String,Object> cartMap = new HashMap<>();
 
         cartMap.put("productName",name.getText().toString());
-        cartMap.put("productPrice",price.getText().toString());
+        cartMap.put("productPrice",baseprice);
         cartMap.put("currentDate",currentDate);
         cartMap.put("currentTime",currentTime);
+        cartMap.put("totalQuantity",totalQuantity);
+        cartMap.put("totalPrice",totalprice);
 
         Log.d("mAuth",mAuth.getCurrentUser().getUid());
 
