@@ -1,14 +1,26 @@
 package my.fa250.furniture4u.com;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.model.PopModel;
@@ -21,7 +33,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     TextView rating,desc,price,name;
     Button addToCart,buyNow;
 
+    //Firebase
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     Object productInfo;
 
@@ -29,6 +43,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     ProductModel productModel;
     PopModel popModel;
     ShowAllModel allModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +65,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         addToCart = findViewById(R.id.add_to_cart);
         buyNow = findViewById(R.id.buy_now);
         name = findViewById(R.id.product_detail_name);
+
+        //setOnClickListener
+        addToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToCart();
+            }
+        });
     }
 
     private void readData()
@@ -74,7 +97,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             rating.setText(String.valueOf(productModel.getRating()));
             desc.setText(productModel.getDescription());
         }
-        if(popModel != null)
+        else if(popModel != null)
         {
             Glide.with(this).load(popModel.getImg_url()).into(detailImage);
             name.setText(popModel.getName());
@@ -82,7 +105,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             rating.setText(String.valueOf(popModel.getRating()));
             desc.setText(popModel.getDescription());
         }
-        if(allModel != null)
+        else if(allModel != null)
         {
             Glide.with(this).load(allModel.getImg_url()).into(detailImage);
             name.setText(allModel.getName());
@@ -90,6 +113,39 @@ public class ProductDetailActivity extends AppCompatActivity {
             rating.setText(String.valueOf(allModel.getRating()));
             desc.setText(allModel.getDescription());
         }
+
+    }
+
+    private void addToCart()
+    {
+        String currentTime, currentDate;
+        Calendar cal = Calendar.getInstance();
+
+        SimpleDateFormat currDate = new SimpleDateFormat("dd MM yyyy");
+        currentDate = currDate.format(cal.getTime());
+
+        SimpleDateFormat currTime = new SimpleDateFormat("HH:mm:ss a");
+        currentTime = currTime.format(cal.getTime());
+
+        final HashMap<String,Object> cartMap = new HashMap<>();
+
+        cartMap.put("productName",name.getText().toString());
+        cartMap.put("productPrice",price.getText().toString());
+        cartMap.put("currentDate",currentDate);
+        cartMap.put("currentTime",currentTime);
+
+        Log.d("mAuth",mAuth.getCurrentUser().getUid());
+
+        firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/cart")
+                .add(cartMap)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        Toast.makeText(ProductDetailActivity.this, "Item successfully added to cart",Toast.LENGTH_SHORT).show();
+                        finish();
+
+                    }
+                });
     }
 
 

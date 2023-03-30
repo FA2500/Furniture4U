@@ -1,6 +1,7 @@
 package my.fa250.furniture4u.comAdapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.ShowAllActivity;
 import my.fa250.furniture4u.model.CategoryModel;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHolder>{
@@ -42,6 +44,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
                 .load(list.get(position).getImg_url())
                 .into(holder.catImg);
         holder.catTV.setText(list.get(position).getName());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ShowAllActivity.class);
+                intent.putExtra("type",list.get(holder.getAdapterPosition()).getType());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

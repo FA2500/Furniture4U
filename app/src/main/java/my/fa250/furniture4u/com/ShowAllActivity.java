@@ -28,6 +28,8 @@ public class ShowAllActivity extends AppCompatActivity {
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
+    String type;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +40,8 @@ public class ShowAllActivity extends AppCompatActivity {
 
     private void initUI()
     {
+        type = getIntent().getStringExtra("type");
+
         recyclerView = findViewById(R.id.show_all_rec);
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         showAllModelList = new ArrayList<>();
@@ -47,21 +51,44 @@ public class ShowAllActivity extends AppCompatActivity {
 
     private void getData()
     {
-        firestore.collection("product")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            for(DocumentSnapshot doc : task.getResult())
+        if(type == null && type.isEmpty())
+        {
+            firestore.collection("product")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
                             {
-                                ShowAllModel showAllModel = doc.toObject(ShowAllModel.class);
-                                showAllModelList.add(showAllModel);
-                                showAllAdapter.notifyDataSetChanged();
+                                for(DocumentSnapshot doc : task.getResult())
+                                {
+                                    ShowAllModel showAllModel = doc.toObject(ShowAllModel.class);
+                                    showAllModelList.add(showAllModel);
+                                    showAllAdapter.notifyDataSetChanged();
+                                }
                             }
                         }
-                    }
-                });
+                    });
+        }
+        else if(!type.isEmpty() && type.equalsIgnoreCase(type))
+        {
+            firestore.collection("product").whereEqualTo("type",type)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful())
+                            {
+                                for(DocumentSnapshot doc : task.getResult())
+                                {
+                                    ShowAllModel showAllModel = doc.toObject(ShowAllModel.class);
+                                    showAllModelList.add(showAllModel);
+                                    showAllAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        }
+                    });
+        }
+
     }
 }
