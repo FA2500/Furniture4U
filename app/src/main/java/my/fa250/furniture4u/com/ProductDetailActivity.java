@@ -2,6 +2,7 @@ package my.fa250.furniture4u.com;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +29,9 @@ import my.fa250.furniture4u.model.ProductModel;
 import my.fa250.furniture4u.model.ShowAllModel;
 
 public class ProductDetailActivity extends AppCompatActivity {
+
+    Toolbar toolbar;
+
 
     ImageView detailImage,addItem,removeItem;
     TextView rating,desc,price,name,quantity;
@@ -61,6 +65,11 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void initUI()
     {
+        //toolbar
+        toolbar = findViewById(R.id.detail_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         quantity = findViewById(R.id.product_detail_quantity);
         detailImage = findViewById(R.id.product_detail_img);
         addItem = findViewById(R.id.product_detail_increase);

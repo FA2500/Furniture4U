@@ -3,6 +3,7 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -21,11 +24,14 @@ import android.widget.TextView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+
+import my.fa250.furniture4u.MainActivity;
 import my.fa250.furniture4u.R;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.slider.Slider;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +49,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
 import my.fa250.furniture4u.comAdapter.PopAdapter;
 import my.fa250.furniture4u.comAdapter.ProductAdapter;
@@ -73,6 +80,10 @@ public class HomePageActivity extends AppCompatActivity {
     PopAdapter popAdapter;
     List<PopModel> popModelList;
 
+    //Toolbar
+    Toolbar toolbar;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     //Database
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -92,6 +103,12 @@ public class HomePageActivity extends AppCompatActivity {
 
     private void initUI()
     {
+        //Toolbar
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_24);
+
         //Progress Bar
         LL = findViewById(R.id.home_layout);
         progressBar = new ProgressBar(HomePageActivity.this,null, android.R.attr.progressBarStyle);
@@ -360,6 +377,32 @@ public class HomePageActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         LL.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        int id = item.getItemId();
+        if(id == R.id.menu_logout)
+        {
+            mAuth.signOut();
+            Intent intent = new Intent(HomePageActivity.this, MultipleSignInActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        else if(id==R.id.menu_cart)
+        {
+            Intent intent = new Intent(HomePageActivity.this, CartActivity.class);
+            startActivity(intent);
+        }
+        return true;
     }
 
 

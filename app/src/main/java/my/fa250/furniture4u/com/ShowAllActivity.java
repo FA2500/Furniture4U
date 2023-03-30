@@ -2,6 +2,7 @@ package my.fa250.furniture4u.com;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,6 +23,8 @@ import my.fa250.furniture4u.model.ShowAllModel;
 
 public class ShowAllActivity extends AppCompatActivity {
 
+    Toolbar toolbar;
+
     RecyclerView recyclerView;
     ShowAllAdapter showAllAdapter;
     List<ShowAllModel> showAllModelList;
@@ -40,6 +43,11 @@ public class ShowAllActivity extends AppCompatActivity {
 
     private void initUI()
     {
+        //toolbar
+        toolbar = findViewById(R.id.show_all_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         type = getIntent().getStringExtra("type");
 
         recyclerView = findViewById(R.id.show_all_rec);

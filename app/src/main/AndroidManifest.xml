@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name="my.fa250.furniture4u.com.CartActivity"
+            android:exported="false" />
+        <activity
             android:name="my.fa250.furniture4u.com.ShowAllActivity"
             android:exported="false" />
         <activity
