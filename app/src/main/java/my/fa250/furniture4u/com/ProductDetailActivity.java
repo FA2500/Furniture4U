@@ -185,6 +185,8 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         final HashMap<String,Object> cartMap = new HashMap<>();
 
+        totalprice = baseprice * totalQuantity;
+
         cartMap.put("productName",name.getText().toString());
         cartMap.put("productPrice",baseprice);
         cartMap.put("currentDate",currentDate);

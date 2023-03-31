@@ -5,7 +5,7 @@ public class CartModel {
     String currentTime;
     String currentDate;
     String productName;
-    String productPrice;
+    double productPrice;
     int totalQuantity;
     double totalPrice;
 
@@ -14,7 +14,7 @@ public class CartModel {
 
     }
 
-    public CartModel(String currentTime, String currentDate, String productName, String productPrice, int totalQuantity, double totalPrice) {
+    public CartModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice) {
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;
@@ -47,11 +47,11 @@ public class CartModel {
         this.productName = productName;
     }
 
-    public String getProductPrice() {
+    public Double getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(String productPrice) {
+    public void setProductPrice(Double productPrice) {
         this.productPrice = productPrice;
     }
 
