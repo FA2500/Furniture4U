@@ -16,16 +16,24 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
-            android:name="my.fa250.furniture4u.com.CartActivity"
+            android:name=".AddAddressActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_address"
+            android:theme="@style/Theme.Furniture4U.NoActionBar" />
+        <activity
+            android:name=".ActivityAddress"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.ShowAllActivity"
+            android:name=".CartActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.ProductDetailActivity"
+            android:name=".ShowAllActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.HomePageActivity"
+            android:name=".ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HomePageActivity"
             android:exported="false" />
         <activity
             android:name="my.fa250.furniture4u.auth.EmailRegisterActivity"
