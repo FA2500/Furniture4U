@@ -2,7 +2,10 @@
     <string name="app_name">Furniture4U</string>
 
     <!--Auth ID-->
-    <string name="default_web_client_ids">1052577895815-36geogs6iqr70c8ng2ngh5qes42k8m45.apps.googleusercontent.com</string>
+    <string name="default_web_client_ids">1052577895815-8jgmaq1kpov3d4b680t0l7ngamkt1s2r.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">2124562481064700</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">13ee2138c467477f2a0921ff7fd754aa</string>
 
     <!--TEST PHASE-->
     <string name="e_commerce">M-Commerce</string>

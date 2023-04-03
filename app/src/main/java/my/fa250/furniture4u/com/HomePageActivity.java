@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
@@ -307,7 +308,7 @@ public class HomePageActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Log.d("dB","Failed");
+                    Toast.makeText(HomePageActivity.this, "Failed to retrieve data. Limited internet connection.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -363,13 +364,12 @@ public class HomePageActivity extends AppCompatActivity {
                     if(task.isSuccessful())
                     {
                         CategoryModel catMod = task.getResult().getValue(CategoryModel.class);
-                        Log.d("DB",task.getResult().toString());
                         categoryModelList.add(catMod);
                         categoryAdapter.notifyDataSetChanged();
                     }
                     else
                     {
-                        Log.d("dB","Failed");
+                        Toast.makeText(HomePageActivity.this, "Failed to retrieve data. Limited internet connection.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });

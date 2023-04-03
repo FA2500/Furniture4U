@@ -10,18 +10,23 @@ public class ProductModel implements Serializable {
     double price;
     String img_url;
 
+    String category;
+    String type;
+
     public ProductModel()
     {
 
     }
 
-    public ProductModel(String desc, String name, double rate, double price, String url)
+    public ProductModel(String desc, String name, double rate, double price, String url, String category, String type)
     {
         this.description = desc;
         this.name = name;
         this.rating = rate;
         this.price = price;
         this.img_url = url;
+        this.category = category;
+        this.type = type;
     }
 
     public String getDescription() {
@@ -62,5 +67,21 @@ public class ProductModel implements Serializable {
 
     public void setImg_url(String img_url) {
         this.img_url = img_url;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

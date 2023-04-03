@@ -346,7 +346,8 @@ public class testAR extends AppCompatActivity implements SampleRender.Renderer {
 
             ByteBuffer buffer =
                     ByteBuffer.allocateDirect(dfgResolution * dfgResolution * dfgChannels * halfFloatSize);
-            try (InputStream is = getAssets().open("models/dfg.raw")) {
+            //try (InputStream is = getAssets().open("models/pawn.obj")) {
+            try (InputStream is = getAssets().open("models/chair2.obj")) {
                 is.read(buffer.array());
             }
             // SampleRender abstraction leaks here.
@@ -383,24 +384,27 @@ public class testAR extends AppCompatActivity implements SampleRender.Renderer {
             virtualObjectAlbedoTexture =
                     Texture.createFromAsset(
                             render,
-                            "models/pawn_albedo.png",
+                           // "models/pawn_albedo.png",
+                            "models/Fabric.jpg",
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.SRGB);
             virtualObjectAlbedoInstantPlacementTexture =
                     Texture.createFromAsset(
                             render,
-                            "models/pawn_albedo_instant_placement.png",
+                            //"models/pawn_albedo_instant_placement.png",
+                            "models/Wood.jpg",
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.SRGB);
             Texture virtualObjectPbrTexture =
                     Texture.createFromAsset(
                             render,
-                            "models/pawn_roughness_metallic_ao.png",
+                            //"models/pawn_roughness_metallic_ao.png",
+                            "models/Fabric.jpg",
                             Texture.WrapMode.CLAMP_TO_EDGE,
                             Texture.ColorFormat.LINEAR);
 
             //virtualObjectMesh = Mesh.createFromAsset(render, "models/pawnold.obj");
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/pawn.obj");
+            virtualObjectMesh = Mesh.createFromAsset(render, "models/chair2.obj");
             virtualObjectShader =
                     Shader.createFromAssets(
                                     render,

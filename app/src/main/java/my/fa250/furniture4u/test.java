@@ -5,12 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import my.fa250.furniture4u.ar.checkARSupported;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
@@ -25,6 +35,24 @@ public class test extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        //AppEventsLogger.activateApp(this);
+
+        /*try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "my.fa250.furniture4u",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        }
+        catch (PackageManager.NameNotFoundException e) {
+        }
+        catch (NoSuchAlgorithmException e) {
+        }*/
 
         /*toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

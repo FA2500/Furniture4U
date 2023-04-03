@@ -59,7 +59,7 @@ public class ShowAllActivity extends AppCompatActivity {
 
     private void getData()
     {
-        if(type == null && type.isEmpty())
+        if(type == null)
         {
             firestore.collection("product")
                     .get()

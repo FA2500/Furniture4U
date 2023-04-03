@@ -7,6 +7,8 @@ public class UserInfo {
     private static String phone;
     private static String role;
 
+    private static String provider;
+
     public static String getName()
     {
         return name;
@@ -47,5 +49,11 @@ public class UserInfo {
         role = a;
     }
 
+    public static String getProvider() {
+        return provider;
+    }
 
+    public static void setProvider(String provider) {
+        UserInfo.provider = provider;
+    }
 }
