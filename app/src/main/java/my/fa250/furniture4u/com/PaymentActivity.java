@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
@@ -33,11 +37,22 @@ public class PaymentActivity extends AppCompatActivity {
     FirebaseUser currentUser = mAuth.getCurrentUser();
     FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
 
+    WebView webView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+        initUI();
         createBill();
+    }
+
+    private void initUI()
+    {
+        webView = (WebView) findViewById(R.id.webview);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+
     }
 
     public void createBill()
@@ -61,8 +76,42 @@ public class PaymentActivity extends AppCompatActivity {
                         Log.d("Payment",redirectUrl);
 
                         // Redirect the user to the payment page
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl));
-                        startActivity(browserIntent);
+                        //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(redirectUrl));
+                        //startActivity(browserIntent);
+
+                        //
+                        webView.loadUrl(redirectUrl);
+                        webView.setWebViewClient(new WebViewClient()
+                        {
+                            @Override
+                            public void onPageStarted(WebView view, String url, Bitmap favicon)
+                            {
+                                super.onPageStarted(view, url, favicon);
+                                Log.d("Webview","Current URL = "+url);
+                            }
+
+                            @Override
+                            public void onPageFinished(WebView view, String url) {
+                                super.onPageFinished(view, url);
+
+                                if(url.contains("bills"))
+                                {
+                                    Log.d("GETBILLID",url.substring(38));
+                                }
+                                else if(url.contains("success"))
+                                {
+                                    Log.d("GOTO","SUCCESS");
+                                    Intent intent = new Intent(PaymentActivity.this, PaymentStatus.class);
+                                    startActivity(intent);
+                                    //nav( "True",url);
+                                }
+                                else if(url.contains("failed"))
+                                {
+                                    Log.d("GOTO","FAILED");
+                                    //nav( "False",url);
+                                }
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

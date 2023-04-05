@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -76,6 +77,14 @@ public class test extends AppCompatActivity {
     {
        // Intent intent = new Intent(test.this, MlActivity.class);
         //startActivity(intent);
+    }
+
+    public void goToARSV(View v)
+    {
+        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+        sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
+        startActivity(sceneViewerIntent);
     }
 
    /* @Override
