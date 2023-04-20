@@ -4,10 +4,17 @@
     <!-- Request Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" /> <!-- Request Features -->
-    <uses-feature android:name="android.hardware.camera.ar" />
+
+    <uses-feature android:name="android.hardware.camera.ar"
+        android:required="true" />
+    <!--<uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />-->
 
     <application
         android:allowBackup="true"
@@ -19,6 +26,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
+        <activity
+            android:name="my.fa250.furniture4u.arsv.ArsvActivity"
+            android:exported="false" />
+        <activity
+            android:name="my.fa250.furniture4u.testlayout"
+            android:exported="true" />
         <activity
             android:name="my.fa250.furniture4u.com.PaymentStatus"
             android:exported="false" />

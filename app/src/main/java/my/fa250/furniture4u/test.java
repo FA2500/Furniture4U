@@ -24,6 +24,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import my.fa250.furniture4u.ar.checkARSupported;
+import my.fa250.furniture4u.arsv.ArsvActivity;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.com.CartActivity;
 
@@ -81,10 +82,12 @@ public class test extends AppCompatActivity {
 
     public void goToARSV(View v)
     {
-        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+        /*Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-        startActivity(sceneViewerIntent);
+        startActivity(sceneViewerIntent);*/
+        Intent intent = new Intent(this, ArsvActivity.class);
+        startActivity(intent);
     }
 
    /* @Override

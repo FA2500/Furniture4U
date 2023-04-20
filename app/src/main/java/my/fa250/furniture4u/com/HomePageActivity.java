@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -107,8 +108,9 @@ public class HomePageActivity extends AppCompatActivity {
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_24);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       // getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_24);
 
         //Progress Bar
         LL = findViewById(R.id.home_layout);
@@ -390,12 +392,12 @@ public class HomePageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
         int id = item.getItemId();
-        if(id == R.id.menu_logout)
+        if(id == R.id.menu_chat)
         {
-            mAuth.signOut();
-            Intent intent = new Intent(HomePageActivity.this, MultipleSignInActivity.class);
-            startActivity(intent);
-            finish();
+            //mAuth.signOut();
+           // Intent intent = new Intent(HomePageActivity.this, MultipleSignInActivity.class);
+           // startActivity(intent);
+           // finish();
         }
         else if(id==R.id.menu_cart)
         {
