@@ -1,6 +1,8 @@
 package my.fa250.furniture4u.model;
 
-public class CartModel {
+import java.io.Serializable;
+
+public class CartModel implements Serializable {
 
     String currentTime;
     String currentDate;
@@ -9,18 +11,30 @@ public class CartModel {
     int totalQuantity;
     double totalPrice;
 
+    String img_url;
+
+    double rating;
+
+    String description;
+
+    Boolean isInCart;
+
     public CartModel()
     {
 
     }
 
-    public CartModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice) {
+    public CartModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, String img_url, double rating,String description, Boolean isInCart) {
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;
         this.productPrice = productPrice;
         this.totalQuantity = totalQuantity;
         this.totalPrice = totalPrice;
+        this.img_url = img_url;
+        this.rating = rating;
+        this.description = description ;
+        this.isInCart = isInCart;
     }
 
     public String getCurrentTime() {
@@ -69,5 +83,37 @@ public class CartModel {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getImg_url() {
+        return img_url;
+    }
+
+    public void setImg_url(String img_url) {
+        this.img_url = img_url;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getIsInCart() {
+        return isInCart;
+    }
+
+    public void setIsInCart(Boolean isInCart) {
+        this.isInCart = isInCart;
     }
 }

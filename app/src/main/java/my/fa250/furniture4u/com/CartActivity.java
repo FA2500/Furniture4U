@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,6 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,8 @@ public class CartActivity extends AppCompatActivity {
     //TV
     TextView totalPriceTV;
 
+    private double qwerty = 0.0;
+
 
     //firebase
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -48,6 +53,7 @@ public class CartActivity extends AppCompatActivity {
 
     //var
     double overallTotalAmount;
+    DecimalFormat DF = new DecimalFormat("0.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,22 @@ public class CartActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.cart_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Cart");
+        try {
+            getSupportActionBar().setTitle("Cart");
+        }
+        catch (Exception e)
+        {
+            Log.w("Action",e);
+        }
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         recyclerView = findViewById(R.id.cart_rec);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         cartModelList = new ArrayList<>();
@@ -70,8 +92,15 @@ public class CartActivity extends AppCompatActivity {
         recyclerView.setAdapter(cartAdapter);
 
         totalPriceTV = findViewById(R.id.cartTotalPrice);
+        totalPriceTV.setText("Total Amount : RM"+DF.format(0.00));
 
         LocalBroadcastManager.getInstance(this).registerReceiver(MessageReceiver, new IntentFilter("CartTotalAmount"));
+    }
+
+    public void buyNow(View v)
+    {
+        Intent intent = new Intent(CartActivity.this, AddressActivity.class);
+        startActivity(intent);
     }
 
     private void getData()
@@ -100,7 +129,9 @@ public class CartActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             double totalBill = intent.getDoubleExtra("totalAmount",0.0);
-            totalPriceTV.setText("Total Amount : RM"+totalBill);
+            Log.d("INTENT","RECEIVING VALUE "+totalBill);
+            qwerty = qwerty + totalBill;
+            totalPriceTV.setText("Total Amount : RM"+DF.format(qwerty));
         }
     };
 }

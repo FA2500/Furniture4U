@@ -108,9 +108,23 @@ public class HomePageActivity extends AppCompatActivity {
         //Toolbar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setTitle("HomePage");
+        try {
+            getSupportActionBar().setTitle("HomePage");
+        }
+        catch (Exception e)
+        {
+            Log.w("Action",e);
+        }
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
        // getSupportActionBar().setHomeAsUpIndicator(R.drawable.baseline_menu_24);
+        /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });*/
 
         //Progress Bar
         LL = findViewById(R.id.home_layout);
@@ -395,8 +409,8 @@ public class HomePageActivity extends AppCompatActivity {
         if(id == R.id.menu_chat)
         {
             //mAuth.signOut();
-           // Intent intent = new Intent(HomePageActivity.this, MultipleSignInActivity.class);
-           // startActivity(intent);
+            Intent intent = new Intent(HomePageActivity.this, ChatActivity.class);
+            startActivity(intent);
            // finish();
         }
         else if(id==R.id.menu_cart)

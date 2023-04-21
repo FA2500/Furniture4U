@@ -25,6 +25,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.model.CartModel;
 import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
 import my.fa250.furniture4u.model.ShowAllModel;
@@ -49,10 +50,15 @@ public class ProductDetailActivity extends AppCompatActivity {
     PopModel popModel;
     ShowAllModel allModel;
 
+    CartModel cartModel;
+
     //var
     int totalQuantity = 1;
     double totalprice = 0;
     double baseprice = 0;
+
+    String img_url;
+    Boolean isInCart;
 
 
     @Override
@@ -60,6 +66,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
         productInfo = getIntent().getSerializableExtra("details");
+        Log.d("Info",productInfo.toString());
         initUI();
         readData();
     }
@@ -139,6 +146,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         {
             allModel = (ShowAllModel) productInfo;
         }
+        else if(productInfo instanceof  CartModel)
+        {
+            cartModel = (CartModel) productInfo;
+        }
         if(productModel != null)
         {
             Glide.with(this).load(productModel.getImg_url()).into(detailImage);
@@ -148,6 +159,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(productModel.getDescription());
 
             baseprice = productModel.getPrice();
+            img_url = productModel.getImg_url();
         }
         else if(popModel != null)
         {
@@ -158,6 +170,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(popModel.getDescription());
 
             baseprice = popModel.getPrice() ;
+            img_url = popModel.getImg_url();
         }
         else if(allModel != null)
         {
@@ -168,6 +181,30 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(allModel.getDescription());
 
             baseprice = allModel.getPrice();
+            img_url = allModel.getImg_url();
+        }
+        else if(cartModel != null)
+        {
+            Glide.with(this).load(cartModel.getImg_url()).into(detailImage);
+            name.setText(cartModel.getProductName());
+            price.setText(String.valueOf(cartModel.getProductPrice()));
+            rating.setText(String.valueOf(cartModel.getRating()));
+            desc.setText(cartModel.getDescription());
+
+            baseprice = cartModel.getProductPrice();
+            img_url = cartModel.getImg_url();
+            isInCart = cartModel.getIsInCart();
+            if(isInCart)
+            {
+                addToCart.setText("View in Cart");
+                addToCart.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
         }
 
     }
@@ -186,6 +223,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         final HashMap<String,Object> cartMap = new HashMap<>();
 
         totalprice = baseprice * totalQuantity;
+        isInCart = true;
 
         cartMap.put("productName",name.getText().toString());
         cartMap.put("productPrice",baseprice);
@@ -193,6 +231,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         cartMap.put("currentTime",currentTime);
         cartMap.put("totalQuantity",totalQuantity);
         cartMap.put("totalPrice",totalprice);
+        cartMap.put("img_url",img_url);
+        cartMap.put("rating",Double.valueOf(rating.getText().toString()));
+        cartMap.put("description",desc.getText().toString());
+        cartMap.put("isInCart",isInCart);
 
         Log.d("mAuth",mAuth.getCurrentUser().getUid());
 

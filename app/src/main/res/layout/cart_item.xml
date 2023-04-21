@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cart_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="5dp"
+    android:layout_margin="5dp"
     android:elevation="4dp"
-    android:layout_margin="5dp">
+    app:cardCornerRadius="5dp">
 
     <LinearLayout
-        android:padding="7dp"
-        android:background="#FB9FDE"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="#FB9FDE"
+        android:orientation="vertical"
+        android:padding="7dp">
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Select" />
 
         <LinearLayout
             android:layout_width="match_parent"
