@@ -12,6 +12,9 @@
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +26,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
+        <activity
+            android:name="my.fa250.furniture4u.ml.ContextActivity"
+            android:screenOrientation="fullSensor"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:exported="false" />
+        <activity
+            android:name="my.fa250.furniture4u.mltest.MlTest"
+            android:exported="false" />
         <activity
             android:name="my.fa250.furniture4u.com.ChatActivity"
             android:exported="false" />

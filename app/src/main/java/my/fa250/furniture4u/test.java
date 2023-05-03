@@ -27,6 +27,8 @@ import my.fa250.furniture4u.ar.checkARSupported;
 import my.fa250.furniture4u.arsv.ArsvActivity;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.com.CartActivity;
+import my.fa250.furniture4u.ml.ContextActivity;
+import my.fa250.furniture4u.mltest.MlTest;
 
 
 public class test extends AppCompatActivity {
@@ -76,8 +78,8 @@ public class test extends AppCompatActivity {
 
     public void goToML(View v)
     {
-       // Intent intent = new Intent(test.this, MlActivity.class);
-        //startActivity(intent);
+       Intent intent = new Intent(test.this, ContextActivity.class);
+       startActivity(intent);
     }
 
     public void goToARSV(View v)
@@ -87,6 +89,12 @@ public class test extends AppCompatActivity {
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
         startActivity(sceneViewerIntent);*/
         Intent intent = new Intent(this, ArsvActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToIncor(View v)
+    {
+        Intent intent = new Intent(this, MlTest.class );
         startActivity(intent);
     }
 

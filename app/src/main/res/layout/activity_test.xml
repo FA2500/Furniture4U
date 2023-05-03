@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="136dp"
-        android:layout_marginTop="51dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="136dp"
         android:onClick="goToECom"
         android:text="@string/e_commerce"
@@ -49,7 +49,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="126dp"
-        android:layout_marginTop="53dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="127dp"
         android:onClick="goToML"
         android:text="@string/personalised"
@@ -62,11 +62,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="158dp"
-        android:layout_marginTop="41dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="159dp"
         android:onClick="goToARSV"
         android:text="3D View"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button4" />
+
+    <Button
+        android:id="@+id/button18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="154dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="163dp"
+        android:onClick="goToIncor"
+        android:text="Incorporate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button5" />
 </androidx.constraintlayout.widget.ConstraintLayout>
