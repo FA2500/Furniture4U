@@ -13,8 +13,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +26,8 @@ public class AddAddressActivity extends AppCompatActivity {
     Toolbar toolbar;
     Button addAddressBtn;
 
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
@@ -92,7 +92,21 @@ public class AddAddressActivity extends AppCompatActivity {
                     map.put("city",userCity);
                     map.put("code",userCode);
 
-                    firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/address")
+                    database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/address")
+                            .push()
+                            .setValue(map)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        Toast.makeText(AddAddressActivity.this, "Address successfully saved", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(AddAddressActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+                    /*firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/address")
                             .add(map)
                             .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                 @Override
@@ -106,7 +120,7 @@ public class AddAddressActivity extends AppCompatActivity {
                                         Toast.makeText(AddAddressActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                            });
+                            });*/
                 }
             }
         });

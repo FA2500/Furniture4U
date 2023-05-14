@@ -34,6 +34,7 @@ import my.fa250.furniture4u.ar.helper.DisplayRotationHelper
 import my.fa250.furniture4u.ar.render.SampleRender
 import my.fa250.furniture4u.ar.render.arcore.BackgroundRenderer
 import my.fa250.furniture4u.ml.classification.DetectedObjectResult
+import my.fa250.furniture4u.ml.classification.GoogleCloudVisionDetector
 import my.fa250.furniture4u.ml.classification.GoogleCloudVisionImage
 import my.fa250.furniture4u.ml.classification.MLKitObjectDetector
 import my.fa250.furniture4u.ml.classification.ObjectDetector
@@ -64,10 +65,11 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
   var scanButtonWasPressed = false
 
   val mlKitAnalyzer = MLKitObjectDetector(activity)
-  //val gcpAnalyzer = GoogleCloudVisionDetector(activity)
-  val gcpAnalyzer = GoogleCloudVisionImage(activity)
+  val gcpAnalyzer = GoogleCloudVisionDetector(activity)
+  val imgAnalyzer = GoogleCloudVisionImage(activity)
 
-  var currentAnalyzer: ObjectDetector = gcpAnalyzer
+  var currentAnalyzer: ObjectDetector = imgAnalyzer
+  var objectAnalyzer: ObjectDetector = gcpAnalyzer
 
   override fun onResume(owner: LifecycleOwner) {
     displayRotationHelper.onResume()
@@ -89,16 +91,24 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     }
 
     view.useCloudMlSwitch.setOnCheckedChangeListener { _, isChecked ->
-      currentAnalyzer = if (isChecked) gcpAnalyzer else mlKitAnalyzer
+      currentAnalyzer = if (isChecked) imgAnalyzer else mlKitAnalyzer
+      objectAnalyzer = if (isChecked) gcpAnalyzer else mlKitAnalyzer
     }
 
-    val gcpConfigured = gcpAnalyzer.credentials != null
+    val gcpConfigured = imgAnalyzer.credentials != null
+    val objConfigured = gcpAnalyzer.credentials != null
     view.useCloudMlSwitch.isChecked = gcpConfigured
     view.useCloudMlSwitch.isEnabled = gcpConfigured
-    currentAnalyzer = if (gcpConfigured) gcpAnalyzer else mlKitAnalyzer
+    view.useCloudMlSwitch.isChecked = objConfigured
+    view.useCloudMlSwitch.isEnabled = objConfigured
+    currentAnalyzer = if (gcpConfigured) imgAnalyzer else mlKitAnalyzer
+    objectAnalyzer = if (objConfigured) gcpAnalyzer else mlKitAnalyzer
 
     if (!gcpConfigured) {
       showSnackbar("Google Cloud Vision isn't configured (see README). The Cloud ML switch will be disabled.")
+    }
+    if(!objConfigured){
+      showSnackbar("Google Object Detection isn't properly configured")
     }
 
     view.resetButton.setOnClickListener {
@@ -121,6 +131,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
   }
 
   var objectResults: List<DetectedObjectResult>? = null
+  var objectRes: List<DetectedObjectResult>? = null
 
   override fun onDrawFrame(render: SampleRender) {
     val session = activity.arCoreSessionHelper.sessionCache ?: return
@@ -168,6 +179,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
           val cameraId = session.cameraConfig.cameraId
           val imageRotation = displayRotationHelper.getCameraSensorToDisplayRotation(cameraId)
           objectResults = currentAnalyzer.analyze(cameraImage, imageRotation)
+          objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
           cameraImage.close()
         }
       }
@@ -175,6 +187,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
 
     /** If results were completed this frame, create [Anchor]s from model results. */
     val objects = objectResults
+    val objectsobj = objectRes
     if (objects != null) {
       objectResults = null
       Log.i(TAG, "$currentAnalyzer got objects: $objects")
@@ -190,15 +203,38 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         view.setScanningActive(false)
         when {
           objects.isEmpty() && currentAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
-            showSnackbar("Default ML Kit classification model returned no results. " +
-              "For better classification performance, see the README to configure a custom model.")
+            //showSnackbar("Colour model returned no results. ")
+            Log.w("COLOUR","NO RESULT")
           objects.isEmpty() ->
-            showSnackbar("Classification model returned no results.")
-          anchors.size != objects.size ->
-            showSnackbar("Objects were classified, but could not be attached to an anchor. " +
-              "Try moving your device around to obtain a better understanding of the environment.")
+            //showSnackbar("Color model returned no results.")
+            Log.w("COLOUR","NO RESULT")
         }
       }
+
+    }
+    if (objectsobj != null) {
+      objectRes = null
+      val anchors = objectsobj.mapNotNull { obj ->
+        val (atX, atY) = obj.centerCoordinate
+        val anchor = createAnchor(atX.toFloat(), atY.toFloat(), frame) ?: return@mapNotNull null
+        Log.i(TAG, "Created anchor ${anchor.pose} from hit test")
+        ARLabeledAnchor(anchor, obj.label)
+      }
+      arLabeledAnchors.addAll(anchors)
+      view.post {
+        view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
+        view.setScanningActive(false)
+        when {
+          objectsobj.isEmpty() && currentAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
+            Log.w("OBJECT","NO RESULT")
+          objectsobj.isEmpty() ->
+            Log.w("OBJECT","NO RESULT")
+          anchors.size != objectsobj.size ->
+            showSnackbar("Objects were classified, but could not be attached to an anchor. " +
+                    "Try moving your device around to obtain a better understanding of the environment.")
+        }
+      }
+
     }
 
     // Draw labels at their anchor position.

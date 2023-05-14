@@ -19,9 +19,10 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -44,7 +45,8 @@ public class CartActivity extends AppCompatActivity {
 
     //firebase
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    //FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     //adapter
     RecyclerView recyclerView;
@@ -107,7 +109,7 @@ public class CartActivity extends AppCompatActivity {
     {
         ///user/mvr4KsEdNNeuBDYzLIAZ2G4p5uI2/cart/jJfXe0TegK9uYayLFKt4
 
-        firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/cart")
+        /*firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/cart")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -122,7 +124,23 @@ public class CartActivity extends AppCompatActivity {
                             }
                         }
                     }
-                });
+                });*/
+
+        database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                    CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                    cartModelList.add(cartModel);
+                    cartAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading cart data", error.toException());
+            }
+        });
     }
 
     public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {

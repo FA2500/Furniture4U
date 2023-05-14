@@ -18,7 +18,9 @@ import android.view.View;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.protobuf.ExtensionRegistry;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -39,8 +41,9 @@ public class test extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+
         //AppEventsLogger.activateApp(this);
 
         /*try {
@@ -84,11 +87,12 @@ public class test extends AppCompatActivity {
 
     public void goToARSV(View v)
     {
-        /*Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
-        sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-        startActivity(sceneViewerIntent);*/
-        Intent intent = new Intent(this, ArsvActivity.class);
+        //Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
+        // sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
+        //sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
+        //startActivity(sceneViewerIntent);
+       Intent intent = new Intent(this, ArsvActivity.class);
         startActivity(intent);
     }
 

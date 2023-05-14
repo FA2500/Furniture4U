@@ -39,9 +39,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,7 +85,7 @@ public class HomePageActivity extends AppCompatActivity {
 
 
     //Database
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     //TextView
@@ -329,29 +326,31 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
 
-        db.collection("product")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            for(QueryDocumentSnapshot doc : task.getResult())
-                            {
-                                ProductModel productModel = doc.toObject(ProductModel.class);
-                                productModelList.add(productModel);
-                                productAdapter.notifyDataSetChanged();
-
-                                PopModel popModel = doc.toObject(PopModel.class);
-                                popModelList.add(popModel);
-                                popAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }
-                });
 
 
-        /*database.getReference().child("category").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot snapshot1 : snapshot.getChildren())
+                {
+                    ProductModel productModel = snapshot1.getValue(ProductModel.class);
+                    productModelList.add(productModel);
+                    productAdapter.notifyDataSetChanged();
+
+                    PopModel popModel = snapshot1.getValue(PopModel.class);
+                    popModelList.add(popModel);
+                    popAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("ERROR", "Error fetching data"+ error);
+            }
+        };
+        database.getReference("product").addListenerForSingleValueEvent(valueEventListener);
+
+        database.getReference().child("category").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if(task.isSuccessful())
@@ -366,7 +365,7 @@ public class HomePageActivity extends AppCompatActivity {
                     Log.d("dB","Failed");
                 }
             }
-        });*/
+        });
 
     }
 

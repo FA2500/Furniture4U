@@ -7,12 +7,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +32,8 @@ public class ShowAllActivity extends AppCompatActivity {
     ShowAllAdapter showAllAdapter;
     List<ShowAllModel> showAllModelList;
 
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-
+    //FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     String type;
 
     @Override
@@ -57,9 +60,8 @@ public class ShowAllActivity extends AppCompatActivity {
         recyclerView.setAdapter(showAllAdapter);
     }
 
-    private void getData()
-    {
-        if(type == null)
+    private void getData() {
+        /*if(type == null)
         {
             firestore.collection("product")
                     .get()
@@ -98,5 +100,41 @@ public class ShowAllActivity extends AppCompatActivity {
                     });
         }
 
+    }*/
+
+        if (type == null) {
+            database.getReference("product").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        ShowAllModel showAllModel = dataSnapshot.getValue(ShowAllModel.class);
+                        showAllModelList.add(showAllModel);
+                        showAllAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w("Database", "Error reading data", error.toException());
+                }
+            });
+        } else if (!type.isEmpty() && type.equalsIgnoreCase(type)) {
+            Query query = database.getReference("product").orderByChild("type").equalTo(type);
+            query.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        ShowAllModel showAllModel = dataSnapshot.getValue(ShowAllModel.class);
+                        showAllModelList.add(showAllModel);
+                        showAllAdapter.notifyDataSetChanged();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.w("Database", "Error reading data", error.toException());
+                }
+            });
+        }
     }
 }

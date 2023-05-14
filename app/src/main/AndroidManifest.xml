@@ -27,77 +27,80 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
-            android:name="my.fa250.furniture4u.ml.ContextActivity"
-            android:screenOrientation="fullSensor"
+            android:name=".Link"
+            android:exported="false" />
+        <activity
+            android:name=".ml.ContextActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:exported="false"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".mltest.MlTest"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.mltest.MlTest"
+            android:name=".com.ChatActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.ChatActivity"
+            android:name=".arsv.ArsvActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.arsv.ArsvActivity"
-            android:exported="false" />
-        <activity
-            android:name="my.fa250.furniture4u.testlayout"
+            android:name=".testlayout"
             android:exported="true" />
         <activity
-            android:name="my.fa250.furniture4u.com.PaymentStatus"
+            android:name=".com.PaymentStatus"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.PaymentActivity"
+            android:name=".com.PaymentActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.AddAddressActivity"
+            android:name=".com.AddAddressActivity"
             android:exported="false"
             android:label="@string/title_activity_add_address"
             android:theme="@style/Theme.Furniture4U.NoActionBar" />
         <activity
-            android:name="my.fa250.furniture4u.com.AddressActivity"
+            android:name=".com.AddressActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.CartActivity"
+            android:name=".com.CartActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.ShowAllActivity"
+            android:name=".com.ShowAllActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.ProductDetailActivity"
+            android:name=".com.ProductDetailActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.com.HomePageActivity"
+            android:name=".com.HomePageActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.auth.EmailRegisterActivity"
+            android:name=".auth.EmailRegisterActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.auth.EmailLoginActivity"
+            android:name=".auth.EmailLoginActivity"
             android:exported="false" />
         <activity
-            android:name="my.fa250.furniture4u.auth.MultipleSignInActivity"
+            android:name=".auth.MultipleSignInActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name="my.fa250.furniture4u.ar.testAR"
+            android:name=".ar.testAR"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name="my.fa250.furniture4u.ar.checkARSupported"
+            android:name=".ar.checkARSupported"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name="my.fa250.furniture4u.test"
+            android:name=".test"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -110,14 +113,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name="my.fa250.furniture4u.auth.Login"
+            android:name=".auth.Login"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name="my.fa250.furniture4u.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
 
             <!--

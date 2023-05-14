@@ -15,9 +15,11 @@ import android.widget.Button;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,8 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
     private AddressAdapter addressAdapter;
 
     //Firebase
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    //FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     //UI
@@ -90,7 +93,23 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
 
     private void getData()
     {
-        firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/address")
+        database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/address").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot addressSnapshot : snapshot.getChildren())
+                {
+                    AddressModel addressModel = addressSnapshot.getValue(AddressModel.class);
+                    addressModelList.add(addressModel);
+                    addressAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading data", error.toException());
+            }
+        });
+        /*firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/address")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -105,7 +124,7 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
                             }
                         }
                     }
-                });
+                });*/
     }
 
     @Override

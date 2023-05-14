@@ -17,8 +17,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,7 +39,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     Button addToCart,buyNow;
 
     //Firebase
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    //FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     Object productInfo;
@@ -238,7 +238,18 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         Log.d("mAuth",mAuth.getCurrentUser().getUid());
 
-        firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/cart")
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/cart")
+                .push()
+                .setValue(cartMap)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(ProductDetailActivity.this, "Item successfully added to cart",Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
+
+        /*firestore.collection("user/"+mAuth.getCurrentUser().getUid()+"/cart")
                 .add(cartMap)
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
@@ -247,7 +258,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                         finish();
 
                     }
-                });
+                });*/
     }
 
 

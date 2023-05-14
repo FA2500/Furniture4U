@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -16,8 +17,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +34,8 @@ public class EmailLoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     //UI
     private EditText emailET;
     private EditText passET;
@@ -55,7 +59,30 @@ public class EmailLoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 user = mAuth.getCurrentUser();
-                                db.collection("user").document(user.getUid())
+                                database.getReference("user").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        if (snapshot.exists()) {
+                                            UserInfo.setName(snapshot.child("name").getValue(String.class));
+                                            UserInfo.setEmail(snapshot.child("email").getValue(String.class));
+                                            UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
+                                            UserInfo.setRole("Customer");
+                                            Log.d("Database", "Data successfully retrieved!");
+                                            Intent intent = new Intent(EmailLoginActivity.this, HomePageActivity.class);
+                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(EmailLoginActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Toast.makeText(EmailLoginActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+
+                                /*db.collection("user").document(user.getUid())
                                         .get()
                                         .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                             @Override
@@ -69,7 +96,7 @@ public class EmailLoginActivity extends AppCompatActivity {
                                                 Intent intent = new Intent(EmailLoginActivity.this, HomePageActivity.class);
                                                 startActivity(intent);
                                             }
-                                        });
+                                        });*/
 
 
                             }

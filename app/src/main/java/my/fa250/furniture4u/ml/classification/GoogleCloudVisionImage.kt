@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.vision.v1.*
 import com.google.protobuf.ByteString
+import my.fa250.furniture4u.UserContextInfo
 import my.fa250.furniture4u.ar.helper.SnackbarHelper
 import my.fa250.furniture4u.ml.ContextActivity
 import my.fa250.furniture4u.ml.classification.utils.ImageUtils
@@ -75,8 +76,7 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
              val score = it.score
              val pixelFraction = it.pixelFraction
              val colors = Color.rgb(r,g,b)
-             Log.d("COLORS", getMostCol(imagePropertiesResult.dominantColors.colorsList))
-
+             getMostCol(imagePropertiesResult.dominantColors.colorsList)
              DetectedObjectResult(score, "(${r}, ${g}, ${b}, ${pixelFraction})",Pair(0,0) )
          }
 
@@ -99,9 +99,9 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
          val g = ColorArray.get(mostCounter).color.green.toFloat() / 255
          val b = ColorArray.get(mostCounter).color.blue.toFloat() / 255
          val colors = Color.rgb(r,g,b)
-         Log.d("COLORS 2", "Color = "+getBestMatchingColorName(colors))
+         UserContextInfo.setPrimaryColours(getBestMatchingColorName(colors)).toString()
+         Log.d("USERCONTEXT", UserContextInfo.getPrimaryColours())
          return ColorArray.get(mostCounter).allFields.toString()
-
 
      }
 
@@ -135,7 +135,6 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
                  closestColorName = currentColorName
              }
          }
-         Log.d("COLORS 3", "Color = "+closestColorName+".Confidence = "+currentDifference)
          return closestColorName
      }
 
@@ -149,5 +148,6 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
              .build()
      }
 
-
+    private fun showSnackbar(message: String): Unit =
+        activity.view.snackbarHelper.showError(activity, message)
  }

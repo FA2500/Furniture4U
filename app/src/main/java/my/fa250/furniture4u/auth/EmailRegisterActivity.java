@@ -16,7 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,8 +27,8 @@ import my.fa250.furniture4u.com.HomePageActivity;
 
 public class EmailRegisterActivity extends AppCompatActivity {
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     private FirebaseAuth mAuth;
 
     private EditText ETName;
@@ -137,7 +137,23 @@ public class EmailRegisterActivity extends AppCompatActivity {
         userinfo.put("phone",ETPhone.getText().toString());
         userinfo.put("role", "Customer");
 
-        db.collection("user").document(user.getUid())
+        database.getReference("user").child(user.getUid()).setValue(userinfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Database", "Data successfully written!");
+                        Intent intent = new Intent(EmailRegisterActivity.this, HomePageActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Database", "Error writing data", e);
+                    }
+                });
+
+        /*db.collection("user").document(user.getUid())
                 .set(userinfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -152,7 +168,7 @@ public class EmailRegisterActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("Database", "Error writing document", e);
                     }
-                });
+                });*/
 
     }
 }

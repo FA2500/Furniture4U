@@ -24,6 +24,7 @@ import com.google.cloud.vision.v1.Feature
 import com.google.cloud.vision.v1.ImageAnnotatorClient
 import com.google.cloud.vision.v1.ImageAnnotatorSettings
 import com.google.protobuf.ByteString
+import my.fa250.furniture4u.UserContextInfo
 import my.fa250.furniture4u.ml.ContextActivity
 import my.fa250.furniture4u.ml.classification.utils.ImageUtils
 import my.fa250.furniture4u.ml.classification.utils.ImageUtils.toByteArray
@@ -68,6 +69,17 @@ class GoogleCloudVisionDetector(val activity: ContextActivity) : ObjectDetector(
 
     // Process result and map to DetectedObjectResult.
     val objectAnnotationsResult = response.responsesList.first().localizedObjectAnnotationsList
+    val list: ArrayList<String> = ArrayList()
+    for(col in objectAnnotationsResult)
+    {
+      list.add(col.name)
+    }
+    val array = list.toTypedArray()
+    UserContextInfo.setObjects(array)
+    for(k in array)
+    {
+      Log.d("USERCONTEXT", "FURNITURE = $k")
+    }
     return objectAnnotationsResult.map {
       val center = it.boundingPoly.normalizedVerticesList.calculateAverage()
       val absoluteCoordinates = center.toAbsoluteCoordinates(rotatedImage.width, rotatedImage.height)
@@ -80,6 +92,9 @@ class GoogleCloudVisionDetector(val activity: ContextActivity) : ObjectDetector(
    *
    * https://cloud.google.com/vision/docs/reference/rest/v1/AnnotateImageRequest
    */
+
+  private fun showSnackbar(message: String): Unit =
+    activity.view.snackbarHelper.showError(activity, message)
   private fun createAnnotateImageRequest(imageBytes: ByteArray): AnnotateImageRequest {
     // GCVImage is a typealias for com.google.cloud.vision's Image, needed to differentiate from android.media.Image
     val image = GCVImage.newBuilder().setContent(ByteString.copyFrom(imageBytes))

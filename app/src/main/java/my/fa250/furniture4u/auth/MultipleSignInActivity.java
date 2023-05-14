@@ -28,6 +28,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,8 +41,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.OAuthProvider;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,6 +58,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     GoogleSignInClient googleSignInClient;
+    private SignInClient oneTapClient;
 
     private static final int REQ_ONE_TAP = 2; //Google Auth
 
@@ -67,7 +71,8 @@ public class MultipleSignInActivity extends AppCompatActivity {
     //Twitter
     OAuthProvider.Builder provider;
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    //FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,26 +81,28 @@ public class MultipleSignInActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         mAuth = FirebaseAuth.getInstance();
 
+
         //Google
+        oneTapClient = Identity.getSignInClient(this);
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
                         // Your server's client ID, not your Android client ID.
                         //.setServerClientId(getString(R.string.default_web_client_ids))
-                        .setServerClientId("1052577895815-3asgokttqccl3curjrk41v8s45sl01ru.apps.googleusercontent.com")
+                        .setServerClientId("1052577895815-8jgmaq1kpov3d4b680t0l7ngamkt1s2r.apps.googleusercontent.com")
                         // Only show accounts previously used to sign in.
                         .setFilterByAuthorizedAccounts(false)
                         .build())
                 .build();
 
-        GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(
+        /*GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken("1052577895815-3asgokttqccl3curjrk41v8s45sl01ru.apps.googleusercontent.com")
+        ).requestIdToken("1052577895815-8jgmaq1kpov3d4b680t0l7ngamkt1s2r.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
 
         googleSignInClient= GoogleSignIn.getClient(MultipleSignInActivity.this
-                ,googleSignInOptions);
+                ,googleSignInOptions);*/
 
         //Facebook
         callbackManager = CallbackManager.Factory.create();
@@ -156,7 +163,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        //mAuth.signOut();
+        mAuth.signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Log.d("Auth","Already Log in with"+currentUser.getDisplayName());
@@ -201,8 +208,29 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private void SignInGoogle()
     {
-        Intent intent=googleSignInClient.getSignInIntent();
-        startActivityForResult(intent,REQ_ONE_TAP);
+        //Intent intent=googleSignInClient.getSignInIntent();
+        oneTapClient.beginSignIn(signInRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<BeginSignInResult>() {
+                    @Override
+                    public void onSuccess(BeginSignInResult result) {
+                        try {
+                            startIntentSenderForResult(
+                                    result.getPendingIntent().getIntentSender(), REQ_ONE_TAP,
+                                    null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.e("ONE TAP", "Couldn't start One Tap UI: " + e.getLocalizedMessage());
+                        }
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // No saved credentials found. Launch the One Tap sign-up flow, or
+                        // do nothing and continue presenting the signed-out UI.
+                        Log.d("ONE TAP", e.getLocalizedMessage());
+                    }
+                });
+        //startActivityForResult(intent,REQ_ONE_TAP);
     }
 
     private void SignInTwitter()
@@ -271,7 +299,23 @@ public class MultipleSignInActivity extends AppCompatActivity {
         userinfo.put("role", "Customer");
         userinfo.put("provider", provider);
 
-        db.collection("user").document(user.getUid())
+        database.getReference().child("user").child(user.getUid()).setValue(userinfo)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("Database", "Data successfully written!");
+                        Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+                        startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("Database", "Error writing data", e);
+                    }
+                });
+
+        /*db.collection("user").document(user.getUid())
                 .set(userinfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -286,12 +330,33 @@ public class MultipleSignInActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("Database", "Error writing document", e);
                     }
-                });
+                });*/
     }
 
     private void getUserData(FirebaseUser user)
     {
-        db.collection("user").document(user.getUid())
+        database.getReference("user").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                {
+                    UserInfo.setName(snapshot.child("name").getValue(String.class));
+                    UserInfo.setEmail(snapshot.child("email").getValue(String.class));
+                    UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
+                    UserInfo.setRole("Customer");
+                    UserInfo.setProvider(snapshot.child("provider").getValue(String.class));
+                    Log.d("Database", "Data successfully retrieved from Realtime Database!");
+                    Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading data from Realtime Database", error.toException());
+            }
+        });
+        /*db.collection("user").document(user.getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
@@ -315,7 +380,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("Database", "Error read document", e);
                     }
-                });
+                });*/
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -352,7 +417,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d("onActivityResult","Result Code = "+requestCode);
 
-        switch (requestCode) {
+        /*switch (requestCode) {
             case REQ_ONE_TAP:
                 SignInClient oneTapClient = Identity.getSignInClient(MultipleSignInActivity.this);
                 Log.d("Google Auth","One Tap Client = "+data.getData());
@@ -385,7 +450,54 @@ public class MultipleSignInActivity extends AppCompatActivity {
                     Log.d("Google Auth", "Missing ID token. "+e.toString());
                 }
                 break;
+        }*/
+        switch(requestCode)
+        {
+            case REQ_ONE_TAP:
+            {
+                try{
+                    SignInCredential googleCredential = oneTapClient.getSignInCredentialFromIntent(data);
+                    String idToken = googleCredential.getGoogleIdToken();
+                    if (idToken !=  null) {
+                        // Got an ID token from Google. Use it to authenticate
+                        // with Firebase.
+                        AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
+                        mAuth.signInWithCredential(firebaseCredential)
+                                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
+                                            Log.d("GOOGLE", "signInWithCredential:success");
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Log.w("GOOGLE", "signInWithCredential:failure", task.getException());
+                                        }
+                                    }
+                                });
+                    }
+                }
+                catch (ApiException e)
+                {
+                    switch (e.getStatusCode())
+                    {
+                        case CommonStatusCodes.CANCELED:
+                            Log.d("GOOGLE", "One-tap dialog was closed.");
+                            // Don't re-prompt the user.
+                            break;
+                        case CommonStatusCodes.NETWORK_ERROR:
+                            Log.d("GOOGLE", "One-tap encountered a network error.");
+                            // Try again or just ignore.
+                            break;
+                        default:
+                            Log.d("GOOGLE", "Couldn't get credential from result."
+                                    + e.getLocalizedMessage());
+                            break;
+                    }
+                }
+                break;
+            }
+            }
         }
     }
-
-}
