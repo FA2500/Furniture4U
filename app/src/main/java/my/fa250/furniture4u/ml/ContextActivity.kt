@@ -1,5 +1,7 @@
 package my.fa250.furniture4u.ml
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -67,7 +69,23 @@ class ContextActivity: AppCompatActivity() {
         setContentView(view.root)
         renderer.bindView(view)
         lifecycle.addObserver(view)
+
+        view.getrcm.setOnClickListener{
+            val sceneViewerIntent = Intent(Intent.ACTION_VIEW);
+            //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
+            //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+            val intentUri = Uri.parse("https://arvr.google.com/scene-viewer/1.0").buildUpon()
+                .appendQueryParameter("file", "https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf")
+                .appendQueryParameter("mode", "ar_preferred")
+                .appendQueryParameter("title", "Untitled")
+                .build()
+            sceneViewerIntent.data = intentUri
+            sceneViewerIntent.setPackage("com.google.ar.core");
+            startActivity(sceneViewerIntent);
+        }
+
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

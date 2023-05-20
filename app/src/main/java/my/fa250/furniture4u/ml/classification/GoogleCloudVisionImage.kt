@@ -100,7 +100,7 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
          val b = ColorArray.get(mostCounter).color.blue.toFloat() / 255
          val colors = Color.rgb(r,g,b)
          UserContextInfo.setPrimaryColours(getBestMatchingColorName(colors)).toString()
-         Log.d("USERCONTEXT", UserContextInfo.getPrimaryColours())
+         Log.d("USERCONTEXT","Furniture "+UserContextInfo.getPrimaryColours())
          return ColorArray.get(mostCounter).allFields.toString()
 
      }

@@ -1,6 +1,6 @@
 package my.fa250.furniture4u.arsv;
 
-import androidx.annotation.NonNull;
+/*import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -90,7 +90,7 @@ public class ArsvActivity extends AppCompatActivity implements
         WeakReference<ArsvActivity> weakActivity = new WeakReference<>(this);
         ModelRenderable.builder()
                 //.setSource(this, Uri.parse("https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair2.gltf"))
-                 .setSource(this, Uri.parse("https://storage.googleapis.com/ar-answers-in-search-models/static/Tiger/model.glb"))
+                 .setSource(this, Uri.parse("https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair2.gltf"))
                 .setIsFilamentGltf(true)
                 .setAsyncLoadEnabled(true)
                 .build()
@@ -146,4 +146,4 @@ public class ArsvActivity extends AppCompatActivity implements
         titleNode.setRenderable(viewRenderable);
         titleNode.setEnabled(true);
     }
-}
+}*/

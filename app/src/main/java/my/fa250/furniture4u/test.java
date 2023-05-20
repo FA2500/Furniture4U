@@ -26,7 +26,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import my.fa250.furniture4u.ar.checkARSupported;
-import my.fa250.furniture4u.arsv.ArsvActivity;
+import my.fa250.furniture4u.arsv.ARActivity2;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.com.CartActivity;
 import my.fa250.furniture4u.ml.ContextActivity;
@@ -92,7 +92,7 @@ public class test extends AppCompatActivity {
         // sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
         //sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
         //startActivity(sceneViewerIntent);
-       Intent intent = new Intent(this, ArsvActivity.class);
+        Intent intent = new Intent(test.this , ARActivity2.class);
         startActivity(intent);
     }
 

@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="peach">#F4C18A</color>
     <color name="borange">#FF4800</color>
+    <color name="sceneview">#FF6639A6</color>
+    <color name="translucent">#3F000000</color>
 </resources>

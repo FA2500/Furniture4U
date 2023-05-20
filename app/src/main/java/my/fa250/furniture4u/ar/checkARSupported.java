@@ -133,6 +133,10 @@ public class checkARSupported extends AppCompatActivity {
             CameraPermissionHelper.requestCameraPermission(this);
             return;
         }
+        else if(CameraPermissionHelper.hasCameraPermission(this))
+        {
+            Toast.makeText(this, "Camera Permission Allowed", Toast.LENGTH_SHORT).show();
+        }
         else
         {
             Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();

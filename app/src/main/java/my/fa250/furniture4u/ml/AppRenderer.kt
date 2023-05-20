@@ -68,7 +68,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
   val gcpAnalyzer = GoogleCloudVisionDetector(activity)
   val imgAnalyzer = GoogleCloudVisionImage(activity)
 
-  var currentAnalyzer: ObjectDetector = imgAnalyzer
+  var colAnalyzer: ObjectDetector = imgAnalyzer
   var objectAnalyzer: ObjectDetector = gcpAnalyzer
 
   override fun onResume(owner: LifecycleOwner) {
@@ -90,8 +90,11 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
       hideSnackbar()
     }
 
-    view.useCloudMlSwitch.setOnCheckedChangeListener { _, isChecked ->
-      currentAnalyzer = if (isChecked) imgAnalyzer else mlKitAnalyzer
+    colAnalyzer = imgAnalyzer
+    objectAnalyzer = gcpAnalyzer
+
+    /*view.useCloudMlSwitch.setOnCheckedChangeListener { _, isChecked ->
+      colAnalyzer = if (isChecked) imgAnalyzer else mlKitAnalyzer
       objectAnalyzer = if (isChecked) gcpAnalyzer else mlKitAnalyzer
     }
 
@@ -101,7 +104,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     view.useCloudMlSwitch.isEnabled = gcpConfigured
     view.useCloudMlSwitch.isChecked = objConfigured
     view.useCloudMlSwitch.isEnabled = objConfigured
-    currentAnalyzer = if (gcpConfigured) imgAnalyzer else mlKitAnalyzer
+    colAnalyzer = if (gcpConfigured) imgAnalyzer else mlKitAnalyzer
     objectAnalyzer = if (objConfigured) gcpAnalyzer else mlKitAnalyzer
 
     if (!gcpConfigured) {
@@ -109,10 +112,11 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     }
     if(!objConfigured){
       showSnackbar("Google Object Detection isn't properly configured")
-    }
+    }*/
 
     view.resetButton.setOnClickListener {
       arLabeledAnchors.clear()
+      view.closeRecommendation()
       view.resetButton.isEnabled = false
       hideSnackbar()
     }
@@ -178,9 +182,9 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         launch(Dispatchers.IO) {
           val cameraId = session.cameraConfig.cameraId
           val imageRotation = displayRotationHelper.getCameraSensorToDisplayRotation(cameraId)
-          objectResults = currentAnalyzer.analyze(cameraImage, imageRotation)
+          objectResults = colAnalyzer.analyze(cameraImage, imageRotation)
           objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
-          cameraImage.close()
+          //cameraImage.close()
         }
       }
     }
@@ -190,7 +194,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     val objectsobj = objectRes
     if (objects != null) {
       objectResults = null
-      Log.i(TAG, "$currentAnalyzer got objects: $objects")
+      Log.i(TAG, "$colAnalyzer got objects: $objects")
       val anchors = objects.mapNotNull { obj ->
         val (atX, atY) = obj.centerCoordinate
         val anchor = createAnchor(atX.toFloat(), atY.toFloat(), frame) ?: return@mapNotNull null
@@ -202,7 +206,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
         view.setScanningActive(false)
         when {
-          objects.isEmpty() && currentAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
+          objects.isEmpty() && colAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
             //showSnackbar("Colour model returned no results. ")
             Log.w("COLOUR","NO RESULT")
           objects.isEmpty() ->
@@ -225,14 +229,15 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
         view.setScanningActive(false)
         when {
-          objectsobj.isEmpty() && currentAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
+          objectsobj.isEmpty() && colAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
             Log.w("OBJECT","NO RESULT")
           objectsobj.isEmpty() ->
             Log.w("OBJECT","NO RESULT")
-          anchors.size != objectsobj.size ->
+          /*anchors.size != objectsobj.size ->
             showSnackbar("Objects were classified, but could not be attached to an anchor. " +
-                    "Try moving your device around to obtain a better understanding of the environment.")
+                    "Try moving your device around to obtain a better understanding of the environment.")*/
         }
+        view.getRecommendation()
       }
 
     }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:visibility="visible">
 
     <android.opengl.GLSurfaceView
         android:id="@+id/surfaceview"
@@ -13,8 +14,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
         android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="80dp"
         app:layout_dodgeInsetEdges="bottom">
 
         <androidx.appcompat.widget.AppCompatButton
@@ -33,13 +34,68 @@
 
     </LinearLayout>
 
-    <androidx.appcompat.widget.SwitchCompat
+    <LinearLayout
+        android:id="@+id/llcontext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_dodgeInsetEdges="top">
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Context Data"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ml_room_type_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="60dp"
+            android:text="Type" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ml_room_col_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="60dp"
+            android:text="Colour" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llcontext2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        app:layout_dodgeInsetEdges="bottom">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/ml_recommendation_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="60dp"
+            android:text="Get Recommendation" />
+
+    </LinearLayout>
+
+    <!--<androidx.appcompat.widget.SwitchCompat
         android:id="@+id/useCloudMlSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
         android:padding="16dp"
         android:background="#55FFFFFF"
-        android:text="@string/use_cloud_ml" />
+        android:text="@string/use_cloud_ml" />-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

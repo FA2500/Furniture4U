@@ -72,14 +72,11 @@ class GoogleCloudVisionDetector(val activity: ContextActivity) : ObjectDetector(
     val list: ArrayList<String> = ArrayList()
     for(col in objectAnnotationsResult)
     {
+      Log.d("USERCONTEXT","Furniture "+col.name)
       list.add(col.name)
     }
     val array = list.toTypedArray()
     UserContextInfo.setObjects(array)
-    for(k in array)
-    {
-      Log.d("USERCONTEXT", "FURNITURE = $k")
-    }
     return objectAnnotationsResult.map {
       val center = it.boundingPoly.normalizedVerticesList.calculateAverage()
       val absoluteCoordinates = center.toAbsoluteCoordinates(rotatedImage.width, rotatedImage.height)
