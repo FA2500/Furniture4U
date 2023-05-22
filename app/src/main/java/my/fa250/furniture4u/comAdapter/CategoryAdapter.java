@@ -24,7 +24,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     private final Context context;
     private final List<CategoryModel> list;
-
     public CategoryAdapter(Context context, List<CategoryModel> list)
     {
         this.context = context;
@@ -39,7 +38,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder holder, int position) {
-        Log.d("Cat", String.valueOf(holder.catTV.getId()));
         Glide.with(context)
                 .load(list.get(position).getImg_url())
                 .into(holder.catImg);

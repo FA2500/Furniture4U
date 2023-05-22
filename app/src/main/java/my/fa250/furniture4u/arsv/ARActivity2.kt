@@ -36,15 +36,16 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     )
 
     val models = listOf(
-        Model("models/spiderbot.glb"),
+        //Model("models/spiderbot.glb"),
         Model(
-            fileLocation = "https://storage.googleapis.com/ar-answers-in-search-models/static/Tiger/model.glb",
+            fileLocation = "https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair2.gltf",
             // Display the Tiger with a size of 3 m long
-            scaleUnits = 2.5f,
-            placementMode = PlacementMode.BEST_AVAILABLE,
-            applyPoseRotation = false
+            scaleUnits = 1.0f,
+           // placementMode = PlacementMode.BEST_AVAILABLE,
+            placementMode = PlacementMode.PLANE_HORIZONTAL,
+            applyPoseRotation = true
         ),
-        Model(
+        /*Model(
             fileLocation = "https://sceneview.github.io/assets/models/DamagedHelmet.glb",
             placementMode = PlacementMode.INSTANT,
             scaleUnits = 0.5f
@@ -56,16 +57,16 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             scaleUnits = 1.5f
         ),
         Model(
-            fileLocation = "https://sceneview.github.io/assets/models/Spoons.glb",
-            placementMode = PlacementMode.PLANE_HORIZONTAL_AND_VERTICAL,
-            // Keep original model size
-            scaleUnits = null
-        ),
-        Model(
-            fileLocation = "https://sceneview.github.io/assets/models/Halloween.glb",
-            placementMode = PlacementMode.PLANE_HORIZONTAL,
-            scaleUnits = 2.5f
-        ),
+             fileLocation = "https://sceneview.github.io/assets/models/Spoons.glb",
+             placementMode = PlacementMode.PLANE_HORIZONTAL_AND_VERTICAL,
+             // Keep original model size
+             scaleUnits = null
+         ),
+         Model(
+             fileLocation = "https://sceneview.github.io/assets/models/Halloween.glb",
+             placementMode = PlacementMode.PLANE_HORIZONTAL,
+             scaleUnits = 2.5f
+         ),*/
     )
     var modelIndex = 0
     var modelNode: ArModelNode? = null

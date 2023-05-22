@@ -1,23 +1,21 @@
 package my.fa250.furniture4u.model;
 
-public class CategoryModel {
-
-
-
+public class SearchModel {
     String img_url;
     String name;
-    String type;
+    String ID;
 
-    public CategoryModel()
+
+
+    public SearchModel()
     {
 
     }
 
-    public CategoryModel(String img_url, String name, String type)
+    public SearchModel(String img_url, String name)
     {
         this.img_url = img_url;
         this.name = name;
-        this.type = type;
     }
 
     public String getImg_url() {
@@ -36,11 +34,7 @@ public class CategoryModel {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
-    }
+    public String getID() { return ID; }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public void setID(String ID) {this.ID = ID;}
 }

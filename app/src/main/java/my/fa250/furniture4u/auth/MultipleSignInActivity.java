@@ -163,13 +163,17 @@ public class MultipleSignInActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.signOut();
+        //mAuth.signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Log.d("Auth","Already Log in with"+currentUser.getDisplayName());
             getUserData((currentUser));
             Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
             startActivity(intent);
+        }
+        else
+        {
+            Log.d("Auth","Not logged in yet");
         }
     }
 
@@ -409,6 +413,54 @@ public class MultipleSignInActivity extends AppCompatActivity {
                 });
     }
 
+    private void RegisterSaveUserInfo(FirebaseUser user)
+    {
+        UserInfo.setName(user.getDisplayName());
+        UserInfo.setEmail(user.getEmail());
+        UserInfo.setPhone(user.getPhoneNumber());
+        UserInfo.setRole("Customer");
+
+        Map<String, Object> userinfo = new HashMap<>();
+        userinfo.put("name", user.getDisplayName());
+        userinfo.put("email", user.getEmail());
+        userinfo.put("phone",user.getPhoneNumber());
+        userinfo.put("role", "Customer");
+
+        database.getReference("user").child(user.getUid()).get()
+                        .addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
+                            @Override
+                            public void onSuccess(DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists())
+                                {
+                                    Log.d("Database", "Data successfully retrieved!");
+                                    Log.d("Database", user.getProviderData().toString());
+                                    Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+                                    startActivity(intent);
+                                }
+                                else
+                                {
+                                    database.getReference("user").child(user.getUid()).setValue(userinfo)
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    Log.d("Database", "Data successfully written!");
+                                                    Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Log.w("Database", "Error writing data", e);
+                                                }
+                                            });
+                                }
+                            }
+                        });
+
+
+    }
+
 
     //Protected
 
@@ -470,6 +522,8 @@ public class MultipleSignInActivity extends AppCompatActivity {
                                             // Sign in success, update UI with the signed-in user's information
                                             Log.d("GOOGLE", "signInWithCredential:success");
                                             FirebaseUser user = mAuth.getCurrentUser();
+                                            Log.d("GOOGLE", task.getResult().toString());
+                                            RegisterSaveUserInfo(user);
                                         } else {
                                             // If sign in fails, display a message to the user.
                                             Log.w("GOOGLE", "signInWithCredential:failure", task.getException());
@@ -500,4 +554,4 @@ public class MultipleSignInActivity extends AppCompatActivity {
             }
             }
         }
-    }
+}

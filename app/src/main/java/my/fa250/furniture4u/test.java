@@ -69,7 +69,8 @@ public class test extends AppCompatActivity {
 
     public void goToAR(View v)
     {
-        Intent intent = new Intent(test.this , checkARSupported.class);
+        //Intent intent = new Intent(test.this , checkARSupported.class);
+        Intent intent = new Intent(test.this , ARActivity2.class);
         startActivity(intent);
     }
 

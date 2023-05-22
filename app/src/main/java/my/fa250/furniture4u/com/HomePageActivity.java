@@ -349,24 +349,6 @@ public class HomePageActivity extends AppCompatActivity {
             }
         };
         database.getReference("product").addListenerForSingleValueEvent(valueEventListener);
-
-        database.getReference().child("category").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful())
-                {
-                    CategoryModel catMod = task.getResult().getValue(CategoryModel.class);
-                    Log.d("DB",task.getResult().toString());
-                    categoryModelList.add(catMod);
-                    categoryAdapter.notifyDataSetChanged();
-                }
-                else
-                {
-                    Log.d("dB","Failed");
-                }
-            }
-        });
-
     }
 
     private void displaydata()
@@ -392,6 +374,12 @@ public class HomePageActivity extends AppCompatActivity {
         progressBar.setVisibility(View.GONE);
         LL.setVisibility(View.VISIBLE);
 
+    }
+
+    public void goToSearch(View v)
+    {
+        Intent intent = new Intent(this, SearchActivity.class);
+        startActivity(intent);
     }
 
     @Override

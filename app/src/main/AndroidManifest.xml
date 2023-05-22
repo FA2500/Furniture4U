@@ -27,6 +27,9 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name=".com.SearchActivity"
+            android:exported="false" />
+        <activity
             android:name=".Link"
             android:exported="false" />
         <activity
@@ -160,9 +163,9 @@
         </activity>
 
         <meta-data
-            tools:replace="android:value"
             android:name="com.google.ar.core"
-            android:value="optional" />
+            android:value="optional"
+            tools:replace="android:value" />
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="ica" />
