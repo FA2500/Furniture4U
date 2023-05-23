@@ -27,6 +27,9 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name=".com.SearchResultActivity"
+            android:exported="false" />
+        <activity
             android:name=".com.SearchActivity"
             android:exported="false" />
         <activity

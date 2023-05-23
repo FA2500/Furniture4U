@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SearchView;
@@ -33,6 +34,8 @@ public class SearchActivity extends AppCompatActivity {
     RecyclerView seaRecyclerView;
     SearchAdapter searchAdapter;
     List<SearchModel> searchModelList;
+
+    List<SearchModel> searchModelList2;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     @Override
@@ -49,14 +52,17 @@ public class SearchActivity extends AppCompatActivity {
         seaRecyclerView = findViewById(R.id.sea_rv);
         seaRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this, RecyclerView.VERTICAL,false));
         searchModelList = new ArrayList<>();
+        searchModelList2 = new ArrayList<>();
         searchAdapter = new SearchAdapter(SearchActivity.this, searchModelList);
         seaRecyclerView.setAdapter(searchAdapter);
 
         Sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d("TEXTSUBMIT",query);
-                return false;
+                Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
+                intent.putExtra("query",query);
+                startActivity(intent);
+                return true;
             }
 
             @Override
@@ -75,8 +81,7 @@ public class SearchActivity extends AppCompatActivity {
                 for(DataSnapshot snapshot1 : snapshot.getChildren())
                 {
                     SearchModel sm = snapshot1.getValue(SearchModel.class);
-                    searchModelList.add(sm);
-                    searchAdapter.notifyDataSetChanged();
+                    searchModelList2.add(sm);
                 }
             }
 
@@ -90,11 +95,19 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchQuery(String query)
     {
-        for(int i = 0 ; i < searchModelList.size() ; i++)
+        searchModelList.clear();
+        searchAdapter.notifyDataSetChanged();
+        for(int i = 0 ; i < searchModelList2.size() ; i++)
         {
-            if(searchModelList.get(i).getName().contains(query))
+            if(query.isEmpty())
             {
-                //
+                break;
+            }
+            if(searchModelList2.get(i).getName().contains(query))
+            {
+                SearchModel sm = searchModelList2.get(i);
+                searchModelList.add(sm);
+                searchAdapter.notifyDataSetChanged();
             }
         }
     }

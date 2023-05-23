@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.SearchActivity;
+import my.fa250.furniture4u.com.SearchResultActivity;
 import my.fa250.furniture4u.com.ShowAllActivity;
 import my.fa250.furniture4u.model.SearchModel;
 
@@ -51,14 +53,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Viewholder
         holder.catTV.setText(list.get(position).getName());
         holder.catTV.setTextColor(Color.BLACK);
 
-        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ShowAllActivity.class);
-                //intent.putExtra("type",list.get(holder.getAdapterPosition()).getType());
+                Intent intent = new Intent(context, SearchResultActivity.class);
+                intent.putExtra("query",list.get(position).getName());
                 context.startActivity(intent);
             }
-        });*/
+        });
     }
 
     @Override
