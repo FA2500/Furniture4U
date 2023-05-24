@@ -4,17 +4,21 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 import my.fa250.furniture4u.R;
@@ -42,10 +46,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull CartAdapter.ViewHolder holder, int position) {
         holder.name.setText(list.get(position).getProductName());
         holder.price.setText("RM"+list.get(position).getProductPrice());
-        holder.date.setText(list.get(position).getCurrentDate());
-        holder.time.setText(list.get(position).getCurrentTime());
         holder.totalPrice.setText(String.valueOf(list.get(position).getTotalPrice()));
         holder.totalQuan.setText(String.valueOf(list.get(position).getTotalQuantity()));
+
+        Glide.with(context)
+                .load(list.get(position).getImg_url())
+                .into(holder.catImg);
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,15 +103,16 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         TextView name,price,date,time,totalQuan,totalPrice;
         CheckBox checkBox;
 
+        ImageView catImg;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.cart_card);
             checkBox = itemView.findViewById(R.id.checkBox);
             checkBox.setText("Not selected");
+            catImg = itemView.findViewById(R.id.cartImg);
             name = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
-            date = itemView.findViewById(R.id.current_date);
-            time = itemView.findViewById(R.id.current_time);
             totalPrice = itemView.findViewById(R.id.total_price_cart);
             totalQuan = itemView.findViewById(R.id.total_quantity_cart);
         }

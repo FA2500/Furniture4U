@@ -32,6 +32,7 @@ import my.fa250.furniture4u.R;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.slider.Slider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -193,6 +194,28 @@ public class HomePageActivity extends AppCompatActivity {
         popModelList = new ArrayList<>();
         popAdapter = new PopAdapter(HomePageActivity.this, popModelList);
         popRecyclerview.setAdapter(popAdapter);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    // Handle home item click
+                    return true;
+                case R.id.action_search:
+                    // Handle search item click
+                    return true;
+                case R.id.action_notifications:
+                    // Handle notifications item click
+                    return true;
+                case R.id.action_profile:
+                    // Handle profile item click
+                    Intent intent = new Intent(HomePageActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                    return true;
+            }
+            return false;
+        });
     }
 
     /*private void writeData() {

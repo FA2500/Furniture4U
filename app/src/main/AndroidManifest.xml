@@ -27,6 +27,12 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name=".com.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".admin.AdminDashboard"
+            android:exported="true" />
+        <activity
             android:name=".com.SearchResultActivity"
             android:exported="false" />
         <activity
