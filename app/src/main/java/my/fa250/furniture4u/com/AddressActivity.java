@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +30,7 @@ import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.AddressAdapter;
 import my.fa250.furniture4u.model.AddressModel;
 
-public class AddressActivity extends AppCompatActivity implements AddressAdapter.SelectedAddress {
+public class AddressActivity extends AppCompatActivity implements Serializable, AddressAdapter.SelectedAddress {
 
     Button addAddress;
     RecyclerView recyclerView;
@@ -47,11 +49,20 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
     Toolbar toolbar;
 
     String mAddress = " ";
+    private String addressKey = "";
+
+    private Double total;
+    private List<String> cardID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_address);
+
+        Intent intent = getIntent();
+        total = intent.getDoubleExtra("total", 0.0);
+        cardID = (List<String>) intent.getSerializableExtra("cardID");
+
 
         initUI();
         getData();
@@ -76,8 +87,19 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
         paymentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddressActivity.this, PaymentActivity.class);
-                startActivity(intent);
+                if(!mAddress.isEmpty() && !addressKey.isEmpty())
+                {
+                    Intent intent = new Intent(AddressActivity.this, PaymentActivity.class);
+                    intent.putExtra("total",total);
+                    intent.putExtra("cardID", (Serializable) cardID);
+                    intent.putExtra("address",mAddress);
+                    intent.putExtra("addressID",addressKey);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toast.makeText(AddressActivity.this, "Please Choose your address first", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -99,6 +121,7 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
                 for(DataSnapshot addressSnapshot : snapshot.getChildren())
                 {
                     AddressModel addressModel = addressSnapshot.getValue(AddressModel.class);
+                    addressModel.setID(addressSnapshot.getKey());
                     addressModelList.add(addressModel);
                     addressAdapter.notifyDataSetChanged();
                 }
@@ -130,5 +153,10 @@ public class AddressActivity extends AppCompatActivity implements AddressAdapter
     @Override
     public void setAddress(String address) {
         mAddress = address;
+    }
+
+    @Override
+    public void setKeyAddress(String address) {
+        addressKey = address;
     }
 }

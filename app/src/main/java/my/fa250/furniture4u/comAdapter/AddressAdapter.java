@@ -56,6 +56,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
                 selectedRadioBtn = (RadioButton) v;
                 selectedRadioBtn.setChecked(true);
                 selectedAddress.setAddress(list.get(holder.getAdapterPosition()).getAddress());
+                selectedAddress.setKeyAddress(list.get(holder.getAdapterPosition()).getID());
             }
         });
     }
@@ -79,5 +80,6 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
     public interface SelectedAddress
     {
         void setAddress(String address);
+        void setKeyAddress(String address);
     }
 }

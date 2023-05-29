@@ -9,6 +9,8 @@ public class UserInfo {
 
     private static String provider;
 
+    private static String token;
+
     public static String getName()
     {
         return name;
@@ -56,4 +58,8 @@ public class UserInfo {
     public static void setProvider(String provider) {
         UserInfo.provider = provider;
     }
+
+    public static String getToken() { return token ;}
+
+    public static void setToken(String token) {UserInfo.token = token;}
 }

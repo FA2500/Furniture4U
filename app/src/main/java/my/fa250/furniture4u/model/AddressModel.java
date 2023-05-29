@@ -1,6 +1,7 @@
 package my.fa250.furniture4u.model;
 
 public class AddressModel {
+    String ID;
     String name ;
     String city ;
     String address ;
@@ -11,7 +12,8 @@ public class AddressModel {
     public AddressModel() {
     }
 
-    public AddressModel(String name, String city, String address, String code, String phone, boolean isPrimary) {
+    public AddressModel(String ID,String name, String city, String address, String code, String phone, boolean isPrimary) {
+        this.ID = ID;
         this.name = name;
         this.city = city;
         this.address = address;
@@ -19,6 +21,10 @@ public class AddressModel {
         this.phone = phone;
         this.isPrimary = isPrimary;
     }
+
+    public String getID() {return ID;}
+
+    public void setID(String ID) {this.ID=ID;}
 
     public String getName() {
         return name;

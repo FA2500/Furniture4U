@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.com.ProductDetailActivity;
@@ -69,6 +71,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     holder.checkBox.setText("Selected");
                     Intent intent = new Intent("CartTotalAmount");
                     intent.putExtra("totalAmount",list.get(holder.getAdapterPosition()).getTotalPrice());
+                    intent.putExtra("status", "add");
+                    intent.putExtra("cartID", list.get(holder.getAdapterPosition()).getId());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     Log.d("INTENT","SENDING VALUE "+list.get(holder.getAdapterPosition()).getTotalPrice());
                 }
@@ -77,6 +81,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     holder.checkBox.setText("Not selected");
                     Intent intent = new Intent("CartTotalAmount");
                     intent.putExtra("totalAmount",-(list.get(holder.getAdapterPosition()).getTotalPrice()));
+                    intent.putExtra("status", "remove");
+                    intent.putExtra("cartID", list.get(holder.getAdapterPosition()).getId());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     Log.d("INTENT","SENDING VALUE "+-(list.get(holder.getAdapterPosition()).getTotalPrice()));
                 }

@@ -1,6 +1,8 @@
 package my.fa250.furniture4u.comAdapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.PreparingActivity;
 import my.fa250.furniture4u.model.ProfileModel;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
@@ -38,6 +39,23 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     public void onBindViewHolder(@NonNull ProfileAdapter.ViewHolder holder, int position) {
         holder.icon.setImageResource(list.get(position).getSrcID());
         holder.title.setText(list.get(position).getTitle());
+
+        if(list.get(position).getNoOfNotif() > 0)
+        {
+            holder.num.setText(String.valueOf(list.get(holder.getAdapterPosition()).getNoOfNotif()));
+            holder.num.setVisibility(View.VISIBLE);
+        }
+
+        if(list.get(position).getTitle().equals("Preparing"))
+        {
+            holder.icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PreparingActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
@@ -48,7 +66,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     public class ViewHolder extends  RecyclerView.ViewHolder{
         ImageView icon;
         TextView title;
-        TextView note;
+        TextView num;
 
 
         public ViewHolder(@NonNull View itemView)
@@ -56,7 +74,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             super(itemView);
             icon = itemView.findViewById(R.id.iconImageView);
             title = itemView.findViewById(R.id.profileTitle);
-            note = itemView.findViewById(R.id.notificationTextView);
+            num = itemView.findViewById(R.id.numberTV);
         }
     }
 }

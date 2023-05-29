@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.CartAdapter;
 import my.fa250.furniture4u.model.CartModel;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends AppCompatActivity implements Serializable {
 
     //toolbar
     Toolbar toolbar;
@@ -52,6 +53,8 @@ public class CartActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<CartModel> cartModelList;
     CartAdapter cartAdapter;
+
+    List<String> listID = new ArrayList<>();
 
     //var
     double overallTotalAmount;
@@ -102,6 +105,8 @@ public class CartActivity extends AppCompatActivity {
     public void buyNow(View v)
     {
         Intent intent = new Intent(CartActivity.this, AddressActivity.class);
+        intent.putExtra("total",qwerty);
+        intent.putExtra("cardID", (Serializable) listID);
         startActivity(intent);
     }
 
@@ -131,6 +136,7 @@ public class CartActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     CartModel cartModel = dataSnapshot.getValue(CartModel.class);
+                    cartModel.setId(dataSnapshot.getKey());
                     cartModelList.add(cartModel);
                     cartAdapter.notifyDataSetChanged();
                 }
@@ -147,9 +153,19 @@ public class CartActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             double totalBill = intent.getDoubleExtra("totalAmount",0.0);
-            Log.d("INTENT","RECEIVING VALUE "+totalBill);
+            String cartID = intent.getStringExtra("cartID");
+            String status = intent.getStringExtra("status");
             qwerty = qwerty + totalBill;
             totalPriceTV.setText("Total Amount : RM"+DF.format(qwerty));
+
+            if(status.equals("add"))
+            {
+                listID.add(cartID);
+            }
+            else if(status.equals("remove"))
+            {
+                listID.remove(cartID);
+            }
         }
     };
 }

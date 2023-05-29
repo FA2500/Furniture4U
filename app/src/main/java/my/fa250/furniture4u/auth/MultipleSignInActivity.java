@@ -45,6 +45,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -70,6 +71,8 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     //Twitter
     OAuthProvider.Builder provider;
+
+    private String FCMtoken;
 
     //FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
@@ -166,6 +169,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
         //mAuth.signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
+            checkToken2(currentUser);
             Log.d("Auth","Already Log in with"+currentUser.getDisplayName());
             getUserData((currentUser));
             Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
@@ -175,6 +179,65 @@ public class MultipleSignInActivity extends AppCompatActivity {
         {
             Log.d("Auth","Not logged in yet");
         }
+    }
+
+    private void checkToken2(FirebaseUser currentUser)
+    {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if(task.isSuccessful())
+                        {
+                            FCMtoken = task.getResult();
+                            database.getReference("user").child(currentUser.getUid()+"/token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        if(!FCMtoken.equals(task.getResult().child("token").getValue(String.class)))
+                                        {
+                                            Map<String, Object> userinfo = new HashMap<>();
+                                            userinfo.put("token", FCMtoken);
+                                            database.getReference("user").child(currentUser.getUid()).updateChildren(userinfo);
+                                        }
+                                        Log.d("TOKEN",FCMtoken);
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                });
+    }
+
+    private void checkToken(FirebaseUser currentUser)
+    {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if(task.isSuccessful())
+                        {
+                            FCMtoken = task.getResult();
+                            database.getReference("user").child(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        if(!FCMtoken.equals(task.getResult().child("token").getValue(String.class)))
+                                        {
+                                            Map<String, Object> userinfo = new HashMap<>();
+                                            userinfo.put("token", FCMtoken);
+                                            database.getReference("user").child(currentUser.getUid()).setValue("token",FCMtoken);
+                                        }
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                });
     }
 
     //Public Method
@@ -290,11 +353,19 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private void sendUserData(FirebaseUser user, String provider)
     {
+        do checkToken2(user);
+        while(FCMtoken.isEmpty());
+        {
+            //
+        }
+
+
         UserInfo.setName(user.getDisplayName());
         UserInfo.setEmail(user.getEmail());
         UserInfo.setPhone(user.getPhoneNumber());
         UserInfo.setRole("Customer");
         UserInfo.setProvider(provider);
+        UserInfo.setToken(FCMtoken);
 
         Map<String, Object> userinfo = new HashMap<>();
         userinfo.put("name", user.getDisplayName());
@@ -302,6 +373,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
         userinfo.put("phone",user.getPhoneNumber());
         userinfo.put("role", "Customer");
         userinfo.put("provider", provider);
+        userinfo.put("token", FCMtoken);
 
         database.getReference().child("user").child(user.getUid()).setValue(userinfo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -318,23 +390,6 @@ public class MultipleSignInActivity extends AppCompatActivity {
                         Log.w("Database", "Error writing data", e);
                     }
                 });
-
-        /*db.collection("user").document(user.getUid())
-                .set(userinfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Database", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Database", "Error writing document", e);
-                    }
-                });*/
     }
 
     private void getUserData(FirebaseUser user)
@@ -349,6 +404,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
                     UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
                     UserInfo.setRole("Customer");
                     UserInfo.setProvider(snapshot.child("provider").getValue(String.class));
+                    UserInfo.setToken(snapshot.child("token").getValue(String.class));
                     Log.d("Database", "Data successfully retrieved from Realtime Database!");
                     Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
                     startActivity(intent);
@@ -415,18 +471,31 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private void RegisterSaveUserInfo(FirebaseUser user)
     {
-        UserInfo.setName(user.getDisplayName());
-        UserInfo.setEmail(user.getEmail());
-        UserInfo.setPhone(user.getPhoneNumber());
-        UserInfo.setRole("Customer");
+        for(com.google.firebase.auth.UserInfo profile : user.getProviderData())
+        {
+            UserInfo.setEmail(profile.getEmail());
+            UserInfo.setPhone(profile.getPhoneNumber());
+        }
 
-        Map<String, Object> userinfo = new HashMap<>();
-        userinfo.put("name", user.getDisplayName());
-        userinfo.put("email", user.getEmail());
-        userinfo.put("phone",user.getPhoneNumber());
-        userinfo.put("role", "Customer");
 
-        database.getReference("user").child(user.getUid()).get()
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                FCMtoken = task.getResult();
+                UserInfo.setName(user.getDisplayName());
+                UserInfo.setRole("Customer");
+                UserInfo.setToken(FCMtoken);
+                UserInfo.setProvider("Google");
+
+                Map<String, Object> userinfo = new HashMap<>();
+                userinfo.put("name", user.getDisplayName());
+                userinfo.put("email", UserInfo.getEmail());
+                userinfo.put("phone",UserInfo.getPhone());
+                userinfo.put("role", "Customer");
+                userinfo.put("token", FCMtoken);
+                userinfo.put("provider","Google");
+
+                database.getReference("user").child(user.getUid()).get()
                         .addOnSuccessListener(new OnSuccessListener<DataSnapshot>() {
                             @Override
                             public void onSuccess(DataSnapshot dataSnapshot) {
@@ -457,6 +526,9 @@ public class MultipleSignInActivity extends AppCompatActivity {
                                 }
                             }
                         });
+            }
+        });
+
 
 
     }
@@ -519,13 +591,9 @@ public class MultipleSignInActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
-                                            Log.d("GOOGLE", "signInWithCredential:success");
                                             FirebaseUser user = mAuth.getCurrentUser();
-                                            Log.d("GOOGLE", task.getResult().toString());
                                             RegisterSaveUserInfo(user);
                                         } else {
-                                            // If sign in fails, display a message to the user.
                                             Log.w("GOOGLE", "signInWithCredential:failure", task.getException());
                                         }
                                     }

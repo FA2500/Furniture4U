@@ -21,28 +21,49 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.functions.HttpsCallableReference;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.UserInfo;
+import my.fa250.furniture4u.model.AddressModel;
+import my.fa250.furniture4u.model.CartModel;
 
 public class PaymentActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser currentUser = mAuth.getCurrentUser();
     FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     WebView webView;
+
+    private Double total;
+    private List<String> cardID;
+    private String address;
+    private String addressID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
+
+        Intent intent = getIntent();
+        total = intent.getDoubleExtra("total", 0.0);
+        cardID = (List<String>) intent.getSerializableExtra("cardID");
+        address = intent.getStringExtra("address");
+        addressID = intent.getStringExtra("addressID");
+
         initUI();
         createBill();
     }
@@ -59,10 +80,10 @@ public class PaymentActivity extends AppCompatActivity {
     {
         Map<String, Object> data = new HashMap<>();
         data.put("collection_id", "oqfedjph");
-        data.put("email", "mfarisammar@gmail.com");
-        data.put("name", "faris");
-        data.put("amount", 10000);
-        data.put("description", "Sofa.");
+        data.put("email", (!UserInfo.getEmail().isEmpty()) ?  UserInfo.getEmail() : "mfarisammar@gmail.com");
+        data.put("name", (!UserInfo.getName().isEmpty()) ?  UserInfo.getName() : "faris" );
+        data.put("amount", (!total.isNaN()) ? (total*100) : 10000);
+        data.put("description", "Furniture.");
         mFunctions.getHttpsCallable("createBill").call(data)
                 .addOnSuccessListener(new OnSuccessListener<HttpsCallableResult>() {
                     @Override
@@ -100,6 +121,36 @@ public class PaymentActivity extends AppCompatActivity {
                                 }
                                 else if(url.contains("success"))
                                 {
+                                    for(int i = 0 ; i < cardID.size() ; i++)
+                                    {
+                                        Log.w("CARDi",cardID.get(i));
+                                        int finalI = i;
+                                        database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/cart").addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                for(DataSnapshot dataSnapshot : snapshot.getChildren())
+                                                {
+                                                    if(dataSnapshot.getKey().equals(cardID.get(finalI)))
+                                                    {
+                                                        Log.d("CARTMODEL","cart = "+dataSnapshot.getValue(CartModel.class).toString());
+                                                        CartModel cart = dataSnapshot.getValue(CartModel.class);
+                                                        database.getReference("user/" +mAuth.getCurrentUser().getUid() + "/order").child(cardID.get(finalI)).setValue(cart);
+                                                        database.getReference("user/" +mAuth.getCurrentUser().getUid() + "/order").child(cardID.get(finalI)).child("address").setValue(addressID);
+
+                                                        //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("cart").setValue(cart);
+                                                        //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("addressID").setValue(addressID);
+                                                        //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("address").setValue(address);
+
+                                                        database.getReference("user/" +mAuth.getCurrentUser().getUid() + "/cart").child(cardID.get(finalI)).removeValue();
+                                                    }
+                                                }
+                                            }
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                Log.w("Database", "Error reading data", error.toException());
+                                            }
+                                        });
+                                    }
                                     Log.d("GOTO","SUCCESS");
                                     Intent intent = new Intent(PaymentActivity.this, PaymentStatus.class);
                                     startActivity(intent);
@@ -125,5 +176,10 @@ public class PaymentActivity extends AppCompatActivity {
                             Log.e("Payment", "createBill failed", e);
                         }
                     }});
+    }
+
+    private void CartToOrder()
+    {
+
     }
 }

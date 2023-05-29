@@ -1,10 +1,8 @@
 package my.fa250.furniture4u.model;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class CartModel implements Serializable {
-
+public class PreparingModel implements Serializable {
     String id;
     String currentTime;
     String currentDate;
@@ -21,12 +19,12 @@ public class CartModel implements Serializable {
 
     Boolean isInCart;
 
-    public CartModel()
+    public PreparingModel()
     {
 
     }
 
-    public CartModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, String img_url, double rating,String description, Boolean isInCart) {
+    public PreparingModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, String img_url, double rating,String description, Boolean isInCart) {
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;

@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -88,19 +91,35 @@ public class test extends AppCompatActivity {
 
     public void goToARSV(View v)
     {
-        //Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
         //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
-        // sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
-        //sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-        //startActivity(sceneViewerIntent);
-        Intent intent = new Intent(test.this , ARActivity2.class);
-        startActivity(intent);
+         sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
+        sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
+        startActivity(sceneViewerIntent);
+        //Intent intent = new Intent(test.this , ARActivity2.class);
+        //startActivity(intent);
     }
 
     public void goToIncor(View v)
     {
         Intent intent = new Intent(this, MlTest.class );
         startActivity(intent);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "CART";
+            String description = "CART REMINDER";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("CART", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
    /* @Override
