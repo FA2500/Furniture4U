@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.UserInfo;
 import my.fa250.furniture4u.comAdapter.CartAdapter;
 import my.fa250.furniture4u.comAdapter.ProfileAdapter;
 import my.fa250.furniture4u.model.CartModel;
@@ -31,7 +33,9 @@ import my.fa250.furniture4u.model.ProfileModel;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    //UI
     Toolbar toolbar;
+    TextView usernameTV,registeredTV;
 
     RecyclerView recyclerView;
     List<ProfileModel> profileModelList;
@@ -70,6 +74,11 @@ public class ProfileActivity extends AppCompatActivity {
             Log.w("Action",e);
         }
 
+        usernameTV = findViewById(R.id.pro_username_tv);
+        registeredTV = findViewById(R.id.pro_registered_tv);
+        usernameTV.setText(UserInfo.getName());
+        registeredTV.setText(UserInfo.getEmail());
+
         recyclerView = findViewById(R.id.order_category);
         recyclerView.setLayoutManager(new LinearLayoutManager(ProfileActivity.this,RecyclerView.HORIZONTAL,false));
         profileModelList = new ArrayList<>();
@@ -86,12 +95,16 @@ public class ProfileActivity extends AppCompatActivity {
                     // Handle home item click
                     Intent intent = new Intent(ProfileActivity.this, HomePageActivity.class);
                     startActivity(intent);
+                    finish();
                     return true;
                 case R.id.action_search:
                     // Handle search item click
                     return true;
                 case R.id.action_notifications:
                     // Handle notifications item click
+                    Intent intent1 = new Intent(ProfileActivity.this, NotificationActivity.class);
+                    startActivity(intent1);
+                    finish();
                     return true;
                 case R.id.action_profile:
                     // Handle profile item click

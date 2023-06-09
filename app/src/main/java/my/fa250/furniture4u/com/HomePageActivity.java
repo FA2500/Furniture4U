@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -213,11 +216,15 @@ public class HomePageActivity extends AppCompatActivity {
                     return true;
                 case R.id.action_notifications:
                     // Handle notifications item click
+                    Intent intent1 = new Intent(HomePageActivity.this, NotificationActivity.class);
+                    startActivity(intent1);
+                    finish();
                     return true;
                 case R.id.action_profile:
                     // Handle profile item click
-                    Intent intent = new Intent(HomePageActivity.this, ProfileActivity.class);
-                    startActivity(intent);
+                    Intent intent2 = new Intent(HomePageActivity.this, ProfileActivity.class);
+                    startActivity(intent2);
+                    finish();
                     return true;
             }
             return false;
@@ -409,6 +416,39 @@ public class HomePageActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, SearchActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            showExitDialog();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void showExitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Exit");
+        builder.setMessage("Do you want to quit the application?");
+        builder.setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+                homeIntent.addCategory( Intent.CATEGORY_HOME );
+                homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(homeIntent);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     // [START ask_post_notifications]

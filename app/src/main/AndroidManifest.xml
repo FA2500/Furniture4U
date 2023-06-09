@@ -10,6 +10,7 @@
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" /> <!-- Request Features -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
     <uses-feature
         android:name="android.hardware.camera.ar"
         android:required="true" />
@@ -27,13 +28,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
+        <activity
+            android:name=".com.NotificationActivity"
+            android:exported="false" />
+
         <service
-            android:name="MyFirebaseMessagingService"
+            android:name=".MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".com.PreparingActivity"
             android:exported="false" />
