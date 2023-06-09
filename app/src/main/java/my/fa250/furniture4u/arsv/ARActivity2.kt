@@ -31,42 +31,19 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     data class Model(
         val fileLocation: String,
         val scaleUnits: Float? = null,
-        val placementMode: PlacementMode = PlacementMode.BEST_AVAILABLE,
+        val placementMode: PlacementMode = PlacementMode.PLANE_HORIZONTAL,
         val applyPoseRotation: Boolean = true
     )
 
     val models = listOf(
-        //Model("models/spiderbot.glb"),
-        Model(
-            fileLocation = "https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair2.gltf",
-            // Display the Tiger with a size of 3 m long
-            scaleUnits = 1.0f,
-           // placementMode = PlacementMode.BEST_AVAILABLE,
-            placementMode = PlacementMode.PLANE_HORIZONTAL,
-            applyPoseRotation = true
-        ),
         /*Model(
             fileLocation = "https://sceneview.github.io/assets/models/DamagedHelmet.glb",
-            placementMode = PlacementMode.INSTANT,
-            scaleUnits = 0.5f
-        ),
-        Model(
-            fileLocation = "https://storage.googleapis.com/ar-answers-in-search-models/static/GiantPanda/model.glb",
+            scaleUnits = 1.0f,
             placementMode = PlacementMode.PLANE_HORIZONTAL,
-            // Display the Tiger with a size of 1.5 m height
-            scaleUnits = 1.5f
-        ),
-        Model(
-             fileLocation = "https://sceneview.github.io/assets/models/Spoons.glb",
-             placementMode = PlacementMode.PLANE_HORIZONTAL_AND_VERTICAL,
-             // Keep original model size
-             scaleUnits = null
-         ),
-         Model(
-             fileLocation = "https://sceneview.github.io/assets/models/Halloween.glb",
-             placementMode = PlacementMode.PLANE_HORIZONTAL,
-             scaleUnits = 2.5f
-         ),*/
+            applyPoseRotation = true
+        ),*/
+        Model("models/bed/queen/bed_queen_red.gltf"),
+        Model("models/chair/fabric/chair_fabric_red.gltf"),
     )
     var modelIndex = 0
     var modelNode: ArModelNode? = null

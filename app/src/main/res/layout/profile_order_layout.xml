@@ -5,31 +5,33 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:layout_margin="8dp">
 
-    <TextView
-        android:id="@+id/numberTV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/notification_background"
-        android:gravity="center"
-        android:minWidth="20dp"
-        android:minHeight="20dp"
-        android:text="0"
-        android:textColor="@android:color/white"
-        android:textSize="12sp"
-        android:visibility="invisible" />
 
-    <ImageView
-        android:id="@+id/iconImageView"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/cart" />
+        <TextView
+            android:id="@+id/numberTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/notification_background"
+            android:gravity="center"
+            android:minWidth="20dp"
+            android:minHeight="20dp"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="invisible" />
 
-    <TextView
-        android:id="@+id/profileTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Text" />
+        <ImageView
+            android:id="@+id/iconImageView"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/cart" />
+
+        <TextView
+            android:id="@+id/profileTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Item Text" />
 
 </LinearLayout>

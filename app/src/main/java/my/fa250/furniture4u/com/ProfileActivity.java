@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -57,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Profile");
         try {
@@ -107,10 +109,11 @@ public class ProfileActivity extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     preCounter++;
                 }
+                //profileModelList.add(new ProfileModel(R.drawable.baseline_shopping_cart_24, "In Cart", 0));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_payment_24, "To Pay", 0));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_alarm_24, "Preparing", preCounter));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_local_shipping_24, "Shipping", 0));
-                profileModelList.add(new ProfileModel(R.drawable.baseline_rate_review_24, "Received", 0));
+                profileModelList.add(new ProfileModel(R.drawable.baseline_rate_review_24, "Delivered", 0));
                 profileAdapter.notifyDataSetChanged();
             }
 
@@ -119,5 +122,31 @@ public class ProfileActivity extends AppCompatActivity {
                 Log.w("Database", "Error reading cart data", error.toException());
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item)
+    {
+        int id = item.getItemId();
+        if(id == R.id.menu_chat)
+        {
+            //mAuth.signOut();
+            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+            startActivity(intent);
+            // finish();
+        }
+        else if(id==R.id.menu_cart)
+        {
+            Intent intent = new Intent(ProfileActivity.this, CartActivity.class);
+            startActivity(intent);
+        }
+        return true;
     }
 }

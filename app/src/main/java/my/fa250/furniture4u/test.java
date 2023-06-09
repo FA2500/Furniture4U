@@ -38,8 +38,6 @@ import my.fa250.furniture4u.mltest.MlTest;
 
 public class test extends AppCompatActivity {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,21 +47,6 @@ public class test extends AppCompatActivity {
 
         //AppEventsLogger.activateApp(this);
 
-        /*try {
-            PackageInfo info = getPackageManager().getPackageInfo(
-                    "my.fa250.furniture4u",
-                    PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        }
-        catch (PackageManager.NameNotFoundException e) {
-        }
-        catch (NoSuchAlgorithmException e) {
-        }*/
-
         /*toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,7 +55,6 @@ public class test extends AppCompatActivity {
 
     public void goToAR(View v)
     {
-        //Intent intent = new Intent(test.this , checkARSupported.class);
         Intent intent = new Intent(test.this , ARActivity2.class);
         startActivity(intent);
     }
@@ -91,13 +73,24 @@ public class test extends AppCompatActivity {
 
     public void goToARSV(View v)
     {
-        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-        //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
-         sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
+        /*Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
+         //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-        startActivity(sceneViewerIntent);
+        startActivity(sceneViewerIntent);*/
         //Intent intent = new Intent(test.this , ARActivity2.class);
         //startActivity(intent);
+        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        Uri intentUri =
+                Uri.parse("https://arvr.google.com/scene-viewer/1.0").buildUpon()
+                        .appendQueryParameter("file", "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf")
+                        .appendQueryParameter("mode", "ar_preferred")
+                        .appendQueryParameter("title", "Furniture")
+                        .appendQueryParameter("resizable", "false")
+                        .build();
+        sceneViewerIntent.setData(intentUri);
+        sceneViewerIntent.setPackage("com.google.ar.core");
+        startActivity(sceneViewerIntent);
     }
 
     public void goToIncor(View v)
@@ -106,21 +99,6 @@ public class test extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "CART";
-            String description = "CART REMINDER";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel("CART", name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
    /* @Override
     public boolean onCreateOptionsMenu(Menu menu)
