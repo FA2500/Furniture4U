@@ -99,7 +99,7 @@ public class HomePageActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     //TextView
-    TextView catShowAll, productShowAll, popShowAll;
+    TextView productShowAll, popShowAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,18 +140,11 @@ public class HomePageActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         //TextView
-        catShowAll = findViewById(R.id.category_see_all);
         productShowAll = findViewById(R.id.newProducts_see_all);
         popShowAll = findViewById(R.id.popular_see_all);
 
         //TV setOnClickListener
-        catShowAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomePageActivity.this, ShowAllActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         productShowAll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,7 +167,7 @@ public class HomePageActivity extends AppCompatActivity {
         List<SlideModel> slideModels = new ArrayList<>();
 
         //Banner Data
-        slideModels.add(new SlideModel(R.drawable.banner,"TEST", ScaleTypes.FIT));
+        slideModels.add(new SlideModel(R.drawable.banner, ScaleTypes.FIT));
         imgSlider.setImageList(slideModels);
 
 

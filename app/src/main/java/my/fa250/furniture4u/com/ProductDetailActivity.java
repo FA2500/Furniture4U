@@ -10,18 +10,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.denzcoskun.imageslider.ImageSlider;
+import com.denzcoskun.imageslider.constants.ScaleTypes;
+import com.denzcoskun.imageslider.models.SlideModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.model.CartModel;
@@ -34,9 +41,14 @@ public class ProductDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
 
 
-    ImageView detailImage,addItem,removeItem;
+    ImageView addItem,removeItem;
+
+    ImageSlider detailImage;
+    List<SlideModel> slideModels = new ArrayList<>();
     TextView rating,desc,price,name,quantity;
     Button addToCart,buyNow;
+
+    RatingBar ratingBar;
 
     //Firebase
     //FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -59,6 +71,8 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     String img_url;
     Boolean isInCart;
+
+    DecimalFormat DF = new DecimalFormat(".00");
 
 
     @Override
@@ -88,6 +102,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         addToCart = findViewById(R.id.add_to_cart);
         buyNow = findViewById(R.id.buy_now);
         name = findViewById(R.id.product_detail_name);
+        ratingBar = findViewById(R.id.product_detail_rate);
 
         //setOnClickListener
         addToCart.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +128,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     totalQuantity++;
                     quantity.setText(String.valueOf(totalQuantity));
                     totalprice = baseprice*totalQuantity;
-                    price.setText(String.valueOf(totalprice));
+                    price.setText(DF.format(totalprice));
                 }
             }
         });
@@ -126,7 +141,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     totalQuantity--;
                     quantity.setText(String.valueOf(totalQuantity));
                     totalprice = baseprice*totalQuantity;
-                    price.setText(String.valueOf(totalprice));
+                    price.setText(DF.format(totalprice));
                 }
             }
         });
@@ -152,10 +167,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         if(productModel != null)
         {
-            Glide.with(this).load(productModel.getImg_url()).into(detailImage);
+            slideModels.clear();
+            slideModels.add(new SlideModel(productModel.getImg_url(),ScaleTypes.FIT));
+            detailImage.setImageList(slideModels);
             name.setText(productModel.getName());
-            price.setText(String.valueOf(productModel.getPrice()));
+            //price.setText(String.valueOf(productModel.getPrice()));
+            price.setText(DF.format(productModel.getPrice()));
             rating.setText(String.valueOf(productModel.getRating()));
+            ratingBar.setRating(Float.parseFloat(productModel.getRating().toString()));
             desc.setText(productModel.getDescription());
 
             baseprice = productModel.getPrice();
@@ -163,10 +182,13 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         else if(popModel != null)
         {
-            Glide.with(this).load(popModel.getImg_url()).into(detailImage);
+            slideModels.clear();
+            slideModels.add(new SlideModel(popModel.getImg_url(),ScaleTypes.FIT));
+            detailImage.setImageList(slideModels);
             name.setText(popModel.getName());
-            price.setText(String.valueOf(popModel.getPrice()));
+            price.setText(DF.format(popModel.getPrice()));
             rating.setText(String.valueOf(popModel.getRating()));
+            ratingBar.setRating(Float.parseFloat(popModel.getRating().toString()));
             desc.setText(popModel.getDescription());
 
             baseprice = popModel.getPrice() ;
@@ -174,10 +196,14 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         else if(allModel != null)
         {
-            Glide.with(this).load(allModel.getImg_url()).into(detailImage);
+            slideModels.clear();
+            slideModels.add(new SlideModel(allModel.getImg_url(),ScaleTypes.FIT));
+            detailImage.setImageList(slideModels);
             name.setText(allModel.getName());
-            price.setText(String.valueOf(allModel.getPrice()));
+            price.setText(DF.format(allModel.getPrice()));
             rating.setText(String.valueOf(allModel.getRating()));
+            float a = (float) allModel.getRating();
+            ratingBar.setRating(a);
             desc.setText(allModel.getDescription());
 
             baseprice = allModel.getPrice();
@@ -185,10 +211,15 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         else if(cartModel != null)
         {
-            Glide.with(this).load(cartModel.getImg_url()).into(detailImage);
+           // Glide.with(this).load(cartModel.getImg_url()).into(detailImage);
+            slideModels.clear();
+            slideModels.add(new SlideModel(cartModel.getImg_url(),ScaleTypes.FIT));
+            detailImage.setImageList(slideModels);
             name.setText(cartModel.getProductName());
-            price.setText(String.valueOf(cartModel.getProductPrice()));
+            price.setText(DF.format(cartModel.getProductPrice()));
             rating.setText(String.valueOf(cartModel.getRating()));
+            float a = (float) cartModel.getRating();
+            ratingBar.setRating(a);
             desc.setText(cartModel.getDescription());
 
             baseprice = cartModel.getProductPrice();

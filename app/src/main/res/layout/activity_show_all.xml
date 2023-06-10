@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_gray"
     tools:context=".com.ShowAllActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -21,10 +22,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/show_all_rec"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/show_all_toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/show_all_toolbar"
+        tools:itemCount="4"
+        tools:listitem="@layout/show_all_item" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

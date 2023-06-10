@@ -19,21 +19,25 @@
         app:layout_constraintTop_toTopOf="parent"
         app:title="Product Details" />
 
-    <ImageView
+
+    <com.denzcoskun.imageslider.ImageSlider
         android:id="@+id/product_detail_img"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="200dp"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detail_toolbar"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:iss_auto_cycle="true"
+        app:iss_delay="0"
+        app:iss_period="1000" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/product_detail_card"
-        android:layout_width="414dp"
-        android:layout_height="432dp"
-        android:layout_marginTop="10dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
         android:layout_marginBottom="10dp"
         android:elevation="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -79,7 +83,9 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="10dp"
                     android:isIndicator="true"
-                    android:numStars="4"
+                    android:backgroundTint="@color/white"
+                    android:progressTint="#FFD700"
+                    android:numStars="5"
                     android:stepSize="0.1" />
 
             </RelativeLayout>
@@ -90,17 +96,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Description" />
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:text="Price"
-                android:textColor="@color/black"
-                android:textSize="21sp"
-                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -113,7 +108,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="RM"
-                    android:textColor="@color/black"
+                    android:textColor="@color/medium_blue"
                     android:textStyle="bold" />
 
                 <TextView
@@ -121,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="10"
-                    android:textColor="@color/black"
+                    android:textColor="@color/medium_blue"
                     android:textStyle="bold" />
 
             </LinearLayout>
