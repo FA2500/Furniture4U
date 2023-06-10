@@ -14,6 +14,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -54,6 +55,8 @@ public class CartActivity extends AppCompatActivity implements Serializable {
     List<CartModel> cartModelList;
     CartAdapter cartAdapter;
 
+    CheckBox allCB;
+
     List<String> listID = new ArrayList<>();
 
     //var
@@ -71,6 +74,7 @@ public class CartActivity extends AppCompatActivity implements Serializable {
 
     private void initUI()
     {
+        allCB = findViewById(R.id.checkBox2);
         toolbar = findViewById(R.id.cart_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -98,6 +102,24 @@ public class CartActivity extends AppCompatActivity implements Serializable {
 
         totalPriceTV = findViewById(R.id.cartTotalPrice);
         totalPriceTV.setText("Total Amount : RM"+DF.format(0.00));
+
+        allCB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(allCB.isChecked())
+                {
+                    Intent intent = new Intent("checkAll");
+                    intent.putExtra("status", true);
+                    LocalBroadcastManager.getInstance(CartActivity.this).sendBroadcast(intent);
+                }
+                else
+                {
+                    Intent intent = new Intent("checkAll");
+                    intent.putExtra("status", false);
+                    LocalBroadcastManager.getInstance(CartActivity.this).sendBroadcast(intent);
+                }
+            }
+        });
 
         LocalBroadcastManager.getInstance(this).registerReceiver(MessageReceiver, new IntentFilter("CartTotalAmount"));
     }

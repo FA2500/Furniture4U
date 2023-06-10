@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
@@ -37,12 +39,16 @@ public class ProfileActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView usernameTV,registeredTV;
 
+    Button AccountSettingBtn, FavouriteBtn, HelpBtn, LogoutBtn;
+
     RecyclerView recyclerView;
     List<ProfileModel> profileModelList;
     ProfileAdapter profileAdapter;
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
+
+
 
     //counter
     private int payCounter = 0;
@@ -85,7 +91,20 @@ public class ProfileActivity extends AppCompatActivity {
         profileAdapter = new ProfileAdapter(this, profileModelList);
         recyclerView.setAdapter(profileAdapter);
 
+        //Button
+        AccountSettingBtn = findViewById(R.id.pro_setting_btn);
+        FavouriteBtn = findViewById(R.id.pro_fav_btn);
+        HelpBtn = findViewById(R.id.pro_help_btn);
+        LogoutBtn = findViewById(R.id.pro_logout_btn);
 
+        AccountSettingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+        //Button
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.action_profile);

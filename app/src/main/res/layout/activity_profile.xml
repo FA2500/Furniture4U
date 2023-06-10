@@ -144,7 +144,7 @@
                     android:orientation="vertical">
 
                     <Button
-                        android:id="@+id/button22"
+                        android:id="@+id/pro_setting_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:insetTop="2dp"
@@ -153,7 +153,7 @@
                         app:icon="@drawable/baseline_person_24" />
 
                     <Button
-                        android:id="@+id/button26"
+                        android:id="@+id/pro_fav_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:insetTop="2dp"
@@ -163,7 +163,7 @@
                         app:icon="@drawable/baseline_favorite_border_24" />
 
                     <Button
-                        android:id="@+id/button23"
+                        android:id="@+id/pro_help_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:insetTop="2dp"
@@ -172,7 +172,7 @@
                         app:icon="@drawable/baseline_help_outline_24" />
 
                     <Button
-                        android:id="@+id/button27"
+                        android:id="@+id/pro_logout_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:insetTop="2dp"

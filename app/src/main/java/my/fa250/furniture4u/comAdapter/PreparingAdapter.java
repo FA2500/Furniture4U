@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
@@ -25,6 +27,8 @@ import my.fa250.furniture4u.model.PreparingModel;
 public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.ViewHolder>{
     private Context context;
     private List<CartModel> list;
+
+    private DecimalFormat DF = new DecimalFormat("0.00");
 
     public PreparingAdapter(Context context, List<CartModel> list) {
         this.context = context;
@@ -40,9 +44,10 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
     @Override
     public void onBindViewHolder(@NonNull PreparingAdapter.ViewHolder holder, int position) {
         holder.name.setText(list.get(position).getProductName());
-        holder.price.setText("RM"+list.get(position).getProductPrice());
+        holder.price.setText("RM"+DF.format(list.get(position).getProductPrice()));
         holder.totalPrice.setText(String.valueOf(list.get(position).getTotalPrice()));
-        holder.totalQuan.setText(String.valueOf(list.get(position).getTotalQuantity()));
+       // holder.totalQuan.setText(String.valueOf(list.get(position).getTotalQuantity()));
+        holder.quan.setText(String.valueOf(list.get(position).getTotalQuantity()));
 
         Glide.with(context)
                 .load(list.get(position).getImg_url())
@@ -66,6 +71,7 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder{
         CardView cv;
         TextView name,price,date,time,totalQuan,totalPrice;
+        Button quan;
         CheckBox checkBox;
 
         ImageView catImg;
@@ -79,7 +85,8 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
             name = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
             totalPrice = itemView.findViewById(R.id.total_price_cart);
-            totalQuan = itemView.findViewById(R.id.total_quantity_cart);
+            //totalQuan = itemView.findViewById(R.id.total_quantity_cart);
+            quan = itemView.findViewById(R.id.product_quant);
         }
     }
 }

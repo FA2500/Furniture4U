@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.CartActivity;
 import my.fa250.furniture4u.com.PreparingActivity;
 import my.fa250.furniture4u.model.ProfileModel;
 
@@ -46,7 +47,18 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
             holder.num.setVisibility(View.VISIBLE);
         }
 
-        if(list.get(position).getTitle().equals("Preparing"))
+
+        if(list.get(position).getTitle().equals("To Pay"))
+        {
+            holder.icon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, CartActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
+        else if(list.get(position).getTitle().equals("Preparing"))
         {
             holder.icon.setOnClickListener(new View.OnClickListener() {
                 @Override
