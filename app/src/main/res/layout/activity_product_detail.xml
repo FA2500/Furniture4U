@@ -98,6 +98,25 @@
                 android:text="Description" />
 
             <LinearLayout
+                android:id="@+id/varianceLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/varianceRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/variance_btn" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -152,16 +171,32 @@
             </LinearLayout>
 
             <Button
+                android:id="@+id/button23"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View in 3D"
+                app:icon="@drawable/baseline_3d_rotation_24" />
+
+            <Button
+                android:id="@+id/button22"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="View in AR"
+                app:icon="@drawable/baseline_view_in_ar_24" />
+
+            <Button
                 android:id="@+id/add_to_cart"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add to Cart" />
+                android:text="Add to Cart"
+                app:icon="@drawable/baseline_shopping_cart_24" />
 
             <Button
                 android:id="@+id/buy_now"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Buy Now" />
+                android:text="Buy Now"
+                app:icon="@drawable/baseline_payment_24" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

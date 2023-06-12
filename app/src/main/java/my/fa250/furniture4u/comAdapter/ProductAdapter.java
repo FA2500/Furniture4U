@@ -38,7 +38,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Glide.with(context).load(list.get(position).getImg_url()).into(holder.prodImg);
+        Glide.with(context).load(list.get(position).getImg_url().get(0)).into(holder.prodImg);
         holder.prodText.setText(list.get(position).getName());
         holder.prodPrice.setText(String.format("%.2f", list.get(position).getPrice()));
 
@@ -48,7 +48,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                 Intent intent = new Intent(context, ProductDetailActivity.class);
                 intent.putExtra("details",list.get(holder.getAdapterPosition()));
                 context.startActivity(intent);
-
             }
         });
     }

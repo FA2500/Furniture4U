@@ -41,7 +41,7 @@ public class PopAdapter extends RecyclerView.Adapter<PopAdapter.Viewholder> {
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull PopAdapter.Viewholder holder, int position) {
-        Glide.with(context).load(popModelList.get(position).getImg_url()).into(holder.popImg);
+        Glide.with(context).load(popModelList.get(position).getImg_url().get(0)).into(holder.popImg);
         holder.popTv.setText(popModelList.get(position).getName());
         holder.popPrice.setText(String.format("%.2f", popModelList.get(position).getPrice()));
 
@@ -51,7 +51,6 @@ public class PopAdapter extends RecyclerView.Adapter<PopAdapter.Viewholder> {
                 Intent intent = new Intent(context, ProductDetailActivity.class);
                 intent.putExtra("details",popModelList.get(holder.getAdapterPosition()));
                 context.startActivity(intent);
-
             }
         });
     }

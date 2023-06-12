@@ -6,6 +6,7 @@ import java.util.List;
 public class CartModel implements Serializable {
 
     String id;
+    String productID;
     String currentTime;
     String currentDate;
     String productName;
@@ -13,7 +14,7 @@ public class CartModel implements Serializable {
     int totalQuantity;
     double totalPrice;
 
-    String img_url;
+    List<String> img_url;
 
     double rating;
 
@@ -21,12 +22,16 @@ public class CartModel implements Serializable {
 
     Boolean isInCart;
 
+    List<String> variance;
+    String colour;
+
     public CartModel()
     {
 
     }
 
-    public CartModel(String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, String img_url, double rating,String description, Boolean isInCart) {
+    public CartModel(String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour) {
+        this.productID = productID;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
         this.productName = productName;
@@ -37,7 +42,12 @@ public class CartModel implements Serializable {
         this.rating = rating;
         this.description = description;
         this.isInCart = isInCart;
+        this.variance = variance;
+        this.colour = colour;
     }
+
+    public String getProductID() {return productID;}
+    public void setProductID(String productID) {this.productID=productID;}
 
     public String getId()
     {
@@ -96,11 +106,11 @@ public class CartModel implements Serializable {
         this.totalPrice = totalPrice;
     }
 
-    public String getImg_url() {
+    public List<String> getImg_url() {
         return img_url;
     }
 
-    public void setImg_url(String img_url) {
+    public void setImg_url(List<String> img_url) {
         this.img_url = img_url;
     }
 
@@ -127,4 +137,16 @@ public class CartModel implements Serializable {
     public void setIsInCart(Boolean isInCart) {
         this.isInCart = isInCart;
     }
+
+    public List<String> getVariance() {
+        return variance;
+    }
+
+    public void setVariance(List<String> variance) {
+        this.variance = variance;
+    }
+
+    public String getColour() { return colour; }
+
+    public void setColour(String colour) { this.colour = colour; }
 }

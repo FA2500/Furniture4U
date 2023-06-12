@@ -3,6 +3,8 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +24,10 @@ import com.denzcoskun.imageslider.models.SlideModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -31,15 +37,19 @@ import java.util.HashMap;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.comAdapter.CategoryAdapter;
+import my.fa250.furniture4u.comAdapter.ProductAdapter;
+import my.fa250.furniture4u.comAdapter.VarianceAdapter;
 import my.fa250.furniture4u.model.CartModel;
+import my.fa250.furniture4u.model.CategoryModel;
 import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
 import my.fa250.furniture4u.model.ShowAllModel;
+import my.fa250.furniture4u.model.VarianceModel;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-
 
     ImageView addItem,removeItem;
 
@@ -47,6 +57,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     List<SlideModel> slideModels = new ArrayList<>();
     TextView rating,desc,price,name,quantity;
     Button addToCart,buyNow;
+
+    LinearLayout varianceLayout;
 
     RatingBar ratingBar;
 
@@ -69,10 +81,15 @@ public class ProductDetailActivity extends AppCompatActivity {
     double totalprice = 0;
     double baseprice = 0;
 
-    String img_url;
+    List<String> img_url;
     Boolean isInCart;
 
     DecimalFormat DF = new DecimalFormat(".00");
+
+    //Product
+    RecyclerView varRecyclerView;
+    VarianceAdapter varianceAdapter;
+    List<VarianceModel> varianceModelList;
 
 
     @Override
@@ -103,7 +120,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         buyNow = findViewById(R.id.buy_now);
         name = findViewById(R.id.product_detail_name);
         ratingBar = findViewById(R.id.product_detail_rate);
-
+        varianceLayout = findViewById(R.id.varianceLayout);
+        varRecyclerView = findViewById(R.id.varianceRecyclerView);
+        varRecyclerView.setLayoutManager(new LinearLayoutManager(ProductDetailActivity.this,RecyclerView.HORIZONTAL,false));
         //setOnClickListener
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,7 +187,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         if(productModel != null)
         {
             slideModels.clear();
-            slideModels.add(new SlideModel(productModel.getImg_url(),ScaleTypes.FIT));
+            for(int i = 0 ; i < productModel.getImg_url().size() ; i++)
+            {
+                slideModels.add(new SlideModel(productModel.getImg_url().get(i), ScaleTypes.FIT));
+            }
             detailImage.setImageList(slideModels);
             name.setText(productModel.getName());
             //price.setText(String.valueOf(productModel.getPrice()));
@@ -177,13 +199,26 @@ public class ProductDetailActivity extends AppCompatActivity {
             ratingBar.setRating(Float.parseFloat(productModel.getRating().toString()));
             desc.setText(productModel.getDescription());
 
+            Log.d("Variance 1", "" + productModel.getVariance().get(0));
+            if(!productModel.getVariance().isEmpty())
+            {
+                varianceLayout.setVisibility(View.VISIBLE);
+                varianceModelList = new ArrayList<>();
+                varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
+                varRecyclerView.setAdapter(varianceAdapter);
+                getVarianceData(productModel);
+            }
+
             baseprice = productModel.getPrice();
             img_url = productModel.getImg_url();
         }
         else if(popModel != null)
         {
             slideModels.clear();
-            slideModels.add(new SlideModel(popModel.getImg_url(),ScaleTypes.FIT));
+            for(int i = 0 ; i < popModel.getImg_url().size() ; i++)
+            {
+                slideModels.add(new SlideModel(popModel.getImg_url().get(i), ScaleTypes.FIT));
+            }
             detailImage.setImageList(slideModels);
             name.setText(popModel.getName());
             price.setText(DF.format(popModel.getPrice()));
@@ -191,13 +226,25 @@ public class ProductDetailActivity extends AppCompatActivity {
             ratingBar.setRating(Float.parseFloat(popModel.getRating().toString()));
             desc.setText(popModel.getDescription());
 
+            if(!popModel.getVariance().isEmpty())
+            {
+                varianceLayout.setVisibility(View.VISIBLE);
+                varianceModelList = new ArrayList<>();
+                varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
+                varRecyclerView.setAdapter(varianceAdapter);
+                getVarianceData(popModel);
+            }
+
             baseprice = popModel.getPrice() ;
             img_url = popModel.getImg_url();
         }
         else if(allModel != null)
         {
             slideModels.clear();
-            slideModels.add(new SlideModel(allModel.getImg_url(),ScaleTypes.FIT));
+            for(int i = 0 ; i < allModel.getImg_url().size() ; i++)
+            {
+                slideModels.add(new SlideModel(allModel.getImg_url().get(i), ScaleTypes.FIT));
+            }
             detailImage.setImageList(slideModels);
             name.setText(allModel.getName());
             price.setText(DF.format(allModel.getPrice()));
@@ -206,6 +253,15 @@ public class ProductDetailActivity extends AppCompatActivity {
             ratingBar.setRating(a);
             desc.setText(allModel.getDescription());
 
+            if(!allModel.getVariance().isEmpty())
+            {
+                varianceLayout.setVisibility(View.VISIBLE);
+                varianceModelList = new ArrayList<>();
+                varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
+                varRecyclerView.setAdapter(varianceAdapter);
+                getVarianceData(allModel);
+            }
+
             baseprice = allModel.getPrice();
             img_url = allModel.getImg_url();
         }
@@ -213,7 +269,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         {
            // Glide.with(this).load(cartModel.getImg_url()).into(detailImage);
             slideModels.clear();
-            slideModels.add(new SlideModel(cartModel.getImg_url(),ScaleTypes.FIT));
+            //slideModels.add(new SlideModel(cartModel.getImg_url(),ScaleTypes.FIT));
+            for(int i = 0 ; i < cartModel.getImg_url().size() ; i++)
+            {
+                slideModels.add(new SlideModel(cartModel.getImg_url().get(i), ScaleTypes.FIT));
+            }
             detailImage.setImageList(slideModels);
             name.setText(cartModel.getProductName());
             price.setText(DF.format(cartModel.getProductPrice()));
@@ -221,6 +281,15 @@ public class ProductDetailActivity extends AppCompatActivity {
             float a = (float) cartModel.getRating();
             ratingBar.setRating(a);
             desc.setText(cartModel.getDescription());
+
+            if(!cartModel.getVariance().isEmpty())
+            {
+                varianceLayout.setVisibility(View.VISIBLE);
+                varianceModelList = new ArrayList<>();
+                varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
+                varRecyclerView.setAdapter(varianceAdapter);
+                getVarianceData(cartModel);
+            }
 
             baseprice = cartModel.getProductPrice();
             img_url = cartModel.getImg_url();
@@ -237,6 +306,57 @@ public class ProductDetailActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private void getVarianceData(Object productInfo)
+    {
+        if(productInfo instanceof ProductModel)
+        {
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snapshot1 : snapshot.getChildren())
+                    {
+                        VarianceModel varMod = snapshot1.getValue(VarianceModel.class);
+                        varianceModelList.add(varMod);
+                        varianceAdapter.notifyDataSetChanged();
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            };
+            database.getReference("product").child(((ProductModel) productInfo).getID()).child("varianceList").addListenerForSingleValueEvent(valueEventListener);
+        }
+        else if(productInfo instanceof PopModel)
+        {
+            database.getReference().child("product").child(((PopModel) productInfo).getID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                    if(task.isSuccessful())
+                    {
+                        VarianceModel varMod = task.getResult().getValue(VarianceModel.class);
+                        varianceModelList.add(varMod);
+                        varianceAdapter.notifyDataSetChanged();
+                        Log.d("Variance", "" + varianceModelList.get(0));
+                    }
+                    else
+                    {
+                        Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+        else if(productInfo instanceof ShowAllModel)
+        {
+
+        }
+        else if(productInfo instanceof  CartModel)
+        {
+
+        }
+
 
     }
 

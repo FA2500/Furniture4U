@@ -1,25 +1,37 @@
 package my.fa250.furniture4u.model;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class PopModel implements Serializable {
 
+    String ID;
     String description;
     String name;
     double rating;
     double price;
-    String img_url;
+    List<String> img_url;
 
     String category;
     String type;
+
+    List<String> variance;
+
+    String colour;
+
+    int stock;
+
+    Map<String,Object> varianceList;
 
     public PopModel()
     {
 
     }
 
-    public PopModel(String desc, String name, double rate, double price, String url ,String category, String type)
+    public PopModel(String ID, String desc, String name, double rate, double price, List<String> url ,String category, String type, List<String> variance, String colour, int stock, Map<String,Object> varianceList)
     {
+        this.ID = ID;
         this.description = desc;
         this.name = name;
         this.rating = rate;
@@ -27,7 +39,14 @@ public class PopModel implements Serializable {
         this.img_url = url;
         this.category = category;
         this.type = type;
+        this.variance = variance;
+        this.colour = colour;
+        this.stock = stock;
+        this.varianceList = varianceList;
     }
+
+    public String getID() {return ID;}
+    public void setID(String ID) {this.ID = ID;}
 
     public String getDescription() {
         return description;
@@ -61,11 +80,11 @@ public class PopModel implements Serializable {
         this.price = price;
     }
 
-    public String getImg_url() {
+    public List<String> getImg_url() {
         return img_url;
     }
 
-    public void setImg_url(String img_url) {
+    public void setImg_url(List<String> img_url) {
         this.img_url = img_url;
     }
 
@@ -83,5 +102,26 @@ public class PopModel implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<String> getVariance() {
+        return variance;
+    }
+
+    public void setVariance(List<String> variance) {
+        this.variance = variance;
+    }
+
+    public String getColour() { return colour; }
+
+    public void setColour(String colour) { this.colour = colour; }
+
+    public int getStock() {return stock;}
+    public void setStock(int stock) {this.stock=stock;}
+
+    public Map<String,Object> getVarianceList() {return varianceList; }
+
+    public void setVarianceList(Map<String,Object> varianceList) {
+        this.varianceList = varianceList;
     }
 }
