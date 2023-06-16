@@ -14,6 +14,8 @@ public class ShowAllModel implements Serializable {
 
     List<String> variance;
     String colour;
+
+    String category;
     //String type;
 
     public ShowAllModel()
@@ -21,7 +23,7 @@ public class ShowAllModel implements Serializable {
 
     }
 
-    public ShowAllModel(String ID, String description, String name, double rating, double price, List<String> img_url, String type, List<String> variance, String colour) {
+    public ShowAllModel(String category, String ID, String description, String name, double rating, double price, List<String> img_url, String type, List<String> variance, String colour) {
         this.ID = ID;
         this.description = description;
         this.name = name;
@@ -30,8 +32,13 @@ public class ShowAllModel implements Serializable {
         this.img_url = img_url;
         this.variance = variance;
         this.colour = colour;
+        this.category = category;
         //this.type = type;
     }
+
+    public String getCategory() {return category;}
+
+    public void setCategory(String category) {this.category=category;}
 
     public String getID() {return ID;}
     public void setID(String ID) {this.ID = ID;}

@@ -3,10 +3,15 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
@@ -75,6 +81,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     ShowAllModel allModel;
 
     CartModel cartModel;
+
+    String varianceChosen,productID,productCat;
 
     //var
     int totalQuantity = 1;
@@ -164,6 +172,8 @@ public class ProductDetailActivity extends AppCompatActivity {
                 }
             }
         });
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(MessageReceiver, new IntentFilter("VarianceButtonClick"));
     }
 
     private void readData()
@@ -198,15 +208,21 @@ public class ProductDetailActivity extends AppCompatActivity {
             rating.setText(String.valueOf(productModel.getRating()));
             ratingBar.setRating(Float.parseFloat(productModel.getRating().toString()));
             desc.setText(productModel.getDescription());
+            productID = productModel.getID();
+            productCat = productModel.getCategory();
 
             Log.d("Variance 1", "" + productModel.getVariance().get(0));
-            if(!productModel.getVariance().isEmpty())
+            if(!productModel.getVariance().isEmpty() && !Objects.equals(productModel.getVariance().get(0), "null"))
             {
                 varianceLayout.setVisibility(View.VISIBLE);
                 varianceModelList = new ArrayList<>();
                 varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
                 varRecyclerView.setAdapter(varianceAdapter);
                 getVarianceData(productModel);
+                addToCart.setClickable(false);
+                addToCart.setEnabled(false);
+                buyNow.setClickable(false);
+                buyNow.setEnabled(false);
             }
 
             baseprice = productModel.getPrice();
@@ -225,14 +241,20 @@ public class ProductDetailActivity extends AppCompatActivity {
             rating.setText(String.valueOf(popModel.getRating()));
             ratingBar.setRating(Float.parseFloat(popModel.getRating().toString()));
             desc.setText(popModel.getDescription());
+            productID = popModel.getID();
+            productCat = popModel.getCategory();
 
-            if(!popModel.getVariance().isEmpty())
+            if(!popModel.getVariance().isEmpty() && !Objects.equals(popModel.getVariance().get(0), "null"))
             {
                 varianceLayout.setVisibility(View.VISIBLE);
                 varianceModelList = new ArrayList<>();
                 varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
                 varRecyclerView.setAdapter(varianceAdapter);
                 getVarianceData(popModel);
+                addToCart.setClickable(false);
+                addToCart.setEnabled(false);
+                buyNow.setClickable(false);
+                buyNow.setEnabled(false);
             }
 
             baseprice = popModel.getPrice() ;
@@ -252,14 +274,20 @@ public class ProductDetailActivity extends AppCompatActivity {
             float a = (float) allModel.getRating();
             ratingBar.setRating(a);
             desc.setText(allModel.getDescription());
+            productID = allModel.getID();
+            productCat = allModel.getCategory();
 
-            if(!allModel.getVariance().isEmpty())
+            if(!allModel.getVariance().isEmpty() && !Objects.equals(allModel.getVariance().get(0), "null"))
             {
                 varianceLayout.setVisibility(View.VISIBLE);
                 varianceModelList = new ArrayList<>();
                 varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
                 varRecyclerView.setAdapter(varianceAdapter);
                 getVarianceData(allModel);
+                addToCart.setClickable(false);
+                addToCart.setEnabled(false);
+                buyNow.setClickable(false);
+                buyNow.setEnabled(false);
             }
 
             baseprice = allModel.getPrice();
@@ -281,14 +309,20 @@ public class ProductDetailActivity extends AppCompatActivity {
             float a = (float) cartModel.getRating();
             ratingBar.setRating(a);
             desc.setText(cartModel.getDescription());
+            productID = cartModel.getProductID();
+            productCat = cartModel.getProductCat();
 
-            if(!cartModel.getVariance().isEmpty())
+            if(!cartModel.getVariance().isEmpty() && !Objects.equals(cartModel.getVariance().get(0), "null"))
             {
                 varianceLayout.setVisibility(View.VISIBLE);
                 varianceModelList = new ArrayList<>();
                 varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
                 varRecyclerView.setAdapter(varianceAdapter);
                 getVarianceData(cartModel);
+                addToCart.setClickable(false);
+                addToCart.setEnabled(false);
+                buyNow.setClickable(false);
+                buyNow.setEnabled(false);
             }
 
             baseprice = cartModel.getProductPrice();
@@ -331,22 +365,22 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         else if(productInfo instanceof PopModel)
         {
-            database.getReference().child("product").child(((PopModel) productInfo).getID()).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            ValueEventListener valueEventListener = new ValueEventListener() {
                 @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                    if(task.isSuccessful())
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snapshot1 : snapshot.getChildren())
                     {
-                        VarianceModel varMod = task.getResult().getValue(VarianceModel.class);
+                        VarianceModel varMod = snapshot1.getValue(VarianceModel.class);
                         varianceModelList.add(varMod);
                         varianceAdapter.notifyDataSetChanged();
-                        Log.d("Variance", "" + varianceModelList.get(0));
-                    }
-                    else
-                    {
-                        Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
                     }
                 }
-            });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            };
+            database.getReference("product").child(((PopModel) productInfo).getID()).child("varianceList").addListenerForSingleValueEvent(valueEventListener);
         }
         else if(productInfo instanceof ShowAllModel)
         {
@@ -377,6 +411,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         isInCart = true;
 
         cartMap.put("productName",name.getText().toString());
+        cartMap.put("productID",productID);
         cartMap.put("productPrice",baseprice);
         cartMap.put("currentDate",currentDate);
         cartMap.put("currentTime",currentTime);
@@ -412,5 +447,24 @@ public class ProductDetailActivity extends AppCompatActivity {
                 });*/
     }
 
+    public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String itemName = intent.getStringExtra("itemName");
+            int btnID = intent.getIntExtra("btnId",0);
+            Log.d("VARIANCE BROADCAST", "item "+itemName+" from "+btnID);
+
+            varianceChosen = itemName;
+            addToCart.setClickable(true);
+            addToCart.setEnabled(true);
+            buyNow.setClickable(true);
+            buyNow.setEnabled(true);
+
+            price.setText(DF.format(intent.getDoubleExtra("itemPrice",0.00)));
+            Intent intent2 = new Intent("VarianceButtonClick2");
+            intent2.putExtra("btnName",itemName);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);
+        }
+    };
 
 }

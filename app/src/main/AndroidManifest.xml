@@ -113,7 +113,7 @@
         <activity
             android:name=".auth.EmailLoginActivity"
             android:exported="false" />
-        <!--
+
 <activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="false">
@@ -121,8 +121,8 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        -->
-        <activity
+
+        <!--<activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="true">
             <intent-filter>
@@ -134,7 +134,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
+        </activity>-->
         <activity
             android:name=".ar.testAR"
             android:exported="false">
@@ -149,10 +149,10 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
+        <!--<activity
             android:name=".test"
-            android:exported="false" />
-        <!--
+            android:exported="false" />-->
+
 <activity
             android:name=".test"
             android:exported="true">
@@ -166,7 +166,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        -->
+
         <activity
             android:name=".auth.Login"
             android:exported="false">

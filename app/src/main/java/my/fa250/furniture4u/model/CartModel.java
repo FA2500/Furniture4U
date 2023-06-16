@@ -7,6 +7,8 @@ public class CartModel implements Serializable {
 
     String id;
     String productID;
+
+    String productCat;
     String currentTime;
     String currentDate;
     String productName;
@@ -30,7 +32,7 @@ public class CartModel implements Serializable {
 
     }
 
-    public CartModel(String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour) {
+    public CartModel(String productCat, String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour) {
         this.productID = productID;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -44,7 +46,11 @@ public class CartModel implements Serializable {
         this.isInCart = isInCart;
         this.variance = variance;
         this.colour = colour;
+        this.productCat = productCat;
     }
+
+    public String getProductCat() {return productCat;}
+    public void setProductCat(String productCat) {this.productCat=productCat;}
 
     public String getProductID() {return productID;}
     public void setProductID(String productID) {this.productID=productID;}
