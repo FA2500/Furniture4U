@@ -5,7 +5,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.ar.core.CameraConfig
 import com.google.ar.core.CameraConfigFilter
 import com.google.ar.core.Config
@@ -15,7 +17,11 @@ import com.google.ar.core.exceptions.UnavailableArcoreNotInstalledException
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
+import my.fa250.furniture4u.R
 import my.fa250.furniture4u.ar.helper.FullScreenHelper
+import my.fa250.furniture4u.com.HomePageActivity
+import my.fa250.furniture4u.com.NotificationActivity
+import my.fa250.furniture4u.com.ProfileActivity
 
 class ContextActivity: AppCompatActivity() {
     val TAG = "ContextActivity"
@@ -23,6 +29,7 @@ class ContextActivity: AppCompatActivity() {
 
     lateinit var renderer: AppRenderer
     lateinit var view: ContextActivityView
+    lateinit var bottomNav : BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +76,42 @@ class ContextActivity: AppCompatActivity() {
         setContentView(view.root)
         renderer.bindView(view)
         lifecycle.addObserver(view)
+
+        bottomNav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNav.selectedItemId = R.id.action_search
+        bottomNav.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.action_home -> {          // Handle home item click
+                    val intent3 = Intent(this@ContextActivity, HomePageActivity::class.java)
+                    startActivity(intent3)
+                    finish()
+                    true
+                }
+                R.id.action_search ->                     // Handle search item click
+                    true
+
+                R.id.action_notifications -> {
+                    // Handle notifications item click
+                    val intent1 = Intent(this@ContextActivity, NotificationActivity::class.java)
+                    startActivity(intent1)
+                    finish()
+                    true
+                }
+
+                R.id.action_profile -> {
+                    // Handle profile item click
+                    val intent2 = Intent(this@ContextActivity, ProfileActivity::class.java)
+                    startActivity(intent2)
+                    finish()
+                    true
+                }
+
+                else -> {
+                    false
+                }
+            }
+        }
+
 
         view.getrcm.setOnClickListener{
             val sceneViewerIntent = Intent(Intent.ACTION_VIEW);

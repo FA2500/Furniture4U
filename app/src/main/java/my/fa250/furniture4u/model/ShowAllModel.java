@@ -18,12 +18,14 @@ public class ShowAllModel implements Serializable {
     String category;
     //String type;
 
+    String url_3d;
+
     public ShowAllModel()
     {
 
     }
 
-    public ShowAllModel(String category, String ID, String description, String name, double rating, double price, List<String> img_url, String type, List<String> variance, String colour) {
+    public ShowAllModel(String category, String ID, String description, String name, double rating, double price, List<String> img_url, String type, List<String> variance, String colour, String url_3d) {
         this.ID = ID;
         this.description = description;
         this.name = name;
@@ -34,6 +36,7 @@ public class ShowAllModel implements Serializable {
         this.colour = colour;
         this.category = category;
         //this.type = type;
+        this.url_3d = url_3d;
     }
 
     public String getCategory() {return category;}
@@ -103,7 +106,9 @@ public class ShowAllModel implements Serializable {
         this.type = type;
     }*/
 
+    public String getUrl_3d() {return url_3d;}
 
+    public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
 
 
 }

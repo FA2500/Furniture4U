@@ -11,10 +11,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.ml.ContextActivity;
 
 public class NotificationActivity extends AppCompatActivity {
 
@@ -47,6 +49,18 @@ public class NotificationActivity extends AppCompatActivity {
             Log.w("Action",e);
         }
 
+
+    }
+
+    private void getData()
+    {
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.action_notifications);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -59,6 +73,9 @@ public class NotificationActivity extends AppCompatActivity {
                     return true;
                 case R.id.action_search:
                     // Handle search item click
+                    Intent intent3= new Intent(NotificationActivity.this, ContextActivity.class);
+                    startActivity(intent3);
+                    finish();
                     return true;
                 case R.id.action_notifications:
                     // Handle notifications item click
@@ -72,17 +89,11 @@ public class NotificationActivity extends AppCompatActivity {
             }
             return false;
         });
-    }
-
-    private void getData()
-    {
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if(!availability.isSupported()) {
+            // Replace with your menu item ID
+            bottomNavigationView.getMenu().findItem(R.id.action_search).setVisible(false); // Set the visibility to false to hide the menu item
+        }
         return true;
     }
 

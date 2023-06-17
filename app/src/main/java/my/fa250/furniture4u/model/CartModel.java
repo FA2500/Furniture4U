@@ -27,12 +27,14 @@ public class CartModel implements Serializable {
     List<String> variance;
     String colour;
 
+    String url_3d;
+
     public CartModel()
     {
 
     }
 
-    public CartModel(String productCat, String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour) {
+    public CartModel(String productCat, String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour, String url_3d) {
         this.productID = productID;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -47,6 +49,7 @@ public class CartModel implements Serializable {
         this.variance = variance;
         this.colour = colour;
         this.productCat = productCat;
+        this.url_3d = url_3d;
     }
 
     public String getProductCat() {return productCat;}
@@ -155,4 +158,8 @@ public class CartModel implements Serializable {
     public String getColour() { return colour; }
 
     public void setColour(String colour) { this.colour = colour; }
+
+    public String getUrl_3d() {return url_3d;}
+
+    public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
 }

@@ -4,12 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.opengl.GLSurfaceView
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import my.fa250.furniture4u.R
 import my.fa250.furniture4u.UserContextInfo
 import my.fa250.furniture4u.ar.helper.SnackbarHelper
@@ -33,6 +35,7 @@ class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) 
         setParentView(root.findViewById(R.id.coordinatorLayout))
         setMaxLines(6)
     }
+
     var roomConType = ""
 
     override fun onResume(owner: LifecycleOwner) {

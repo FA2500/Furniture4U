@@ -73,14 +73,17 @@ public class test extends AppCompatActivity {
 
     public void goToARSV(View v)
     {
-        /*Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
-         //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
+        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+        String a = "https://furniture4u.s3.ap-southeast-1.amazonaws.com/table/glass/table_glass_grey.gltf" ;
+        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=".concat(a)));
+        //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
+        //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/SheenChair/glTF/SheenChair.gltf"));
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-        startActivity(sceneViewerIntent);*/
+        startActivity(sceneViewerIntent);
         //Intent intent = new Intent(test.this , ARActivity2.class);
         //startActivity(intent);
-        Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+
+        /*Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
         Uri intentUri =
                 Uri.parse("https://arvr.google.com/scene-viewer/1.0").buildUpon()
                         .appendQueryParameter("file", "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf")
@@ -90,7 +93,7 @@ public class test extends AppCompatActivity {
                         .build();
         sceneViewerIntent.setData(intentUri);
         sceneViewerIntent.setPackage("com.google.ar.core");
-        startActivity(sceneViewerIntent);
+        startActivity(sceneViewerIntent);*/
     }
 
     public void goToIncor(View v)

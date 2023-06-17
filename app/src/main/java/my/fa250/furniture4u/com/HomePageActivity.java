@@ -43,6 +43,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.slider.Slider;
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -62,6 +63,7 @@ import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
 import my.fa250.furniture4u.comAdapter.PopAdapter;
 import my.fa250.furniture4u.comAdapter.ProductAdapter;
+import my.fa250.furniture4u.ml.ContextActivity;
 import my.fa250.furniture4u.model.CategoryModel;
 import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
@@ -170,8 +172,6 @@ public class HomePageActivity extends AppCompatActivity {
         slideModels.add(new SlideModel(R.drawable.banner, ScaleTypes.FIT));
         imgSlider.setImageList(slideModels);
 
-
-
         //Recycler View
         catRecyclerview = findViewById(R.id.rec_category);
         prodRecyclerview = findViewById(R.id.new_product_rec);
@@ -197,32 +197,11 @@ public class HomePageActivity extends AppCompatActivity {
         popAdapter = new PopAdapter(HomePageActivity.this, popModelList);
         popRecyclerview.setAdapter(popAdapter);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setSelectedItemId(R.id.action_home);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.action_home:
-                    // Handle home item click
-                    return true;
-                case R.id.action_search:
-                    // Handle search item click
-                    return true;
-                case R.id.action_notifications:
-                    // Handle notifications item click
-                    Intent intent1 = new Intent(HomePageActivity.this, NotificationActivity.class);
-                    startActivity(intent1);
-                    finish();
-                    return true;
-                case R.id.action_profile:
-                    // Handle profile item click
-                    Intent intent2 = new Intent(HomePageActivity.this, ProfileActivity.class);
-                    startActivity(intent2);
-                    finish();
-                    return true;
-            }
-            return false;
-        });
+
+
     }
+
+
 
     /*private void writeData() {
         HashMap<Object,String> a = new HashMap<Object, String>() ;
@@ -478,6 +457,39 @@ public class HomePageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setSelectedItemId(R.id.action_home);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.action_home:
+                    // Handle home item click
+                    return true;
+                case R.id.action_search:
+                    // Handle search item click
+                    Intent intent3= new Intent(HomePageActivity.this, ContextActivity.class);
+                    startActivity(intent3);
+                    finish();
+                    return true;
+                case R.id.action_notifications:
+                    // Handle notifications item click
+                    Intent intent1 = new Intent(HomePageActivity.this, NotificationActivity.class);
+                    startActivity(intent1);
+                    finish();
+                    return true;
+                case R.id.action_profile:
+                    // Handle profile item click
+                    Intent intent2 = new Intent(HomePageActivity.this, ProfileActivity.class);
+                    startActivity(intent2);
+                    finish();
+                    return true;
+            }
+            return false;
+        });
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if(!availability.isSupported()) {
+            // Replace with your menu item ID
+            bottomNavigationView.getMenu().findItem(R.id.action_search).setVisible(false); // Set the visibility to false to hide the menu item
+        }
         return true;
     }
 

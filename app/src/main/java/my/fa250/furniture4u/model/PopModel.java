@@ -24,12 +24,14 @@ public class PopModel implements Serializable {
 
     Map<String,Object> varianceList;
 
+    String url_3d;
+
     public PopModel()
     {
 
     }
 
-    public PopModel(String ID, String desc, String name, double rate, double price, List<String> url ,String category, String type, List<String> variance, String colour, int stock, Map<String,Object> varianceList)
+    public PopModel(String ID, String desc, String name, double rate, double price, List<String> url ,String category, String type, List<String> variance, String colour, int stock, Map<String,Object> varianceList, String url_3d)
     {
         this.ID = ID;
         this.description = desc;
@@ -43,6 +45,7 @@ public class PopModel implements Serializable {
         this.colour = colour;
         this.stock = stock;
         this.varianceList = varianceList;
+        this.url_3d = url_3d;
     }
 
     public String getID() {return ID;}
@@ -124,4 +127,8 @@ public class PopModel implements Serializable {
     public void setVarianceList(Map<String,Object> varianceList) {
         this.varianceList = varianceList;
     }
+
+    public String getUrl_3d() {return url_3d;}
+
+    public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
 }

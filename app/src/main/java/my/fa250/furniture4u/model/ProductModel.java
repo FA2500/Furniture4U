@@ -7,7 +7,6 @@ import java.util.Map;
 public class ProductModel implements Serializable {
 
     String ID;
-
     String description;
     String name;
     double rating;
@@ -25,12 +24,14 @@ public class ProductModel implements Serializable {
 
     int stock;
 
+    String url_3d;
+
     public ProductModel()
     {
 
     }
 
-    public ProductModel(String ID, String desc, String name, double rate, double price, List<String> url, String category, String type, List<String> variance, String colour, Map<String,Object> varianceList,int stock)
+    public ProductModel(String ID, String desc, String name, double rate, double price, List<String> url, String category, String type, List<String> variance, String colour, Map<String,Object> varianceList,int stock, String url_3d)
     {
         this.ID = ID;
         this.description = desc;
@@ -44,6 +45,7 @@ public class ProductModel implements Serializable {
         this.colour = colour;
         this.varianceList = varianceList;
         this.stock = stock;
+        this.url_3d = url_3d;
     }
 
     public String getID() {return ID;}
@@ -125,5 +127,9 @@ public class ProductModel implements Serializable {
 
     public int getStock() {return stock;}
     public void setStock(int stock) {this.stock=stock;}
+
+    public String getUrl_3d() {return url_3d;}
+
+    public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
 }
 

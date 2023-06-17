@@ -172,8 +172,8 @@ public class MultipleSignInActivity extends AppCompatActivity {
             checkToken2(currentUser);
             Log.d("Auth","Already Log in with"+currentUser.getDisplayName());
             getUserData((currentUser));
-            Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+            //startActivity(intent);
         }
         else
         {

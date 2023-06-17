@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +45,7 @@ import java.util.List;
 import java.util.Objects;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.arsv.ARActivity2;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
 import my.fa250.furniture4u.comAdapter.ProductAdapter;
 import my.fa250.furniture4u.comAdapter.VarianceAdapter;
@@ -52,6 +55,7 @@ import my.fa250.furniture4u.model.PopModel;
 import my.fa250.furniture4u.model.ProductModel;
 import my.fa250.furniture4u.model.ShowAllModel;
 import my.fa250.furniture4u.model.VarianceModel;
+import my.fa250.furniture4u.test;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
@@ -62,7 +66,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     ImageSlider detailImage;
     List<SlideModel> slideModels = new ArrayList<>();
     TextView rating,desc,price,name,quantity;
-    Button addToCart,buyNow;
+    Button addToCart,buyNow,viewIn3D,viewInAR;
 
     LinearLayout varianceLayout;
 
@@ -82,7 +86,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     CartModel cartModel;
 
-    String varianceChosen,productID,productCat;
+    String varianceChosen,productID,productCat,url_3d;
 
     //var
     int totalQuantity = 1;
@@ -130,6 +134,8 @@ public class ProductDetailActivity extends AppCompatActivity {
         ratingBar = findViewById(R.id.product_detail_rate);
         varianceLayout = findViewById(R.id.varianceLayout);
         varRecyclerView = findViewById(R.id.varianceRecyclerView);
+        viewIn3D = findViewById(R.id.view_in_3d_btn);
+        viewInAR = findViewById(R.id.view_in_ar_btn);
         varRecyclerView.setLayoutManager(new LinearLayoutManager(ProductDetailActivity.this,RecyclerView.HORIZONTAL,false));
         //setOnClickListener
         addToCart.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +179,31 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
 
+        viewIn3D.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
+                sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=".concat(url_3d)));
+                sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
+                startActivity(sceneViewerIntent);
+            }
+        });
+
+        viewInAR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProductDetailActivity.this , ARActivity2.class);
+                intent.putExtra("url_3d",url_3d);
+                startActivity(intent);
+            }
+        });
+
+        ArCoreApk.Availability availability = ArCoreApk.getInstance().checkAvailability(this);
+        if(availability.isSupported()) {
+            viewIn3D.setVisibility(View.VISIBLE);
+            viewInAR.setVisibility(View.VISIBLE);
+        }
+
         LocalBroadcastManager.getInstance(this).registerReceiver(MessageReceiver, new IntentFilter("VarianceButtonClick"));
     }
 
@@ -210,6 +241,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(productModel.getDescription());
             productID = productModel.getID();
             productCat = productModel.getCategory();
+            url_3d = productModel.getUrl_3d();
 
             Log.d("Variance 1", "" + productModel.getVariance().get(0));
             if(!productModel.getVariance().isEmpty() && !Objects.equals(productModel.getVariance().get(0), "null"))
@@ -243,6 +275,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(popModel.getDescription());
             productID = popModel.getID();
             productCat = popModel.getCategory();
+            url_3d = popModel.getUrl_3d();
 
             if(!popModel.getVariance().isEmpty() && !Objects.equals(popModel.getVariance().get(0), "null"))
             {
@@ -276,6 +309,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(allModel.getDescription());
             productID = allModel.getID();
             productCat = allModel.getCategory();
+            url_3d = allModel.getUrl_3d();
 
             if(!allModel.getVariance().isEmpty() && !Objects.equals(allModel.getVariance().get(0), "null"))
             {
@@ -311,6 +345,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(cartModel.getDescription());
             productID = cartModel.getProductID();
             productCat = cartModel.getProductCat();
+            url_3d = cartModel.getUrl_3d();
 
             if(!cartModel.getVariance().isEmpty() && !Objects.equals(cartModel.getVariance().get(0), "null"))
             {

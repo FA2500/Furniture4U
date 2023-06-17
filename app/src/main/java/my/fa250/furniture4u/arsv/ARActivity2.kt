@@ -35,18 +35,19 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         val applyPoseRotation: Boolean = true
     )
 
-    val models = listOf(
+    var models = mutableListOf<Model>()
         /*Model(
             fileLocation = "https://sceneview.github.io/assets/models/DamagedHelmet.glb",
             scaleUnits = 1.0f,
             placementMode = PlacementMode.PLANE_HORIZONTAL,
             applyPoseRotation = true
         ),*/
-        Model("models/bed/queen/bed_queen_red.gltf"),
-        Model("models/chair/fabric/chair_fabric_red.gltf"),
-    )
+        //Model("models/bed/queen/bed_queen_red.gltf"),
+        //Model("models/chair/fabric/chair_fabric_red.gltf"),
+   // )
     var modelIndex = 0
     var modelNode: ArModelNode? = null
+
 
     var isLoading = false
         set(value) {
@@ -56,6 +57,19 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val intent = intent
+
+        val url_3d = intent.getStringExtra("url_3d")
+        url_3d?.let {
+            Model(
+                fileLocation = it,
+                scaleUnits = 10f,
+                placementMode = PlacementMode.PLANE_HORIZONTAL,
+                applyPoseRotation = true
+            )
+        }?.let { models.add(it) }
+
+
 
         setFullScreen(
             findViewById(R.id.rootView),

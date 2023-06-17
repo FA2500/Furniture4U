@@ -171,17 +171,19 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/button23"
+                android:id="@+id/view_in_3d_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="View in 3D"
+                android:visibility="gone"
                 app:icon="@drawable/baseline_3d_rotation_24" />
 
             <Button
-                android:id="@+id/button22"
+                android:id="@+id/view_in_ar_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="View in AR"
+                android:visibility="gone"
                 app:icon="@drawable/baseline_view_in_ar_24" />
 
             <Button
