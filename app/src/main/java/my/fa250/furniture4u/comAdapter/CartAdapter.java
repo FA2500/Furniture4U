@@ -58,7 +58,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.quan.setText(String.valueOf(list.get(position).getTotalQuantity()));
 
         Glide.with(context)
-                .load(list.get(position).getImg_url())
+                .load(list.get(position).getImg_url().get(0))
                 .into(holder.catImg);
 
         holder.cv.setOnClickListener(new View.OnClickListener() {

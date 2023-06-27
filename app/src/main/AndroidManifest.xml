@@ -4,8 +4,6 @@
     <!-- Request Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" /> <!-- Request Features -->
@@ -117,15 +115,14 @@
             android:name=".auth.EmailLoginActivity"
             android:exported="false" />
 
-<activity
+        <!--<activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-
-        <!--<activity
+        </activity>-->
+        <activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="true">
             <intent-filter>
@@ -137,7 +134,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>-->
+        </activity>
         <activity
             android:name=".ar.testAR"
             android:exported="false">
@@ -152,11 +149,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <!--<activity
-            android:name=".test"
-            android:exported="false" />-->
 
-<activity
+        <activity
+            android:name=".test"
+            android:exported="false" />
+        <!--<activity
             android:name=".test"
             android:exported="true">
             <intent-filter>
@@ -168,7 +165,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
+        </activity>-->
 
         <activity
             android:name=".auth.Login"

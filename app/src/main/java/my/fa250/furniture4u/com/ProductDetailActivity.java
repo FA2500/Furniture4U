@@ -40,6 +40,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -86,7 +87,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     CartModel cartModel;
 
-    String varianceChosen,productID,productCat,url_3d;
+    String varianceChosen,productID,productCat,url_3d,productColour;
 
     //var
     int totalQuantity = 1;
@@ -241,7 +242,10 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(productModel.getDescription());
             productID = productModel.getID();
             productCat = productModel.getCategory();
+            productColour = productModel.getColour();
             url_3d = productModel.getUrl_3d();
+            getInCart(productModel.getName());
+
 
             Log.d("Variance 1", "" + productModel.getVariance().get(0));
             if(!productModel.getVariance().isEmpty() && !Objects.equals(productModel.getVariance().get(0), "null"))
@@ -275,7 +279,9 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(popModel.getDescription());
             productID = popModel.getID();
             productCat = popModel.getCategory();
+            productColour = popModel.getColour();
             url_3d = popModel.getUrl_3d();
+            getInCart(popModel.getName());
 
             if(!popModel.getVariance().isEmpty() && !Objects.equals(popModel.getVariance().get(0), "null"))
             {
@@ -309,7 +315,9 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(allModel.getDescription());
             productID = allModel.getID();
             productCat = allModel.getCategory();
+            productColour = allModel.getColour();
             url_3d = allModel.getUrl_3d();
+            getInCart(allModel.getName());
 
             if(!allModel.getVariance().isEmpty() && !Objects.equals(allModel.getVariance().get(0), "null"))
             {
@@ -345,20 +353,25 @@ public class ProductDetailActivity extends AppCompatActivity {
             desc.setText(cartModel.getDescription());
             productID = cartModel.getProductID();
             productCat = cartModel.getProductCat();
+            productColour = cartModel.getColour();
             url_3d = cartModel.getUrl_3d();
 
-            if(!cartModel.getVariance().isEmpty() && !Objects.equals(cartModel.getVariance().get(0), "null"))
+            if(cartModel.getVariance()!=null)
             {
-                varianceLayout.setVisibility(View.VISIBLE);
-                varianceModelList = new ArrayList<>();
-                varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
-                varRecyclerView.setAdapter(varianceAdapter);
-                getVarianceData(cartModel);
-                addToCart.setClickable(false);
-                addToCart.setEnabled(false);
-                buyNow.setClickable(false);
-                buyNow.setEnabled(false);
+                if(!cartModel.getVariance().isEmpty() && !Objects.equals(cartModel.getVariance().get(0), "null"))
+                {
+                    varianceLayout.setVisibility(View.VISIBLE);
+                    varianceModelList = new ArrayList<>();
+                    varianceAdapter = new VarianceAdapter(ProductDetailActivity.this, varianceModelList);
+                    varRecyclerView.setAdapter(varianceAdapter);
+                    getVarianceData(cartModel);
+                    addToCart.setClickable(false);
+                    addToCart.setEnabled(false);
+                    buyNow.setClickable(false);
+                    buyNow.setEnabled(false);
+                }
             }
+
 
             baseprice = cartModel.getProductPrice();
             img_url = cartModel.getImg_url();
@@ -375,6 +388,27 @@ public class ProductDetailActivity extends AppCompatActivity {
                 });
             }
         }
+    }
+
+    private void getInCart(String productName)
+    {
+        database.getReference("user").child(mAuth.getUid()).child("cart").limitToFirst(1).get()
+                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(task.getResult().getValue().toString().contains(productName))
+                        {
+                            addToCart.setText("View in Cart");
+                            addToCart.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     private void getVarianceData(Object productInfo)
@@ -445,16 +479,37 @@ public class ProductDetailActivity extends AppCompatActivity {
         totalprice = baseprice * totalQuantity;
         isInCart = true;
 
-        cartMap.put("productName",name.getText().toString());
         cartMap.put("productID",productID);
+        cartMap.put("productCat",productCat);
+        cartMap.put("colour",productColour);
+        cartMap.put("description",desc.getText().toString());
+        cartMap.put("img_url",img_url);
+        cartMap.put("productName",name.getText().toString());
         cartMap.put("productPrice",baseprice);
-        cartMap.put("currentDate",currentDate);
-        cartMap.put("currentTime",currentTime);
         cartMap.put("totalQuantity",totalQuantity);
         cartMap.put("totalPrice",totalprice);
-        cartMap.put("img_url",img_url);
         cartMap.put("rating",Double.valueOf(rating.getText().toString()));
-        cartMap.put("description",desc.getText().toString());
+        //cartMap.put("productType",productCat);
+        cartMap.put("url_3d",url_3d);
+        cartMap.put("currentDate",currentDate);
+        cartMap.put("currentTime",currentTime);
+        if(varianceModelList == null)
+        {
+            List<String> empList = Collections.<String>emptyList();
+            cartMap.put("variance", empList);
+            cartMap.put("varianceList", empList);
+        }
+        else
+        {
+            List<String> empList = Collections.<String>emptyList();
+            for(int i = 0 ; i < varianceModelList.size() ; i++)
+            {
+                empList.add(varianceModelList.get(i).getName());
+            }
+            cartMap.put("variance", empList);
+            cartMap.put("varianceList", varianceModelList);
+        }
+
         cartMap.put("isInCart",isInCart);
 
         Log.d("mAuth",mAuth.getCurrentUser().getUid());

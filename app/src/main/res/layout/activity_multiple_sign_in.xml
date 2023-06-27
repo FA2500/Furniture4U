@@ -6,17 +6,64 @@
     android:layout_height="match_parent"
     tools:context="my.fa250.furniture4u.auth.MultipleSignInActivity">
 
+    <Button
+        android:id="@+id/button22"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="160dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="160dp"
+        android:drawableLeft="@drawable/baseline_login_24"
+        android:drawableTint="#FFFFFF"
+        android:onClick="BtnLoginEmail"
+        android:text="Login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2" />
+
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="193dp"
-        android:layout_height="162dp"
-        android:layout_marginStart="106dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginStart="107dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="107dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
+
+    <EditText
+        android:id="@+id/editTextTextEmailAddress3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="101dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="100dp"
+        android:background="@android:drawable/editbox_background"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileTitle" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="99dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="102dp"
+        android:background="@android:drawable/editbox_background"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextEmailAddress3" />
 
     <TextView
         android:id="@+id/profileTitle"
@@ -32,19 +79,18 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/share_button"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="155dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="162dp"
-        android:minHeight="48dp"
-        android:onClick="BtnSignInFacebook"
+        android:layout_marginStart="142dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="142dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profileTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/login_button" />
 
     <Button
         android:id="@+id/button6"
@@ -55,6 +101,7 @@
         android:layout_marginEnd="160dp"
         android:onClick="BtnSignInGoogle"
         android:text="Google"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,9 +116,11 @@
         android:layout_marginEnd="158dp"
         android:onClick="BtnSignInTwitter"
         android:text="Twitter"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button6" />
+        app:layout_constraintTop_toBottomOf="@+id/share_button" />
 
     <Button
         android:id="@+id/button8"
@@ -82,6 +131,7 @@
         android:layout_marginEnd="156dp"
         android:onClick="BtnSignInEmail"
         android:text="Email"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
@@ -91,20 +141,74 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="175dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="178dp"
         android:text="or"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button7" />
+        app:layout_constraintTop_toBottomOf="@+id/button22" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="1dp"
+        android:minHeight="48dp"
+        android:onClick="BtnSignInFacebook"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/linearLayout3" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="1dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:onClick="BtnSignInGoogle"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/google_icon_2" />
+
+        <ImageButton
+            android:id="@+id/imageButton4"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:onClick="BtnSignInFacebook"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/facebook_icon" />
+
+        <ImageButton
+            android:id="@+id/imageButton5"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#00FFFFFF"
+            android:onClick="BtnSignInTwitter"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/twitter_icon" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="369dp"
-        android:layout_height="58dp"
-        android:layout_marginStart="23dp"
-        android:layout_marginEnd="21dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
         android:layout_marginBottom="16dp"
         android:text="Dont have an account? Click here to register."
         android:textAlignment="center"
@@ -113,4 +217,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

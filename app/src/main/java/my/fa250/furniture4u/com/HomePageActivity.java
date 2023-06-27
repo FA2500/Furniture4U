@@ -497,14 +497,14 @@ public class HomePageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
         int id = item.getItemId();
-        if(id == R.id.menu_chat)
+        /*if(id == R.id.menu_chat)
         {
             //mAuth.signOut();
             Intent intent = new Intent(HomePageActivity.this, ChatActivity.class);
             startActivity(intent);
            // finish();
-        }
-        else if(id==R.id.menu_cart)
+        }*/
+        if(id==R.id.menu_cart)
         {
             Intent intent = new Intent(HomePageActivity.this, CartActivity.class);
             startActivity(intent);

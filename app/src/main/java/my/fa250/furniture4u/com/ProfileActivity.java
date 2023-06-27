@@ -29,6 +29,7 @@ import java.util.List;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.UserInfo;
+import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.comAdapter.CartAdapter;
 import my.fa250.furniture4u.comAdapter.ProfileAdapter;
 import my.fa250.furniture4u.ml.ContextActivity;
@@ -107,7 +108,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         //Button
-
+        LogoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                Intent intent = new Intent(ProfileActivity.this, MultipleSignInActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -178,14 +186,14 @@ public class ProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
         int id = item.getItemId();
-        if(id == R.id.menu_chat)
+        /*if(id == R.id.menu_chat)
         {
             //mAuth.signOut();
             Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
             startActivity(intent);
             // finish();
-        }
-        else if(id==R.id.menu_cart)
+        }*/
+        if(id==R.id.menu_cart)
         {
             Intent intent = new Intent(ProfileActivity.this, CartActivity.class);
             startActivity(intent);

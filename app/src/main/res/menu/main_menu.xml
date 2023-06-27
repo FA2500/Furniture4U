@@ -15,10 +15,10 @@
         android:icon="@drawable/cart"
         app:showAsAction="always"/>
 
-    <item
+    <!--<item
         android:id="@+id/menu_chat"
         android:title="chat"
         android:icon="@drawable/chat"
-        app:showAsAction="always"/>
+        app:showAsAction="always"/>-->
 
 </menu>
