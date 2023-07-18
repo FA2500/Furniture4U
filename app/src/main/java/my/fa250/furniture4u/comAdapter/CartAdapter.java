@@ -1,8 +1,10 @@
 package my.fa250.furniture4u.comAdapter;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.content.IntentFilter;
@@ -51,6 +53,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @SuppressLint("DefaultLocale")
     @Override
     public void onBindViewHolder(@NonNull CartAdapter.ViewHolder holder, int position) {
+        list.get(position).setIsInCart(false);
+        list.get(holder.getAdapterPosition()).setIsInCart(false);
         holder.name.setText(list.get(position).getProductName());
         holder.price.setText("RM"+DF.format(list.get(position).getProductPrice()));
         holder.totalPrice.setText(String.valueOf(list.get(position).getTotalPrice()));
@@ -72,8 +76,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.checkBox.isChecked())
+                if(holder.checkBox.isChecked() && !list.get(holder.getAdapterPosition()).getIsInCart())
                 {
+                    list.get(holder.getAdapterPosition()).setIsInCart(true);
                     holder.checkBox.setText("Selected");
                     Intent intent = new Intent("CartTotalAmount");
                     intent.putExtra("totalAmount",list.get(holder.getAdapterPosition()).getTotalPrice());
@@ -82,8 +87,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     Log.d("INTENT","SENDING VALUE "+list.get(holder.getAdapterPosition()).getTotalPrice());
                 }
-                else
+                else if(!holder.checkBox.isChecked())
                 {
+                    list.get(holder.getAdapterPosition()).setIsInCart(false);
                     holder.checkBox.setText("Not selected");
                     Intent intent = new Intent("CartTotalAmount");
                     intent.putExtra("totalAmount",-(list.get(holder.getAdapterPosition()).getTotalPrice()));
@@ -91,6 +97,57 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                     intent.putExtra("cartID", list.get(holder.getAdapterPosition()).getId());
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     Log.d("INTENT","SENDING VALUE "+-(list.get(holder.getAdapterPosition()).getTotalPrice()));
+                }
+            }
+        });
+        holder.minBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(list.get(holder.getAdapterPosition()).getTotalQuantity() >= 1)
+                {
+                    list.get(holder.getAdapterPosition()).setTotalQuantity((list.get(holder.getAdapterPosition()).getTotalQuantity()-1));
+                    list.get(holder.getAdapterPosition()).setTotalPrice(list.get(holder.getAdapterPosition()).getProductPrice()*list.get(holder.getAdapterPosition()).getTotalQuantity());
+                    holder.price.setText("RM"+DF.format((list.get(holder.getAdapterPosition()).getTotalPrice())));
+                    holder.quan.setText(String.valueOf(list.get(holder.getAdapterPosition()).getTotalQuantity()));
+
+                    if(holder.checkBox.isChecked())
+                    {
+                        Intent intent = new Intent("CartTotalAmount");
+                        intent.putExtra("totalAmount",-(list.get(holder.getAdapterPosition()).getProductPrice()));
+                        intent.putExtra("totalQuan",list.get(holder.getAdapterPosition()).getTotalQuantity());
+                        intent.putExtra("cartID", list.get(holder.getAdapterPosition()).getId());
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    }
+                }
+                else
+                {
+
+                }
+
+            }
+        });
+        holder.addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(list.get(holder.getAdapterPosition()).getTotalQuantity() >= 1)
+                {
+                    list.get(holder.getAdapterPosition()).setTotalQuantity((list.get(holder.getAdapterPosition()).getTotalQuantity()+1));
+                    list.get(holder.getAdapterPosition()).setTotalPrice(list.get(holder.getAdapterPosition()).getProductPrice()*list.get(holder.getAdapterPosition()).getTotalQuantity());
+                    holder.price.setText("RM"+DF.format((list.get(holder.getAdapterPosition()).getTotalPrice())));
+                    holder.quan.setText(String.valueOf(list.get(holder.getAdapterPosition()).getTotalQuantity()));
+
+                    if(holder.checkBox.isChecked())
+                    {
+                        Intent intent = new Intent("CartTotalAmount");
+                        intent.putExtra("totalAmount",list.get(holder.getAdapterPosition()).getProductPrice());
+                        intent.putExtra("totalQuan",list.get(holder.getAdapterPosition()).getTotalQuantity());
+                        intent.putExtra("cartID", list.get(holder.getAdapterPosition()).getId());
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    }
+                }
+                else
+                {
+
                 }
             }
         });
@@ -112,7 +169,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        TextView name,price,date,time,totalQuan,totalPrice;
+        TextView name,price,date,time,totalQuan,totalPrice,minBtn,addBtn;
         CheckBox checkBox;
         Button quan;
 
@@ -130,6 +187,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             //price = itemView.findViewById(R.id.product_price);
             totalPrice = itemView.findViewById(R.id.total_price_cart);
             //totalQuan = itemView.findViewById(R.id.total_quantity_cart);
+            minBtn = itemView.findViewById(R.id.minusQuanBtn);
+            addBtn = itemView.findViewById(R.id.addQuanBtn);
         }
 
         public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {

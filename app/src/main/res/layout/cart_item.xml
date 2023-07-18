@@ -65,7 +65,7 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:id="@+id/button28"
+                        android:id="@+id/minusQuanBtn"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:backgroundTint="#FFFFFF"
@@ -85,7 +85,7 @@
                         app:strokeWidth="1dp" />
 
                     <Button
-                        android:id="@+id/button29"
+                        android:id="@+id/addQuanBtn"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:backgroundTint="#FFFFFF"

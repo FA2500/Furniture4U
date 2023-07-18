@@ -1,28 +1,29 @@
 package my.fa250.furniture4u.model;
 
+import java.util.List;
+
 public class SearchModel {
-    String img_url;
+    List<String> img_url;
     String name;
     String ID;
-
-
 
     public SearchModel()
     {
 
     }
 
-    public SearchModel(String img_url, String name)
+    public SearchModel(List<String> img_url, String name, String ID)
     {
         this.img_url = img_url;
         this.name = name;
+        this.ID = ID;
     }
 
-    public String getImg_url() {
+    public List<String> getImg_url() {
         return img_url;
     }
 
-    public void setImg_url(String img_url) {
+    public void setImg_url(List<String> img_url) {
         this.img_url = img_url;
     }
 

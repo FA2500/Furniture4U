@@ -6,6 +6,8 @@
     <string name="facebook_app_id">2124562481064700</string>
     <string name="fb_login_protocol_scheme">fb1234</string>
     <string name="facebook_client_token">13ee2138c467477f2a0921ff7fd754aa</string>
+    <string name="default_notification_channel_id">PushNotifications</string>
+
 
     <!--TEST PHASE-->
     <string name="e_commerce">M-Commerce</string>

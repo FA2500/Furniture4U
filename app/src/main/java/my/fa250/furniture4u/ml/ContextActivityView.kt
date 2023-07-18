@@ -7,15 +7,21 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import my.fa250.furniture4u.R
 import my.fa250.furniture4u.UserContextInfo
 import my.fa250.furniture4u.ar.helper.SnackbarHelper
 import my.fa250.furniture4u.ar.render.SampleRender
+import my.fa250.furniture4u.arsv.ARActivity2
+import java.util.Locale
 
 class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) :
     DefaultLifecycleObserver {
@@ -35,8 +41,10 @@ class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) 
         setParentView(root.findViewById(R.id.coordinatorLayout))
         setMaxLines(6)
     }
+    val alertDialog = AlertDialog.Builder(activity).create()
 
     var roomConType = ""
+    var BtnisAct = false;
 
     override fun onResume(owner: LifecycleOwner) {
         surfaceView.onResume()
@@ -71,7 +79,53 @@ class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) 
         }
         typeBtn.text = roomConType
         colBtn.text = UserContextInfo.getPrimaryColours()
+        alertDialog.dismiss()
+        BtnisAct = false
     }
+
+    fun showAlertDialog() {
+        alertDialog.setMessage("Processing Context Information")
+        alertDialog.setCancelable(false)
+
+        val coroutineScope = CoroutineScope(Dispatchers.Main)
+        coroutineScope.launch {
+            alertDialog.show()
+
+        }
+    }
+
+    fun getColour(): String
+    {
+        return UserContextInfo.getPrimaryColours().lowercase(Locale.ROOT)
+    }
+
+    fun getRoomType(): String
+    {
+        return roomConType
+    }
+
+    fun getFurnType(): ArrayList<String>
+    {
+        val a = ArrayList<String>()
+        if(roomConType == "Bedroom")
+        {
+            val b = listOf("Bed", "Chair", "Table")
+            a.addAll(b)
+        }
+        else if(roomConType == "Living Room")
+        {
+            val b = listOf("Chair", "Sofa", "Table")
+            a.addAll(b)
+        }
+        else if(roomConType == "Kitchen")
+        {
+            val b = listOf("Chair", "Clock", "Table")
+            a.addAll(b)
+        }
+        return a
+    }
+
+
 
     fun closeRecommendation()
     {
@@ -102,6 +156,14 @@ class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) 
 
             scanButton.isEnabled = true
             scanButton.setText(activity.getString(R.string.scan_available))
+            if(!BtnisAct)
+            {
+                showAlertDialog()
+                BtnisAct = true
+            } else {
+
+            }
+
         }
     }
 }

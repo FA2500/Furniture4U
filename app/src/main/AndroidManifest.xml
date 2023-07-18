@@ -8,6 +8,7 @@
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" /> <!-- Request Features -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-feature
         android:name="android.hardware.camera.ar"
@@ -239,6 +240,7 @@
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token" />
+        <receiver android:name=".NotifReceiver"/>
     </application>
 
 </manifest>

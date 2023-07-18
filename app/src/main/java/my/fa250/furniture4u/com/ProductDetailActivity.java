@@ -3,10 +3,14 @@ package my.fa250.furniture4u.com;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +18,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -45,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import my.fa250.furniture4u.NotifReceiver;
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.arsv.ARActivity2;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
@@ -121,6 +127,12 @@ public class ProductDetailActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         quantity = findViewById(R.id.product_detail_quantity);
         detailImage = findViewById(R.id.product_detail_img);
@@ -396,16 +408,19 @@ public class ProductDetailActivity extends AppCompatActivity {
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if(task.getResult().getValue().toString().contains(productName))
+                        if(task.getResult().exists())
                         {
-                            addToCart.setText("View in Cart");
-                            addToCart.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
+                            if(task.getResult().getValue().toString().contains(productName))
+                            {
+                                addToCart.setText("View in Cart");
+                                addToCart.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                            }
                         }
                     }
                 });
@@ -495,13 +510,13 @@ public class ProductDetailActivity extends AppCompatActivity {
         cartMap.put("currentTime",currentTime);
         if(varianceModelList == null)
         {
-            List<String> empList = Collections.<String>emptyList();
+            List<String> empList = new ArrayList<String>();
             cartMap.put("variance", empList);
             cartMap.put("varianceList", empList);
         }
         else
         {
-            List<String> empList = Collections.<String>emptyList();
+            List<String> empList = new ArrayList<String>();
             for(int i = 0 ; i < varianceModelList.size() ; i++)
             {
                 empList.add(varianceModelList.get(i).getName());
@@ -521,6 +536,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(ProductDetailActivity.this, "Item successfully added to cart",Toast.LENGTH_SHORT).show();
+                        scheduleNotif(getNotif("You have items in your cart. Checkout before it's gone!"),5000);
                         finish();
                     }
                 });
@@ -535,6 +551,32 @@ public class ProductDetailActivity extends AppCompatActivity {
 
                     }
                 });*/
+    }
+
+    private void scheduleNotif(Notification notif, int delay)
+    {
+        Intent intent = new Intent(this, NotifReceiver.class);
+        intent.putExtra(NotifReceiver.NOTIFICATIONID,1);
+        intent.putExtra(NotifReceiver.NOTIFICAION,notif);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this,0,intent,PendingIntent.FLAG_IMMUTABLE);
+        long futureMilis = SystemClock.elapsedRealtime()+delay;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureMilis, pendingIntent);
+    }
+
+    private Notification getNotif(String content)
+    {
+        Intent intent = new Intent(this, CartActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1001");
+        builder.setContentTitle("Cart Reminder");
+        builder.setContentText(content);
+        builder.setSmallIcon(R.drawable.baseline_shopping_cart_24);
+        builder.setAutoCancel(true);
+        builder.setChannelId("1001");;
+        builder.setContentIntent(pendingIntent);
+        return  builder.build();
     }
 
     public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {

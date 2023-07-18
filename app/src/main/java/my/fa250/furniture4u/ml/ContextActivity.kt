@@ -19,6 +19,7 @@ import com.google.ar.core.exceptions.UnavailableSdkTooOldException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
 import my.fa250.furniture4u.R
 import my.fa250.furniture4u.ar.helper.FullScreenHelper
+import my.fa250.furniture4u.arsv.ARActivity2
 import my.fa250.furniture4u.com.HomePageActivity
 import my.fa250.furniture4u.com.NotificationActivity
 import my.fa250.furniture4u.com.ProfileActivity
@@ -114,9 +115,9 @@ class ContextActivity: AppCompatActivity() {
 
 
         view.getrcm.setOnClickListener{
-            val sceneViewerIntent = Intent(Intent.ACTION_VIEW);
-            //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
-            //sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+            /*val sceneViewerIntent = Intent(Intent.ACTION_VIEW);
+            sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf"));
+            sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
             val intentUri = Uri.parse("https://arvr.google.com/scene-viewer/1.0").buildUpon()
                 .appendQueryParameter("file", "https://furniture4u.s3.ap-southeast-1.amazonaws.com/couch/m2/red/couch_m2_red.gltf")
                 .appendQueryParameter("mode", "ar_preferred")
@@ -124,7 +125,12 @@ class ContextActivity: AppCompatActivity() {
                 .build()
             sceneViewerIntent.data = intentUri
             sceneViewerIntent.setPackage("com.google.ar.core");
-            startActivity(sceneViewerIntent);
+            startActivity(sceneViewerIntent);*/
+            val intent = Intent(this, ARActivity2::class.java)
+            intent.putExtra("type",view.getRoomType())
+            intent.putExtra("colour",view.getColour())
+            intent.putExtra("furn", view.getFurnType())
+            startActivity(intent)
         }
 
     }

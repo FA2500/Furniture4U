@@ -180,14 +180,18 @@ public class CartActivity extends AppCompatActivity implements Serializable {
             qwerty = qwerty + totalBill;
             totalPriceTV.setText("Total Amount : RM"+DF.format(qwerty));
 
-            if(status.equals("add"))
+            if(status != null)
             {
-                listID.add(cartID);
+                if(status.equals("add"))
+                {
+                    listID.add(cartID);
+                }
+                else if(status.equals("remove"))
+                {
+                    listID.remove(cartID);
+                }
             }
-            else if(status.equals("remove"))
-            {
-                listID.remove(cartID);
-            }
+
         }
     };
 }

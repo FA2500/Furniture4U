@@ -1,9 +1,17 @@
+/* eslint-disable */
+const admin = require('firebase-admin');
+var serviceAccount = require("./serviceAccountKey.json");
 const functions = require("firebase-functions");
 const vision = require("@google-cloud/vision");
 const Billplz = require('billplz');
 const url = require('url');
 const axios = require('axios');
 const https = require('https');
+const { resolve } = require('path');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 const billplz = new Billplz({
   'key': 'bd3b9b73-7ae2-4c9c-8a37-b2382854556d',
@@ -134,4 +142,30 @@ exports.payment_success = functions.https.onRequest(async (req, res) => {
 
 exports.payment_failed = functions.https.onRequest(async (req, res) => {
   res.send('payment_failed');
+});
+
+exports.notification = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
+  const {title,body,token} = req.body;
+  const registrationToken = 'ck1L5-rjSE2bSL3cAyLJ3v:APA91bEgYneawEs1uAH3Cxu9UR8H6CR-AtwHjINdmegICJcAi_5QQWd8vK8Hsm2Nm4HgIIj2qsWBUNENhiWfeXCZGFdT4_pJYCIo1kod1sMax0RgDQtTk51tEE0WojrVWuF-xTmyuNFw';
+  const message = {
+    notification: {
+      title: "TITLE",
+      body: "BODY",
+    },
+    token: registrationToken,
+  };
+
+  return new Promise((res,rej)=>{
+    admin
+    .messaging()
+    .sendEachForMulticast(message)
+    .then((res)=> {
+      console.log(res.responses);
+      resolve(res);
+    })
+    .catch((error)=>{
+      console.log(JSON.stringify(error));
+      reject(error);
+    });
+  });
 });

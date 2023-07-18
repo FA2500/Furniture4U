@@ -34,7 +34,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Viewholder
         this.list = list;
     }
 
-
     @NonNull
     @Override
     public SearchAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,13 +42,10 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.Viewholder
 
     @Override
     public void onBindViewHolder(@NonNull SearchAdapter.Viewholder holder, int position) {
-        Log.d("SearchAdapter","NAME="+list.get(position).getName());
-        Log.d("SearchAdapter","URL="+list.get(position).getImg_url());
-
+        String a = list.get(position).getImg_url().get(0);
         Glide.with(context)
-                .load(list.get(position).getImg_url())
+                .load(a)
                 .into(holder.catImg);
-
         holder.catTV.setText(list.get(position).getName());
         holder.catTV.setTextColor(Color.BLACK);
 

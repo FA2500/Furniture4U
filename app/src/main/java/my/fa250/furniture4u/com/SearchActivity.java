@@ -80,6 +80,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot snapshot1 : snapshot.getChildren())
                 {
+                    Log.d("SEARCH",snapshot1.getValue().toString());
                     SearchModel sm = snapshot1.getValue(SearchModel.class);
                     searchModelList2.add(sm);
                 }

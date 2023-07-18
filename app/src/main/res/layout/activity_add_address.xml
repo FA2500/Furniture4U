@@ -22,7 +22,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="300dp"
         android:layout_height="64dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.424"
@@ -43,14 +43,14 @@
         android:layout_width="300dp"
         android:layout_height="64dp"
         android:layout_marginTop="10dp"
-        android:hint="Address Lane"
+        android:hint="Phone Number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.424"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
         <EditText
-            android:id="@+id/ad_address"
+            android:id="@+id/ad_phone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="text" />
@@ -62,14 +62,14 @@
         android:layout_width="300dp"
         android:layout_height="64dp"
         android:layout_marginTop="10dp"
-        android:hint="City"
+        android:hint="Address Line"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.424"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout4">
 
         <EditText
-            android:id="@+id/ad_city"
+            android:id="@+id/ad_address"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="text" />
@@ -96,18 +96,37 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="300dp"
         android:layout_height="64dp"
         android:layout_marginTop="10dp"
-        android:hint="Phone Number"
+        android:hint="District"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.424"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout6">
 
         <EditText
-            android:id="@+id/ad_phone"
+            android:id="@+id/ad_district"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="number" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="300dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="10dp"
+        android:hint="State"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.424"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+
+        <EditText
+            android:id="@+id/ad_state"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:inputType="number" />
@@ -117,7 +136,7 @@
         android:id="@+id/ad_add_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="30dp"
 
         android:text="Add Address"
         android:textColor="@android:color/white"

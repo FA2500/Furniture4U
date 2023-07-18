@@ -178,8 +178,9 @@ public class MultipleSignInActivity extends AppCompatActivity {
         //mAuth.signOut();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
+            currentUser.getIdToken(true);
             checkToken2(currentUser);
-            Log.d("Auth","Already Log in with"+currentUser.getDisplayName());
+            Log.d("Auth","Already Log in with "+currentUser.getDisplayName());
             getUserData((currentUser));
             //Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
             //startActivity(intent);

@@ -441,10 +441,27 @@ public class HomePageActivity extends AppCompatActivity {
                     PackageManager.PERMISSION_GRANTED) {
                 // FCM SDK (and your app) can post notifications.
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: display an educational UI explaining to the user the features that will be enabled
-                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
-                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
-                //       If the user selects "No thanks," allow the user to continue without notifications.
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Notification Permission");
+                builder.setMessage("Granting the notification permission allows you to receive important updates and notifications.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Request the permission after the user clicks "OK"
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            // Request the POST_NOTIFICATIONS permission
+                            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                        }
+                    }
+                });
+                builder.setNegativeButton("No thanks", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // User declined the permission, continue without notifications
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             } else {
                 // Directly ask for the permission
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);

@@ -22,7 +22,7 @@ import my.fa250.furniture4u.R;
 
 public class AddAddressActivity extends AppCompatActivity {
 
-    EditText name,address,city,postCode,phoneNumber;
+    EditText name,phoneNumber,address,postCode,district,state;
     Toolbar toolbar;
     Button addAddressBtn;
 
@@ -45,10 +45,12 @@ public class AddAddressActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         name = findViewById(R.id.ad_name);
+        phoneNumber = findViewById(R.id.ad_district);
         address = findViewById(R.id.ad_address);
-        city = findViewById(R.id.ad_city);
         postCode = findViewById(R.id.ad_code);
-        phoneNumber = findViewById(R.id.ad_phone);
+        district = findViewById(R.id.ad_district);
+        state = findViewById(R.id.ad_state);
+
         addAddressBtn = findViewById(R.id.ad_add_address);
 
         //onclick
@@ -56,10 +58,12 @@ public class AddAddressActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String username = name.getText().toString();
-                String userCity = city.getText().toString();
+                String userNumber = phoneNumber.getText().toString();
                 String userAddress = address.getText().toString();
                 String userCode = postCode.getText().toString();
-                String userNumber = phoneNumber.getText().toString();
+                String userDist = district.getText().toString();
+                String userState = state.getText().toString();
+
 
                 String final_address = "";
 
@@ -75,22 +79,27 @@ public class AddAddressActivity extends AppCompatActivity {
                 {
                     Toast.makeText(AddAddressActivity.this, "Address is empty", Toast.LENGTH_SHORT).show();
                 }
-                else if(userCity.isEmpty())
-                {
-                    Toast.makeText(AddAddressActivity.this, "City is empty", Toast.LENGTH_SHORT).show();
-                }
                 else if(userCode.isEmpty())
                 {
                     Toast.makeText(AddAddressActivity.this, "Code is empty", Toast.LENGTH_SHORT).show();
                 }
-                else if (!username.isEmpty() && !userNumber.isEmpty() && !userAddress.isEmpty() && !userCity.isEmpty() && !userCode.isEmpty())
+                else if(userDist.isEmpty())
+                {
+                    Toast.makeText(AddAddressActivity.this, "District is empty", Toast.LENGTH_SHORT).show();
+                }
+                else if(userState.isEmpty())
+                {
+                    Toast.makeText(AddAddressActivity.this, "State is empty", Toast.LENGTH_SHORT).show();
+                }
+                else if (!username.isEmpty() && !userNumber.isEmpty() && !userAddress.isEmpty() && !userCode.isEmpty() && !userDist.isEmpty() && !userState.isEmpty())
                 {
                     Map<String,String> map = new HashMap<>();
                     map.put("name",username);
                     map.put("phone",userNumber);
                     map.put("address",userAddress);
-                    map.put("city",userCity);
                     map.put("code",userCode);
+                    map.put("district",userDist);
+                    map.put("state",userState);
 
                     database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/address")
                             .push()
@@ -100,6 +109,7 @@ public class AddAddressActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(AddAddressActivity.this, "Address successfully saved", Toast.LENGTH_SHORT).show();
+                                        finish();
                                     } else {
                                         Toast.makeText(AddAddressActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
                                     }
