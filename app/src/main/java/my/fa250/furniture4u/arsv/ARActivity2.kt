@@ -61,6 +61,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var productCheckout: Button
     lateinit var productKotlinColour: TextView
     lateinit var closeAR: ImageButton
+    lateinit var closeMenu: ImageButton
 
     var auth: FirebaseAuth = FirebaseAuth.getInstance()
     var currentUser = auth.currentUser
@@ -219,6 +220,11 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             setOnClickListener {
                 val intent = Intent(this@ARActivity2, CartActivity::class.java)
                 startActivity(intent)
+            }
+        }
+        closeMenu = findViewById<ImageButton?>(R.id.cardkotlinclose).apply {
+            setOnClickListener {
+                productCardView.isGone = true
             }
         }
     }
