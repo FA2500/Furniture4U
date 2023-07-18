@@ -43,7 +43,7 @@ public class PaymentActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseUser currentUser = mAuth.getCurrentUser();
-    FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
+    FirebaseFunctions mFunctions = FirebaseFunctions.getInstance("asia-southeast1");
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     WebView webView;
@@ -136,8 +136,12 @@ public class PaymentActivity extends AppCompatActivity {
                                                         CartModel cart = dataSnapshot.getValue(CartModel.class);
                                                         database.getReference("user/" +mAuth.getCurrentUser().getUid() + "/order").child(cardID.get(finalI)).setValue(cart);
                                                         database.getReference("user/" +mAuth.getCurrentUser().getUid() + "/order").child(cardID.get(finalI)).child("address").setValue(addressID);
-
-                                                        //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("cart").setValue(cart);
+                                                        String orderID = database.getReference("order/").getKey();
+                                                        HashMap<String,Object> a = new HashMap<String, Object>();
+                                                        a.put("address",address);
+                                                        a.put("addressID",addressID);
+                                                        database.getReference("order/").child(orderID).setValue(cart);
+                                                        database.getReference("order/").child(orderID).updateChildren(a);
                                                         //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("addressID").setValue(addressID);
                                                         //database.getReference("order/").push().child(mAuth.getCurrentUser().getUid()).child("address").setValue(address);
 

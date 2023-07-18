@@ -38,16 +38,25 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull AddressAdapter.ViewHolder holder, int position) {
-        Log.d("ADDRESS ADAPTER", "ADD = "+list.get(position).getAddress());
+
+        holder.name.setText(list.get(position).getName());
+        holder.phone.setText(list.get(position).getPhone());
         holder.address.setText(list.get(position).getAddress());
+        if(list.get(position).getisPrimary())
+        {
+            holder.status.setVisibility(View.VISIBLE);
+            holder.status.setText("Primary");
+        }
+
+
         holder.radioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 for(AddressModel address:list)
                 {
-                    address.setPrimary(false);
+                    address.setisPrimary(false);
                 }
-                list.get(holder.getAdapterPosition()).setPrimary(true);
+                list.get(holder.getAdapterPosition()).setisPrimary(true);
 
                 if(selectedRadioBtn!=null)
                 {
@@ -68,11 +77,14 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView address;
+        TextView name,phone,address,status;
         RadioButton radioButton;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            name = itemView.findViewById(R.id.addNameX);
             address = itemView.findViewById(R.id.address_add);
+            phone = itemView.findViewById(R.id.addPhoneX);
+            status = itemView.findViewById(R.id.addStatusX);
             radioButton = itemView.findViewById(R.id.select_address);
         }
     }

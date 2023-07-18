@@ -121,6 +121,21 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void getData()
     {
+        //To Pay
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
+                    payCounter++;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading cart data", error.toException());
+            }
+        });
         database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/order").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -128,7 +143,7 @@ public class ProfileActivity extends AppCompatActivity {
                     preCounter++;
                 }
                 //profileModelList.add(new ProfileModel(R.drawable.baseline_shopping_cart_24, "In Cart", 0));
-                profileModelList.add(new ProfileModel(R.drawable.baseline_payment_24, "To Pay", 0));
+                profileModelList.add(new ProfileModel(R.drawable.baseline_payment_24, "To Pay", payCounter));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_alarm_24, "Preparing", preCounter));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_local_shipping_24, "Shipping", 0));
                 profileModelList.add(new ProfileModel(R.drawable.baseline_rate_review_24, "Delivered", 0));

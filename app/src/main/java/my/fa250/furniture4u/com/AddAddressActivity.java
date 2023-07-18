@@ -4,21 +4,25 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.model.AddressModel;
 
 public class AddAddressActivity extends AppCompatActivity {
 
@@ -26,9 +30,12 @@ public class AddAddressActivity extends AppCompatActivity {
     Toolbar toolbar;
     Button addAddressBtn;
 
+    CheckBox setAsPrimary;
+
     //FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +50,21 @@ public class AddAddressActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.add_address_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         name = findViewById(R.id.ad_name);
-        phoneNumber = findViewById(R.id.ad_district);
+        phoneNumber = findViewById(R.id.ad_phone);
         address = findViewById(R.id.ad_address);
         postCode = findViewById(R.id.ad_code);
         district = findViewById(R.id.ad_district);
         state = findViewById(R.id.ad_state);
+
+        setAsPrimary = findViewById(R.id.primaryAdd);
 
         addAddressBtn = findViewById(R.id.ad_add_address);
 
@@ -93,13 +108,34 @@ public class AddAddressActivity extends AppCompatActivity {
                 }
                 else if (!username.isEmpty() && !userNumber.isEmpty() && !userAddress.isEmpty() && !userCode.isEmpty() && !userDist.isEmpty() && !userState.isEmpty())
                 {
-                    Map<String,String> map = new HashMap<>();
+                    Map<String,Object> map = new HashMap<>();
                     map.put("name",username);
                     map.put("phone",userNumber);
                     map.put("address",userAddress);
                     map.put("code",userCode);
                     map.put("district",userDist);
                     map.put("state",userState);
+                    map.put("isPrimary",setAsPrimary.isChecked());
+
+                    HashMap<String,Object> a = new HashMap<String, Object>() ;
+                    a.put("isPrimary",false);
+
+
+
+                    database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        for(DataSnapshot dataSnapshot: task.getResult().getChildren())
+                                        {
+                                            AddressModel addressModel = dataSnapshot.getValue(AddressModel.class);
+                                            database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address/"+dataSnapshot.getKey()).updateChildren(a);
+                                        }
+                                    }
+                                }
+                            });
+
 
                     database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/address")
                             .push()
@@ -109,7 +145,8 @@ public class AddAddressActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(AddAddressActivity.this, "Address successfully saved", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        Intent intent = new Intent(AddAddressActivity.this, AddressActivity.class);
+                                        startActivity(intent);
                                     } else {
                                         Toast.makeText(AddAddressActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
                                     }

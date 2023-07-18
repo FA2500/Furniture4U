@@ -54,6 +54,8 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
     private Double total;
     private List<String> cardID;
 
+    int primeInd=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +76,12 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
         toolbar = findViewById(R.id.address_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         addAddress = findViewById(R.id.add_address_btn);
         recyclerView = findViewById(R.id.address_recycler);
@@ -124,6 +132,17 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
                     addressModel.setID(addressSnapshot.getKey());
                     addressModelList.add(addressModel);
                     addressAdapter.notifyDataSetChanged();
+                }
+                for(int i = 0 ; i < addressModelList.size();i++)
+                {
+                    if(addressModelList.get(i).getisPrimary())
+                    {
+                        AddressModel addressModels = addressModelList.get(i);
+                        addressModelList.remove(i);
+                        addressModelList.add(0,addressModels);
+                        addressAdapter.notifyItemMoved(i,0);
+                        break;
+                    }
                 }
             }
 

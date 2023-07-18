@@ -35,11 +35,12 @@
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notifRV"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingTop="10dp"
                 tools:itemCount="3"
-                tools:listitem="@layout/notification_list" />
+                tools:listitem="@layout/notification_item" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -3,23 +3,27 @@ package my.fa250.furniture4u.model;
 public class AddressModel {
     String ID;
     String name ;
-    String city ;
-    String address ;
-    String code ;
     String phone ;
+
+    String address ;
+
+    String code ;
+    String district;
+    String state ;
     boolean isPrimary;
 
     public AddressModel() {
     }
 
-    public AddressModel(String ID,String name, String city, String address, String code, String phone, boolean isPrimary) {
+    public AddressModel(String ID,String name, String city, String address, String code, String phone, boolean isPrimary,String district,String state) {
         this.ID = ID;
         this.name = name;
-        this.city = city;
         this.address = address;
         this.code = code;
         this.phone = phone;
         this.isPrimary = isPrimary;
+        this.district = district;
+        this.state = state;
     }
 
     public String getID() {return ID;}
@@ -32,14 +36,6 @@ public class AddressModel {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public String getAddress() {
@@ -66,11 +62,27 @@ public class AddressModel {
         this.phone = phone;
     }
 
-    public boolean isPrimary() {
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public boolean getisPrimary() {
         return isPrimary;
     }
 
-    public void setPrimary(boolean primary) {
+    public void setisPrimary(boolean primary) {
         isPrimary = primary;
     }
 }

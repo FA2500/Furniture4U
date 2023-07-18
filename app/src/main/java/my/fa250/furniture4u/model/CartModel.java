@@ -2,6 +2,7 @@ package my.fa250.furniture4u.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class CartModel implements Serializable {
 
@@ -29,12 +30,14 @@ public class CartModel implements Serializable {
 
     String url_3d;
 
+    Map<String,Object> varianceList;
+
     public CartModel()
     {
 
     }
 
-    public CartModel(String productCat, String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour, String url_3d) {
+    public CartModel(String productCat, String productID, String currentTime, String currentDate, String productName, Double productPrice, int totalQuantity, double totalPrice, List<String> img_url, double rating,String description, Boolean isInCart, List<String> variance, String colour, String url_3d ,Map<String,Object> varianceList) {
         this.productID = productID;
         this.currentTime = currentTime;
         this.currentDate = currentDate;
@@ -50,6 +53,7 @@ public class CartModel implements Serializable {
         this.colour = colour;
         this.productCat = productCat;
         this.url_3d = url_3d;
+        this.varianceList = varianceList;
     }
 
     public String getProductCat() {return productCat;}
@@ -162,4 +166,10 @@ public class CartModel implements Serializable {
     public String getUrl_3d() {return url_3d;}
 
     public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
+
+    public Map<String,Object> getVarianceList() {return varianceList; }
+
+    public void setVarianceList(Map<String,Object> varianceList) {
+        this.varianceList = varianceList;
+    }
 }

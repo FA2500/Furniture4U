@@ -48,6 +48,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import my.fa250.furniture4u.NotifReceiver;
@@ -496,7 +497,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         cartMap.put("productID",productID);
         cartMap.put("productCat",productCat);
-        cartMap.put("colour",productColour);
+        cartMap.put("colour",(varianceModelList == null) ? productColour : varianceChosen);
         cartMap.put("description",desc.getText().toString());
         cartMap.put("img_url",img_url);
         cartMap.put("productName",name.getText().toString());
@@ -511,18 +512,34 @@ public class ProductDetailActivity extends AppCompatActivity {
         if(varianceModelList == null)
         {
             List<String> empList = new ArrayList<String>();
+            empList.add("null");
             cartMap.put("variance", empList);
-            cartMap.put("varianceList", empList);
+            final HashMap<String,Object> cartMap2 = new HashMap<>();
+            final HashMap<String,Object> cartMap3 = new HashMap<>();
+            cartMap3.put("img_url",empList);
+            cartMap3.put("name","null");
+            cartMap3.put("price",0);
+            cartMap2.put("null",cartMap3);
+            cartMap.put("varianceList", cartMap2);
         }
         else
         {
+            final HashMap<String,Object> cartMap2 = new HashMap<>();
             List<String> empList = new ArrayList<String>();
+            for(int i = 0 ; i < varianceModelList.size();i++)
+            {
+                cartMap2.put(varianceModelList.get(i).getName(),varianceModelList.get(i));
+                empList.add(varianceModelList.get(i).getName());
+            }
+            cartMap.put("variance", empList);
+            cartMap.put("varianceList", cartMap2);
+            /*List<String> empList = new ArrayList<String>();
             for(int i = 0 ; i < varianceModelList.size() ; i++)
             {
                 empList.add(varianceModelList.get(i).getName());
             }
             cartMap.put("variance", empList);
-            cartMap.put("varianceList", varianceModelList);
+            cartMap.put("varianceList", varianceModelList);*/
         }
 
         cartMap.put("isInCart",isInCart);
@@ -567,9 +584,28 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private Notification getNotif(String content)
     {
-        Intent intent = new Intent(this, CartActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,1,intent,PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1001");
+        String currentTime, currentDate;
+        Calendar cal = Calendar.getInstance();
+
+        SimpleDateFormat currDate = new SimpleDateFormat("dd MM yyyy");
+        currentDate = currDate.format(cal.getTime());
+
+        SimpleDateFormat currTime = new SimpleDateFormat("HH:mm:ss a");
+        currentTime = currTime.format(cal.getTime());
+        final HashMap<String,Object> cartMap = new HashMap<>();
+
+        cartMap.put("Title","Cart Reminder");
+        cartMap.put("Content",content);
+        cartMap.put("currentDate",currentDate);
+        cartMap.put("currentTime",currentTime);
+
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/notification")
+                .push()
+                .setValue(cartMap);
+
+        Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(ProductDetailActivity.this,1,intent,PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(ProductDetailActivity.this, "1001");
         builder.setContentTitle("Cart Reminder");
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.baseline_shopping_cart_24);
@@ -577,6 +613,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         builder.setChannelId("1001");;
         builder.setContentIntent(pendingIntent);
         return  builder.build();
+
     }
 
     public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {

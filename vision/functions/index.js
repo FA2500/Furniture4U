@@ -20,7 +20,7 @@ const billplz = new Billplz({
 
 const client = new vision.ImageAnnotatorClient();
 
-exports.annotateImage = functions.https.onCall(async (data, context) => {
+exports.annotateImage = functions.region('asia-southeast1').https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "unauthenticated",
@@ -34,7 +34,7 @@ exports.annotateImage = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.createBill = functions.https.onCall(async (data, context) => {
+exports.createBill = functions.region('asia-southeast1').https.onCall(async (data, context) => {
 
   const requestBody = JSON.stringify({
     collection_id: data.collection_id,
@@ -42,8 +42,8 @@ exports.createBill = functions.https.onCall(async (data, context) => {
     email: data.email,
     name: data.name,
     amount: data.amount,
-    callback_url: 'https://us-central1-furniture4u-93724.cloudfunctions.net/callback',
-    redirect_url: 'https://us-central1-furniture4u-93724.cloudfunctions.net/redirect'
+    callback_url: 'https://asia-southeast1-furniture4u-93724.cloudfunctions.net/callback',
+    redirect_url: 'https://asia-southeast1-furniture4u-93724.cloudfunctions.net/redirect'
   });
 
   const config = {
@@ -80,7 +80,7 @@ exports.createBill = functions.https.onCall(async (data, context) => {
   });
 });
 
-exports.callback = functions.https.onRequest(async (req, res) => {
+exports.callback = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   const billplzId = req.body.id;
   const isPaid = req.body.paid;
 
@@ -93,7 +93,7 @@ exports.callback = functions.https.onRequest(async (req, res) => {
   }
 });
 
-exports.redirect = functions.https.onRequest(async (req, res) => {
+exports.redirect = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
     const queryObject = url.parse(req.url, true).query;
     const billplzId = queryObject['billplz[id]'];
 
@@ -111,11 +111,11 @@ exports.redirect = functions.https.onRequest(async (req, res) => {
     if (response.data.paid) {
       // Redirect to the specified URL
       console.log('Success');
-      return res.redirect('https://us-central1-furniture4u-93724.cloudfunctions.net/payment_success');
+      return res.redirect('https://asia-southeast1-furniture4u-93724.cloudfunctions.net/payment_success');
     } else {
       // Return the bill information
       console.log('Failed');
-      return res.json('https://us-central1-furniture4u-93724.cloudfunctions.net/payment_failed');
+      return res.json('https://asia-southeast1-furniture4u-93724.cloudfunctions.net/payment_failed');
     }
 
     
@@ -136,11 +136,11 @@ exports.redirect = functions.https.onRequest(async (req, res) => {
   }*/
 
 
-exports.payment_success = functions.https.onRequest(async (req, res) => {
+exports.payment_success = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   res.send('payment_success');
 });
 
-exports.payment_failed = functions.https.onRequest(async (req, res) => {
+exports.payment_failed = functions.region('asia-southeast1').https.onRequest(async (req, res) => {
   res.send('payment_failed');
 });
 

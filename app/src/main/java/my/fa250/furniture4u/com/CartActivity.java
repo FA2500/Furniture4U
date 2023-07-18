@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -126,10 +127,18 @@ public class CartActivity extends AppCompatActivity implements Serializable {
 
     public void buyNow(View v)
     {
-        Intent intent = new Intent(CartActivity.this, AddressActivity.class);
-        intent.putExtra("total",qwerty);
-        intent.putExtra("cardID", (Serializable) listID);
-        startActivity(intent);
+        if(listID.isEmpty())
+        {
+            Toast.makeText(this, "Please select at least one item to pay", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Intent intent = new Intent(CartActivity.this, AddressActivity.class);
+            intent.putExtra("total",qwerty);
+            intent.putExtra("cardID", (Serializable) listID);
+            startActivity(intent);
+        }
+
     }
 
     private void getData()

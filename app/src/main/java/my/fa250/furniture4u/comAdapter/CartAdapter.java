@@ -1,5 +1,7 @@
 package my.fa250.furniture4u.comAdapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -24,12 +26,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.CartActivity;
 import my.fa250.furniture4u.com.ProductDetailActivity;
 import my.fa250.furniture4u.model.CartModel;
 
@@ -38,6 +47,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     private Context context;
     private List<CartModel> list;
     private DecimalFormat DF = new DecimalFormat("0.00");
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     public CartAdapter(Context context, List<CartModel> list) {
         this.context = context;
@@ -60,10 +72,32 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.totalPrice.setText(String.valueOf(list.get(position).getTotalPrice()));
         //holder.totalQuan.setText(String.valueOf(list.get(position).getTotalQuantity()));
         holder.quan.setText(String.valueOf(list.get(position).getTotalQuantity()));
+        if(list.get(position).getVariance().size() > 1)
+        {
+            holder.provar.setVisibility(View.VISIBLE);
+            holder.provar.setText("Variance = "+list.get(position).getColour());
+            int varL = 0;
+            for(int i = 0 ; i<list.get(position).getVariance().size();i++)
+            {
+                if(Objects.equals(list.get(position).getVariance().get(i), list.get(position).getColour()))
+                {
+                    varL = i;
+                    break;
+                }
+            }
+            varL*=3;
+            Glide.with(context)
+                    .load(list.get(position).getImg_url().get(varL))
+                    .into(holder.catImg);
+        }
+        else
+        {
+            Glide.with(context)
+                    .load(list.get(position).getImg_url().get(0))
+                    .into(holder.catImg);
+        }
 
-        Glide.with(context)
-                .load(list.get(position).getImg_url().get(0))
-                .into(holder.catImg);
+
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +137,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.minBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(list.get(holder.getAdapterPosition()).getTotalQuantity() >= 1)
+                if(list.get(holder.getAdapterPosition()).getTotalQuantity() > 1)
                 {
                     list.get(holder.getAdapterPosition()).setTotalQuantity((list.get(holder.getAdapterPosition()).getTotalQuantity()-1));
                     list.get(holder.getAdapterPosition()).setTotalPrice(list.get(holder.getAdapterPosition()).getProductPrice()*list.get(holder.getAdapterPosition()).getTotalQuantity());
@@ -121,7 +155,24 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
                 }
                 else
                 {
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle("Alert");
+                    builder.setMessage("Do you want to delete this item?");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            database.getReference("user").child(mAuth.getUid()).child("cart").child(list.get(holder.getAdapterPosition()).getId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    Intent intent = new Intent(context, CartActivity.class);
+                                    startActivity(context,intent,null);
+                                }
+                            });
+                            // Delete the item
+                        }
+                    });
+                    builder.setNegativeButton("No", null);
+                    builder.show();
                 }
 
             }
@@ -169,7 +220,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
-        TextView name,price,date,time,totalQuan,totalPrice,minBtn,addBtn;
+        TextView name,price,date,time,totalQuan,totalPrice,minBtn,addBtn,provar;
         CheckBox checkBox;
         Button quan;
 
@@ -189,6 +240,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             //totalQuan = itemView.findViewById(R.id.total_quantity_cart);
             minBtn = itemView.findViewById(R.id.minusQuanBtn);
             addBtn = itemView.findViewById(R.id.addQuanBtn);
+            provar = itemView.findViewById(R.id.product_var);
         }
 
         public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
