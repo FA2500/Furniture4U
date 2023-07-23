@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.SearchAdapter;
@@ -67,6 +68,11 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(newText.length() >= 1)
+                {
+                    newText = newText.substring(0,1).toUpperCase(Locale.ROOT) + newText.substring(1);
+                }
+                Log.w("SEARCH",newText);
                 searchQuery(newText);
                 return false;
             }

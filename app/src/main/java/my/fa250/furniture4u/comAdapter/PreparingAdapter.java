@@ -20,6 +20,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import my.fa250.furniture4u.R;
+import my.fa250.furniture4u.com.InvoiceActivity;
 import my.fa250.furniture4u.com.ProductDetailActivity;
 import my.fa250.furniture4u.model.CartModel;
 import my.fa250.furniture4u.model.PreparingModel;
@@ -27,7 +28,6 @@ import my.fa250.furniture4u.model.PreparingModel;
 public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.ViewHolder>{
     private Context context;
     private List<CartModel> list;
-
     private DecimalFormat DF = new DecimalFormat("0.00");
 
     public PreparingAdapter(Context context, List<CartModel> list) {
@@ -60,6 +60,15 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
                 context.startActivity(intent);
             }
         });
+
+        holder.detail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, InvoiceActivity.class);
+                intent.putExtra("ID",list.get(holder.getAdapterPosition()).getId());
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -70,8 +79,7 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder{
         CardView cv;
         TextView name,price,date,time,totalQuan,totalPrice;
-        Button quan;
-        CheckBox checkBox;
+        Button detail;
 
         ImageView catImg;
 
@@ -82,6 +90,8 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
             name = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
             totalPrice = itemView.findViewById(R.id.total_price_cart);
+
+            detail = itemView.findViewById(R.id.orderBtn);
         }
     }
 }

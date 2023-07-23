@@ -73,7 +73,7 @@
                         android:text="Preparing" />
 
                     <Button
-                        android:id="@+id/button16"
+                        android:id="@+id/orderBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
