@@ -81,6 +81,9 @@
             android:name=".arsv.ARActivity2"
             android:exported="true" />
         <activity
+            android:name=".arsv.ARActivity3"
+            android:exported="true" />
+        <activity
             android:name=".testlayout"
             android:exported="true" />
         <activity

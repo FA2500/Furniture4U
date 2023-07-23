@@ -44,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import java.util.Objects;
 import my.fa250.furniture4u.NotifReceiver;
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.arsv.ARActivity2;
+import my.fa250.furniture4u.arsv.ARActivity3;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
 import my.fa250.furniture4u.comAdapter.ProductAdapter;
 import my.fa250.furniture4u.comAdapter.VarianceAdapter;
@@ -206,8 +208,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         viewInAR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProductDetailActivity.this , ARActivity2.class);
-                intent.putExtra("url_3d",url_3d);
+                Intent intent = new Intent(ProductDetailActivity.this , ARActivity3.class);
+                intent.putExtra("ID",productID);
+                intent.putExtra("color",productColour);
                 startActivity(intent);
             }
         });
@@ -403,6 +406,81 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void changeImage(String name)
+    {
+        varianceChosen = name;
+        productColour= name;
+
+        if(productModel != null)
+        {
+            for(int i = 0 ; i < productModel.getVariance().size();i++)
+            {
+                if(Objects.equals(name, productModel.getVariance().get(i)))
+                {
+                    slideModels.clear();
+                    for(int j = 0 ; j < 3 ; j++)
+                    {
+                        slideModels.add(new SlideModel(productModel.getImg_url().get((i*3)+j), ScaleTypes.FIT));
+                    }
+                    detailImage.setImageList(slideModels);
+                    Map<String,Object> a = (Map<String, Object>) productModel.getVarianceList().get(productModel.getVariance().get(i));
+                    url_3d = a.get("url_3d").toString();
+                }
+            }
+        }
+        else if(popModel != null)
+        {
+            for(int i = 0 ; i < popModel.getVariance().size();i++)
+            {
+                if(Objects.equals(name, popModel.getVariance().get(i)))
+                {
+                    slideModels.clear();
+                    for(int j = 0 ; j < 3 ; j++)
+                    {
+                        slideModels.add(new SlideModel(popModel.getImg_url().get((i*3)+j), ScaleTypes.FIT));
+                    }
+                    detailImage.setImageList(slideModels);
+                    Map<String,Object> a = (Map<String, Object>) popModel.getVarianceList().get(popModel.getVariance().get(i));
+                    url_3d = a.get("url_3d").toString();
+                }
+            }
+        }
+        else if(allModel != null)
+        {
+            for(int i = 0 ; i < allModel.getVariance().size();i++)
+            {
+                if(Objects.equals(name, allModel.getVariance().get(i)))
+                {
+                    slideModels.clear();
+                    for(int j = 0 ; j < 3 ; j++)
+                    {
+                        slideModels.add(new SlideModel(allModel.getImg_url().get((i*3)+j), ScaleTypes.FIT));
+                    }
+                    detailImage.setImageList(slideModels);
+                    Map<String,Object> a = (Map<String, Object>) allModel.getVarianceList().get(allModel.getVariance().get(i));
+                    url_3d = a.get("url_3d").toString();
+                }
+            }
+        }
+        else if(cartModel != null)
+        {
+            for(int i = 0 ; i < cartModel.getVariance().size();i++)
+            {
+                if(Objects.equals(name, cartModel.getVariance().get(i)))
+                {
+                    slideModels.clear();
+                    for(int j = 0 ; j < 3 ; j++)
+                    {
+                        slideModels.add(new SlideModel(cartModel.getImg_url().get((i*3)+j), ScaleTypes.FIT));
+                    }
+                    detailImage.setImageList(slideModels);
+                    Map<String,Object> a = (Map<String, Object>) cartModel.getVarianceList().get(cartModel.getVariance().get(i));
+                    url_3d = a.get("url_3d").toString();
+                }
+            }
+        }
+    }
+
     private void getInCart(String productName)
     {
         database.getReference("user").child(mAuth.getUid()).child("cart").limitToFirst(1).get()
@@ -469,11 +547,41 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
         else if(productInfo instanceof ShowAllModel)
         {
-
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snapshot1 : snapshot.getChildren())
+                    {
+                        VarianceModel varMod = snapshot1.getValue(VarianceModel.class);
+                        varianceModelList.add(varMod);
+                        varianceAdapter.notifyDataSetChanged();
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            };
+            database.getReference("product").child(((ShowAllModel) productInfo).getID()).child("varianceList").addListenerForSingleValueEvent(valueEventListener);
         }
         else if(productInfo instanceof  CartModel)
         {
-
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot snapshot1 : snapshot.getChildren())
+                    {
+                        VarianceModel varMod = snapshot1.getValue(VarianceModel.class);
+                        varianceModelList.add(varMod);
+                        varianceAdapter.notifyDataSetChanged();
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(ProductDetailActivity.this, "Failed to retrieve variance data. Limited internet connection.", Toast.LENGTH_SHORT).show();
+                }
+            };
+            database.getReference("product").child(((CartModel) productInfo).getProductID()).child("varianceList").addListenerForSingleValueEvent(valueEventListener);
         }
 
 
@@ -494,7 +602,6 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         totalprice = baseprice * totalQuantity;
         isInCart = true;
-
         cartMap.put("productID",productID);
         cartMap.put("productCat",productCat);
         cartMap.put("colour",(varianceModelList == null) ? productColour : varianceChosen);
@@ -613,8 +720,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         builder.setChannelId("1001");;
         builder.setContentIntent(pendingIntent);
         return  builder.build();
-
     }
+
+
 
     public BroadcastReceiver MessageReceiver = new BroadcastReceiver() {
         @Override
@@ -623,7 +731,8 @@ public class ProductDetailActivity extends AppCompatActivity {
             int btnID = intent.getIntExtra("btnId",0);
             Log.d("VARIANCE BROADCAST", "item "+itemName+" from "+btnID);
 
-            varianceChosen = itemName;
+            changeImage(itemName);
+
             addToCart.setClickable(true);
             addToCart.setEnabled(true);
             buyNow.setClickable(true);

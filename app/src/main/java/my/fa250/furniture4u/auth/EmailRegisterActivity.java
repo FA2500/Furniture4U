@@ -16,7 +16,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +38,8 @@ public class EmailRegisterActivity extends AppCompatActivity {
     private EditText ETPhone;
     private EditText ETPass;
     private EditText ETCPass;
+
+    private String FCMtoken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,39 +140,33 @@ public class EmailRegisterActivity extends AppCompatActivity {
         userinfo.put("email", ETEmail.getText().toString());
         userinfo.put("phone",ETPhone.getText().toString());
         userinfo.put("role", "Customer");
+        userinfo.put("provider","Email");
 
-        database.getReference("user").child(user.getUid()).setValue(userinfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Database", "Data successfully written!");
-                        Intent intent = new Intent(EmailRegisterActivity.this, HomePageActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Database", "Error writing data", e);
+                    public void onComplete(@NonNull Task<String> task) {
+                        if(task.isSuccessful())
+                        {
+                            FCMtoken = task.getResult();
+                            userinfo.put("token",FCMtoken);
+                            database.getReference("user").child(user.getUid()).setValue(userinfo)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d("Database", "Data successfully written!");
+                                            Intent intent = new Intent(EmailRegisterActivity.this, HomePageActivity.class);
+                                            startActivity(intent);
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("Database", "Error writing data", e);
+                                        }
+                                    });
+                        }
                     }
                 });
-
-        /*db.collection("user").document(user.getUid())
-                .set(userinfo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("Database", "DocumentSnapshot successfully written!");
-                        Intent intent = new Intent(EmailRegisterActivity.this, HomePageActivity.class);
-                        startActivity(intent);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("Database", "Error writing document", e);
-                    }
-                });*/
-
     }
 }

@@ -7,16 +7,20 @@ public class VarianceModel implements Serializable {
     String name;
     List<String> img_url;
     double price;
+    int stock;
+    String url_3d;
 
     public VarianceModel()
     {
 
     }
 
-    public VarianceModel(String name, List<String> img_url, double price) {
+    public VarianceModel(String name, List<String> img_url, double price,int stock,String url_3d) {
         this.name = name;
         this.img_url = img_url;
         this.price = price;
+        this.stock = stock;
+        this.url_3d = url_3d;
     }
 
     public String getName() {
@@ -42,4 +46,12 @@ public class VarianceModel implements Serializable {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public int getStock() { return stock; }
+
+    public void setStock(int stock) { this.stock = stock; }
+
+    public String getUrl_3d() {return url_3d;}
+
+    public void setUrl_3d(String url_3d) { this.url_3d=url_3d; }
 }

@@ -24,16 +24,16 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
 
      val mColors = hashMapOf(
          "red" to Color.rgb(255, 0, 0),
-         "pink" to Color.rgb(255, 192, 203),
-         "purple" to Color.rgb(36, 10, 64),
-         "blue" to Color.rgb(0, 0, 255),
-         "green" to Color.rgb(0, 255, 0),
-         "yellow" to Color.rgb(255, 255, 0),
          "orange" to Color.rgb(255, 104, 31),
-         "white" to Color.rgb(255, 255, 255),
+         "yellow" to Color.rgb(255, 255, 0),
+         "green" to Color.rgb(0, 255, 0),
+         "blue" to Color.rgb(0, 0, 255),
+         "purple" to Color.rgb(36, 10, 64),
          "black" to Color.rgb(0, 0, 0),
+         "white" to Color.rgb(255, 255, 255),
+         /*"pink" to Color.rgb(255, 192, 203),
          "gray" to Color.rgb(128, 128, 128),
-         "cream" to Color.rgb(255, 253, 208)
+         "cream" to Color.rgb(255, 253, 208)*/
      )
 
     val credentials = try {
@@ -53,7 +53,6 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
      override suspend fun analyze(image: Image, imageRotation: Int): List<DetectedObjectResult> {
          // Convert the image to a byte array.
          val convertYuv = convertYuv(image)
-
          // The model performs best on upright images, so rotate it.
          val rotatedImage = ImageUtils.rotateBitmap(convertYuv, imageRotation)
 

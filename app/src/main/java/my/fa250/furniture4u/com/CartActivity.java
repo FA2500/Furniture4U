@@ -91,7 +91,8 @@ public class CartActivity extends AppCompatActivity implements Serializable {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(CartActivity.this, HomePageActivity.class);
+                startActivity(intent);
             }
         });
 

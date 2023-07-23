@@ -18,6 +18,7 @@ package my.fa250.furniture4u.ml.classification
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.icu.text.CaseMap.Lower
 import android.media.Image
 import android.util.Log
 import com.google.ar.core.Frame
@@ -43,8 +44,6 @@ abstract class ObjectDetector(val context: Context) {
    * Converts a YUV image to a [Bitmap] using [YuvToRgbConverter].
    */
   fun convertYuv(image: Image): Bitmap {
-    Log.d("ConvertYuv Height",image.height.toString())
-    Log.d("ConvertYuv Width",image.width.toString())
     return Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888).apply {
       yuvConverter.yuvToRgb(image, this)
     }

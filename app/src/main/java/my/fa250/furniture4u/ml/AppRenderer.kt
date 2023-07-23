@@ -29,6 +29,7 @@ import java.util.Collections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import my.fa250.furniture4u.ar.helper.DisplayRotationHelper
 import my.fa250.furniture4u.ar.render.SampleRender
@@ -47,7 +48,7 @@ import my.fa250.furniture4u.ml.render.PointCloudRender
  */
 class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, SampleRender.Renderer, CoroutineScope by MainScope() {
   companion object {
-    val TAG = "HelloArRenderer"
+    val TAG = "ARRenderer"
   }
 
   lateinit var view: ContextActivityView
@@ -61,10 +62,9 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
   val projectionMatrix = FloatArray(16)
   val viewProjectionMatrix = FloatArray(16)
 
-  val arLabeledAnchors = Collections.synchronizedList(mutableListOf<ARLabeledAnchor>())
+  //val arLabeledAnchors = Collections.synchronizedList(mutableListOf<ARLabeledAnchor>())
   var scanButtonWasPressed = false
 
-  val mlKitAnalyzer = MLKitObjectDetector(activity)
   val gcpAnalyzer = GoogleCloudVisionDetector(activity)
   val imgAnalyzer = GoogleCloudVisionImage(activity)
 
@@ -83,8 +83,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     this.view = view
 
     view.scanButton.setOnClickListener {
-      // frame.acquireCameraImage is dependent on an ARCore Frame, which is only available in onDrawFrame.
-      // Use a boolean and check its state in onDrawFrame to interact with the camera image.
+      Log.w("THREAD","BUTTON ON THREAD")
       scanButtonWasPressed = true
       view.setScanningActive(true)
       hideSnackbar()
@@ -93,29 +92,8 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     colAnalyzer = imgAnalyzer
     objectAnalyzer = gcpAnalyzer
 
-    /*view.useCloudMlSwitch.setOnCheckedChangeListener { _, isChecked ->
-      colAnalyzer = if (isChecked) imgAnalyzer else mlKitAnalyzer
-      objectAnalyzer = if (isChecked) gcpAnalyzer else mlKitAnalyzer
-    }
-
-    val gcpConfigured = imgAnalyzer.credentials != null
-    val objConfigured = gcpAnalyzer.credentials != null
-    view.useCloudMlSwitch.isChecked = gcpConfigured
-    view.useCloudMlSwitch.isEnabled = gcpConfigured
-    view.useCloudMlSwitch.isChecked = objConfigured
-    view.useCloudMlSwitch.isEnabled = objConfigured
-    colAnalyzer = if (gcpConfigured) imgAnalyzer else mlKitAnalyzer
-    objectAnalyzer = if (objConfigured) gcpAnalyzer else mlKitAnalyzer
-
-    if (!gcpConfigured) {
-      showSnackbar("Google Cloud Vision isn't configured (see README). The Cloud ML switch will be disabled.")
-    }
-    if(!objConfigured){
-      showSnackbar("Google Object Detection isn't properly configured")
-    }*/
-
     view.resetButton.setOnClickListener {
-      arLabeledAnchors.clear()
+      //arLabeledAnchors.clear()
       view.closeRecommendation()
       view.resetButton.isEnabled = false
       hideSnackbar()
@@ -176,15 +154,76 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     // Check if the button was pressed last frame to start processing the camera image.
     if (scanButtonWasPressed) {
       scanButtonWasPressed = false
-      val cameraImage = frame.tryAcquireCameraImage()
-      if (cameraImage != null) {
-        // Call our ML model on an IO thread.
-        launch(Dispatchers.IO) {
+      var cameraImage = frame.tryAcquireCameraImage()
+      while (cameraImage?.width!! <= 0 && cameraImage?.height!! <= 0)
+      {
+        cameraImage = frame.tryAcquireCameraImage()
+      }
+
+      if (cameraImage != null ) {
+
+        //MAIN
+        /*launch(Dispatchers.IO) {
           val cameraId = session.cameraConfig.cameraId
           val imageRotation = displayRotationHelper.getCameraSensorToDisplayRotation(cameraId)
-          objectResults = colAnalyzer.analyze(cameraImage, imageRotation)
-          objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
-          //cameraImage.close()
+          try {
+            objectResults = colAnalyzer.analyze(cameraImage, imageRotation)
+            objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
+          }
+          catch (e: Exception)
+          {
+            Log.e("THREAD","NO RESULT",e)
+            showSnackbar("Inaccurate Context Data.Please Rescan")
+          }
+          Log.w("THREAD","CLASSIFICATION END ON THREAD")
+
+          /*val threads = Thread(Runnable {
+            launch {
+              Log.w("THREAD","CLASSIFICATION RUNNING ON THREAD")
+              try {
+                objectResults = colAnalyzer.analyze(cameraImage, imageRotation)
+                objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
+              }
+              catch (e: Exception)
+              {
+                Log.e("COLOUR","NO RESULT",e)
+                showSnackbar("Inaccurate Colour Data.Please Rescan")
+              }
+
+            }
+          })
+          threads.start()
+          threads.join()*/
+
+          cameraImage.close()
+        }*/
+
+        launch(Dispatchers.IO) {
+          Log.w("THREAD", "COLOR CLASSIFICATION START ON THREAD")
+          val cameraId = session.cameraConfig.cameraId
+          val imageRotation = displayRotationHelper.getCameraSensorToDisplayRotation(cameraId)
+          try {
+            objectResults = colAnalyzer.analyze(cameraImage, imageRotation)
+          } catch (e: Exception) {
+            Log.e("THREAD", "Error in colAnalyzer", e)
+            showSnackbar("Inaccurate Context Data. Please Rescan")
+          }
+          Log.w("THREAD", "COLOR CLASSIFICATION END ON THREAD")
+          cameraImage.close()
+        }
+
+        launch(Dispatchers.IO) {
+          Log.w("THREAD", "OBJECT CLASSIFICATION START ON THREAD")
+          val cameraId = session.cameraConfig.cameraId
+          val imageRotation = displayRotationHelper.getCameraSensorToDisplayRotation(cameraId)
+          try {
+            objectRes = objectAnalyzer.analyze(cameraImage, imageRotation)
+          } catch (e: Exception) {
+            Log.e("THREAD", "Error in objectAnalyzer", e)
+            showSnackbar("Inaccurate Context Data. Please Rescan")
+          }
+          Log.w("THREAD", "OBJECT CLASSIFICATION END ON THREAD")
+          cameraImage.close()
         }
       }
     }
@@ -192,7 +231,8 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     /** If results were completed this frame, create [Anchor]s from model results. */
     val objects = objectResults
     val objectsobj = objectRes
-    if (objects != null) {
+
+    /*if (objects != null) {
       objectResults = null
       Log.i(TAG, "$colAnalyzer got objects: $objects")
       val anchors = objects.mapNotNull { obj ->
@@ -201,14 +241,11 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         Log.i(TAG, "Created anchor ${anchor.pose} from hit test")
         ARLabeledAnchor(anchor, obj.label)
       }
-      arLabeledAnchors.addAll(anchors)
+      //arLabeledAnchors.addAll(anchors)
       view.post {
-        view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
+        //view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
         view.setScanningActive(false)
         when {
-          objects.isEmpty() && colAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
-            //showSnackbar("Colour model returned no results. ")
-            Log.w("COLOUR","NO RESULT")
           objects.isEmpty() ->
             //showSnackbar("Color model returned no results.")
             Log.w("COLOUR","NO RESULT")
@@ -224,26 +261,42 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         Log.i(TAG, "Created anchor ${anchor.pose} from hit test")
         ARLabeledAnchor(anchor, obj.label)
       }
-      arLabeledAnchors.addAll(anchors)
+      //arLabeledAnchors.addAll(anchors)
       view.post {
-        view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
+        //view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
         view.setScanningActive(false)
         when {
-          objectsobj.isEmpty() && colAnalyzer == mlKitAnalyzer && !mlKitAnalyzer.hasCustomModel() ->
-            Log.w("OBJECT","NO RESULT")
           objectsobj.isEmpty() ->
             Log.w("OBJECT","NO RESULT")
-          /*anchors.size != objectsobj.size ->
-            showSnackbar("Objects were classified, but could not be attached to an anchor. " +
-                    "Try moving your device around to obtain a better understanding of the environment.")*/
+
         }
         view.getRecommendation()
       }
+    }*/
 
+    //test
+    if (objects != null && objectsobj != null) {
+      objectResults = null
+      objectRes = null
+      view.post {
+        //view.resetButton.isEnabled = arLabeledAnchors.isNotEmpty()
+        view.setScanningActive(false)
+        when {
+          objects.isEmpty() ->
+            //showSnackbar("Color model returned no results.")
+            Log.w("COLOUR","NO RESULT")
+        }
+        when {
+          objectsobj.isEmpty() ->
+            Log.w("OBJECT","NO RESULT")
+        }
+        view.getRecommendation()
+      }
     }
+    //test
 
     // Draw labels at their anchor position.
-    for (arDetectedObject in arLabeledAnchors) {
+    /*for (arDetectedObject in arLabeledAnchors) {
       val anchor = arDetectedObject.anchor
       if (anchor.trackingState != TrackingState.TRACKING) continue
       labelRenderer.draw(
@@ -253,7 +306,7 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
         camera.pose,
         arDetectedObject.label
       )
-    }
+    }*/
   }
 
   /**

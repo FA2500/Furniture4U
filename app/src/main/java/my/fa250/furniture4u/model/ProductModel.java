@@ -12,18 +12,12 @@ public class ProductModel implements Serializable {
     double rating;
     double price;
     List<String> img_url;
-
     String category;
     String type;
-
     List<String> variance;
-
     Map<String,Object> varianceList;
-
     String colour;
-
     int stock;
-
     String url_3d;
 
     public ProductModel()

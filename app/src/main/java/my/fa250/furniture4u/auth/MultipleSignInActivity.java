@@ -172,6 +172,12 @@ public class MultipleSignInActivity extends AppCompatActivity {
         provider = OAuthProvider.newBuilder("twitter.com");
     }
 
+    public void goToRegister(View v)
+    {
+        Intent intent = new Intent(MultipleSignInActivity.this, EmailRegisterActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onStart() {
         super.onStart();

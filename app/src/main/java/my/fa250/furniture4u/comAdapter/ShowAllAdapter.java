@@ -2,6 +2,7 @@ package my.fa250.furniture4u.comAdapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +43,7 @@ public class ShowAllAdapter extends RecyclerView.Adapter<ShowAllAdapter.Viewhold
 
     @Override
     public void onBindViewHolder(@NonNull ShowAllAdapter.Viewholder holder, int position) {
-        Glide.with(context).load(list.get(position).getImg_url()).into(holder.ItemImage);
+        Glide.with(context).load(list.get(position).getImg_url().get(0)).into(holder.ItemImage);
         holder.aCost.setText("RM"+(DF.format(list.get(position).getPrice())));
         holder.aName.setText(list.get(position).getName());
         float a = (float) list.get(position).getRating();

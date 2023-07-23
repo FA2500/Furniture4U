@@ -158,7 +158,7 @@ class ContextActivityView(val activity: ContextActivity, renderer: AppRenderer) 
             scanButton.setText(activity.getString(R.string.scan_available))
             if(!BtnisAct)
             {
-                showAlertDialog()
+                //showAlertDialog()
                 BtnisAct = true
             } else {
 
