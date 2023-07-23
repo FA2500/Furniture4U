@@ -155,13 +155,18 @@ class AppRenderer(val activity: ContextActivity) : DefaultLifecycleObserver, Sam
     if (scanButtonWasPressed) {
       scanButtonWasPressed = false
       var cameraImage = frame.tryAcquireCameraImage()
+      while (cameraImage == null)
+      {
+        cameraImage = frame.tryAcquireCameraImage()
+      }
       while (cameraImage?.width!! <= 0 && cameraImage?.height!! <= 0)
       {
         cameraImage = frame.tryAcquireCameraImage()
       }
 
       if (cameraImage != null ) {
-
+        objectResults = null
+        objectRes = null
         //MAIN
         /*launch(Dispatchers.IO) {
           val cameraId = session.cameraConfig.cameraId

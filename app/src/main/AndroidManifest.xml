@@ -8,7 +8,7 @@
         android:name="com.google.android.gms.permission.AD_ID"
         tools:node="remove" /> <!-- Request Features -->
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
         android:name="android.hardware.camera.ar"
@@ -30,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
+        <activity
+            android:name=".com.InvoiceActivity"
+            android:exported="false" />
         <activity
             android:name=".SplashScreen"
             android:exported="false" />
@@ -118,14 +121,15 @@
         <activity
             android:name=".auth.EmailLoginActivity"
             android:exported="false" />
-
-        <!--<activity
+        <!--
+<activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>-->
+        </activity>
+        -->
         <activity
             android:name=".auth.MultipleSignInActivity"
             android:exported="true">
@@ -153,11 +157,11 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".test"
             android:exported="false" />
-        <!--<activity
+        <!--
+<activity
             android:name=".test"
             android:exported="true">
             <intent-filter>
@@ -169,8 +173,8 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>-->
-
+        </activity>
+        -->
         <activity
             android:name=".auth.Login"
             android:exported="false">
@@ -243,7 +247,8 @@
         <meta-data
             android:name="com.facebook.sdk.ClientToken"
             android:value="@string/facebook_client_token" />
-        <receiver android:name=".NotifReceiver"/>
+
+        <receiver android:name=".NotifReceiver" />
     </application>
 
 </manifest>

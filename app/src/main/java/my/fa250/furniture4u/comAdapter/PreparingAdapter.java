@@ -38,7 +38,7 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
     @NonNull
     @Override
     public PreparingAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PreparingAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_item, parent, false));
+        return new PreparingAdapter.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.order_item, parent, false));
     }
 
     @Override
@@ -47,10 +47,9 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
         holder.price.setText("RM"+DF.format(list.get(position).getProductPrice()));
         holder.totalPrice.setText(String.valueOf(list.get(position).getTotalPrice()));
        // holder.totalQuan.setText(String.valueOf(list.get(position).getTotalQuantity()));
-        holder.quan.setText(String.valueOf(list.get(position).getTotalQuantity()));
 
         Glide.with(context)
-                .load(list.get(position).getImg_url())
+                .load(list.get(position).getImg_url().get(0))
                 .into(holder.catImg);
 
         holder.cv.setOnClickListener(new View.OnClickListener() {
@@ -79,14 +78,10 @@ public class PreparingAdapter extends RecyclerView.Adapter<PreparingAdapter.View
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             cv = itemView.findViewById(R.id.cart_card);
-            checkBox = itemView.findViewById(R.id.checkBox);
-            checkBox.setText("Not selected");
             catImg = itemView.findViewById(R.id.cartImg);
             name = itemView.findViewById(R.id.product_name);
             price = itemView.findViewById(R.id.product_price);
             totalPrice = itemView.findViewById(R.id.total_price_cart);
-            //totalQuan = itemView.findViewById(R.id.total_quantity_cart);
-            quan = itemView.findViewById(R.id.product_quant);
         }
     }
 }

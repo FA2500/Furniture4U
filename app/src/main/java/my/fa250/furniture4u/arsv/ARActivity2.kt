@@ -13,15 +13,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintSet.Layout
+import androidx.constraintlayout.widget.ConstraintSet.VISIBLE
+import androidx.constraintlayout.widget.ConstraintSet.WRAP_CONTENT
 import androidx.core.app.NotificationCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -60,8 +65,12 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var productAddToCart: Button
     lateinit var productCheckout: Button
     lateinit var productKotlinColour: TextView
+    lateinit var productvar: Button
     lateinit var closeAR: ImageButton
     lateinit var closeMenu: ImageButton
+    lateinit var ll: LinearLayout
+    var indTemp = 0;
+    var llm = LinearLayout.LayoutParams(150, 150)
 
     var auth: FirebaseAuth = FirebaseAuth.getInstance()
     var currentUser = auth.currentUser
@@ -98,6 +107,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         super.onCreate(savedInstanceState)
         val intent = intent
         initUI()
+        llm.setMargins(0,0,10,0)
 
          roomType = intent.getStringExtra("type").toString()
          roomColour = intent.getStringExtra("colour").toString()
@@ -132,13 +142,23 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                                 applyPoseRotation = true,
                                 PKM = k,
                             )
-
                         }?.let { models.add(it) }
+                        val a = ImageButton(this@ARActivity2)
+                        a.contentDescription = indTemp.toString()
+                        indTemp += 1
+                        Glide.with(this@ARActivity2).load(k.img_url!!.get(0)).centerCrop()
+                            .into(a)
+                        a.setOnClickListener {
+                            newModelNode2(a)
+                        }
+                        ll.addView(a,llm)
+
                     }
                     else if(k.varianceList?.keys?.contains(capitalize(roomColour)) == true)
                     {
                         val vl = k.varianceList!![capitalize(roomColour)] as Map<*, *>
                         val vla = vl["url_3d"]
+                        val list: MutableList<String> = vl["img_url"] as MutableList<String>
                         k.colour = capitalize(roomColour)
                         models.add(
                             Model(
@@ -148,8 +168,19 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                                 placementMode = if(k.type=="Clock") PlacementMode.PLANE_VERTICAL else PlacementMode.PLANE_HORIZONTAL,
                                 applyPoseRotation = true,
                                 PKM = k,
+
                             )
                         )
+
+                        val a = ImageButton(this@ARActivity2)
+                        a.contentDescription = indTemp.toString()
+                        indTemp += 1
+                        Glide.with(this@ARActivity2).load(list[0]).centerCrop()
+                            .into(a)
+                        a.setOnClickListener {
+                            newModelNode2(a)
+                        }
+                        ll.addView(a,llm)
                     }
                 }
                 if (models.isEmpty())
@@ -173,7 +204,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                             "Black",
                             1,
                             "https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair/lilly/black/chair_lilly_black.gltf"
-                        )
+                        ),
                     ))
                     Toast.makeText(
                         this@ARActivity2,
@@ -207,6 +238,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         productKotlinName = findViewById(R.id.productKotlinName)
         productKotlinPrice = findViewById(R.id.productKotlinPrice)
         productKotlinColour = findViewById(R.id.productKotlinColour)
+        ll = findViewById(R.id.ProductLL)
         closeAR = findViewById<ImageButton?>(R.id.closeRec).apply {
             setOnClickListener {
                 val intent = Intent(this@ARActivity2, ContextActivity::class.java)
@@ -226,6 +258,9 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             setOnClickListener {
                 productCardView.isGone = true
             }
+        }
+        productvar = findViewById<Button?>(R.id.colourKT).apply {
+
         }
     }
 
@@ -320,6 +355,10 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         database.getReference("user").child(auth.uid.toString()).child("cart").addValueEventListener(cartListener)
 
         productCardView.isGone = false
+        if (model.PKM.varianceList!!.size>1)
+        {
+            productvar.visibility = View.VISIBLE
+        }
         productKotlinName.setText(model.PKM.name)
         productKotlinPrice.setText("RM"+model.PKM.price)
         productKotlinColour.setText(model.PKM.colour)
@@ -421,6 +460,46 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         }
         val model = models[modelIndex]
         modelIndex = (modelIndex + 1) % models.size
+        modelNode = ArModelNode(model.placementMode).apply {
+            applyPoseRotation = model.applyPoseRotation
+            name = model.name
+            loadModelGlbAsync(
+                glbFileLocation = model.fileLocation,
+                autoAnimate = true,
+                scaleToUnits = model.scaleUnits,
+                // Place the model origin at the bottom center
+                centerOrigin = Position(y = -1.0f),
+            ) {
+                sceneView.planeRenderer.isVisible = true
+                isLoading = false
+            }
+            onAnchorChanged = { anchor ->
+                placeModelButton.isGone = anchor != null
+                Log.w("AR TEST","onAnchor")
+            }
+            onHitResult = { node, _ ->
+                placeModelButton.isGone = !node.isTracking
+                Log.w("AR TEST","onHit")
+            }
+            onTap = { motion,render ->
+                productAddToCart.setText("Add to Cart")
+                productAddToCart.isClickable=true
+                getProductInfo(model)
+                Log.w("AR TEST","onTap")
+            }
+        }
+        sceneView.addChild(modelNode!!)
+        // Select the model node by default (the model node is also selected on tap)
+        sceneView.selectedNode = modelNode
+    }
+
+    fun newModelNode2(v: View) {
+        isLoading = true
+        modelNode?.takeIf { !it.isAnchored }?.let {
+            sceneView.removeChild(it)
+            it.destroy()
+        }
+        val model = models[v.contentDescription.toString().toInt()]
         modelNode = ArModelNode(model.placementMode).apply {
             applyPoseRotation = model.applyPoseRotation
             name = model.name

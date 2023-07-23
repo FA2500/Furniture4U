@@ -58,6 +58,12 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
 
+    //COLOR
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
+    implementation "com.github.kittinunf.fuel:fuel:2.3.1"
+    implementation "com.github.kittinunf.fuel:fuel-android:2.3.1"
+    //COLOR
+
 
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"

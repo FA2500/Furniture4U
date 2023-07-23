@@ -4,16 +4,53 @@ import android.app.Activity
 import android.graphics.Color
 import android.media.Image
 import android.util.Log
+import com.github.kittinunf.fuel.Fuel
 import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.vision.v1.*
 import com.google.protobuf.ByteString
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import my.fa250.furniture4u.UserContextInfo
 import my.fa250.furniture4u.ar.helper.SnackbarHelper
 import my.fa250.furniture4u.ml.ContextActivity
 import my.fa250.furniture4u.ml.classification.utils.ImageUtils
 import my.fa250.furniture4u.ml.classification.utils.ImageUtils.toByteArray
+import my.fa250.furniture4u.model.ColorResponse
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import com.google.cloud.vision.v1.Image as GCVImage
 
+@Serializable
+data class ColorResponse(
+    val hex: Hex,
+    val rgb: RGB
+)
+
+@Serializable
+data class Hex(
+    val value: String,
+    val clean: String,
+    val contrast: String
+)
+
+@Serializable
+data class RGB(
+    val fraction: Fraction,
+    val r: Int,
+    val g: Int,
+    val b: Int
+)
+
+@Serializable
+data class Fraction(
+    val r: Float,
+    val g: Float,
+    val b: Float
+)
 
 class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(activity) {
     companion object {
@@ -24,14 +61,15 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
 
      val mColors = hashMapOf(
          "red" to Color.rgb(255, 0, 0),
-         "orange" to Color.rgb(255, 104, 31),
+         "orange" to Color.rgb(255, 128, 0),
          "yellow" to Color.rgb(255, 255, 0),
          "green" to Color.rgb(0, 255, 0),
          "blue" to Color.rgb(0, 0, 255),
-         "purple" to Color.rgb(36, 10, 64),
+         "purple" to Color.rgb(127, 10, 255),
          "black" to Color.rgb(0, 0, 0),
          "white" to Color.rgb(255, 255, 255),
-         /*"pink" to Color.rgb(255, 192, 203),
+         /*"brown" to Color.rgb(101,67,33),
+         "pink" to Color.rgb(255, 192, 203),
          "gray" to Color.rgb(128, 128, 128),
          "cream" to Color.rgb(255, 253, 208)*/
      )
@@ -74,12 +112,9 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
              val b = color.blue.toFloat() / 255
              val score = it.score
              val pixelFraction = it.pixelFraction
-             val colors = Color.rgb(r,g,b)
              getMostCol(imagePropertiesResult.dominantColors.colorsList)
              DetectedObjectResult(score, "(${r}, ${g}, ${b}, ${pixelFraction})",Pair(0,0) )
          }
-
-
      }
 
      private fun getMostCol(ColorArray: List<ColorInfo>): String {
@@ -101,7 +136,6 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
          UserContextInfo.setPrimaryColours(getBestMatchingColorName(colors)).toString()
          Log.d("USERCONTEXT","Furniture "+UserContextInfo.getPrimaryColours())
          return ColorArray.get(mostCounter).allFields.toString()
-
      }
 
      private fun getBestMatchingColorName(pixelColor: Int): String? {
@@ -150,3 +184,5 @@ class GoogleCloudVisionImage(val activity: ContextActivity) : ObjectDetector(act
     private fun showSnackbar(message: String): Unit =
         activity.view.snackbarHelper.showError(activity, message)
  }
+
+
