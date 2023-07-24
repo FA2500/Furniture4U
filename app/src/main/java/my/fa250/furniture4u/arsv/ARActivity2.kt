@@ -1,6 +1,7 @@
 package my.fa250.furniture4u.arsv;
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Intent
@@ -19,9 +20,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintSet.Layout
-import androidx.constraintlayout.widget.ConstraintSet.VISIBLE
-import androidx.constraintlayout.widget.ConstraintSet.WRAP_CONTENT
 import androidx.core.app.NotificationCompat
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isGone
@@ -35,6 +33,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import io.github.sceneview.SceneView
 import io.github.sceneview.ar.ArSceneView
 import io.github.sceneview.ar.getDescription
 import io.github.sceneview.ar.node.ArModelNode
@@ -51,6 +50,7 @@ import my.fa250.furniture4u.model.ProductKotlinModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+
 
 class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
 
@@ -69,6 +69,8 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var closeAR: ImageButton
     lateinit var closeMenu: ImageButton
     lateinit var ll: LinearLayout
+    lateinit var productRemove: Button
+
     var indTemp = 0;
     var llm = LinearLayout.LayoutParams(150, 150)
 
@@ -260,7 +262,23 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             }
         }
         productvar = findViewById<Button?>(R.id.colourKT).apply {
-
+            setOnClickListener {
+                showVarianceList()
+            }
+        }
+        productRemove = findViewById<Button?>(R.id.removeKT).apply {
+            setOnClickListener {
+                //test
+                /*modelNode?.let {
+                    sceneView.removeChild(it)
+                    it.destroy()
+                    productCardView.isGone = true
+                }*/
+                sceneView.selectedNode?.let {
+                    sceneView.removeChild(it)
+                    productCardView.isGone = true
+                }
+            }
         }
     }
 
@@ -406,6 +424,59 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         cartMap["isInCart"] = true
     }
 
+    fun showVarianceList()
+    {
+        val varList = cartMap["variance"] as MutableList<String>
+        val charSequenceArray = varList.map { it as CharSequence }.toTypedArray()
+        val builder = AlertDialog.Builder(this@ARActivity2)
+        builder.setTitle("Choose Variance Model")
+        builder.setItems(
+            charSequenceArray
+        ) { dialog, which ->
+            addMoreVar(charSequenceArray[which])
+        }
+        builder.create().show()
+    }
+
+    fun addMoreVar(a: CharSequence)
+    {
+        for( k in models.indices)
+        {
+            if(models[k].name == cartMap["productName"])
+            {
+                val mode = models[k]
+                models.removeAt(k)
+                ll.removeViewAt(k)
+                for(l in categoryModelList.indices)
+                {
+                    if(categoryModelList.get(l).name == mode.name)
+                    {
+                        val vl = categoryModelList.get(l).varianceList!![capitalize(a.toString())] as Map<*, *>
+                        val vla = vl["url_3d"]
+                        val list: MutableList<String> = vl["img_url"] as MutableList<String>
+                        categoryModelList.get(l).colour = capitalize(a.toString())
+                        models.add(k,Model(
+                            categoryModelList.get(l).name.toString(),
+                            fileLocation = vla as String,
+                            scaleUnits = 1f,
+                            placementMode = if(categoryModelList.get(l).type=="Clock") PlacementMode.PLANE_VERTICAL else PlacementMode.PLANE_HORIZONTAL,
+                            applyPoseRotation = true,
+                            PKM = categoryModelList.get(l),
+                        ))
+                        val a = ImageButton(this@ARActivity2)
+                        a.contentDescription = k.toString()
+                        Glide.with(this@ARActivity2).load(list[0]).centerCrop()
+                            .into(a)
+                        a.setOnClickListener {
+                            newModelNode2(a)
+                        }
+                        ll.addView(a,llm)
+                    }
+                }
+            }
+        }
+    }
+
     fun addToCartKotlin()
     {
         database.getReference("user/" + auth.currentUser!!.uid + "/cart")
@@ -495,10 +566,6 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
 
     fun newModelNode2(v: View) {
         isLoading = true
-        modelNode?.takeIf { !it.isAnchored }?.let {
-            sceneView.removeChild(it)
-            it.destroy()
-        }
         val model = models[v.contentDescription.toString().toInt()]
         modelNode = ArModelNode(model.placementMode).apply {
             applyPoseRotation = model.applyPoseRotation
@@ -520,12 +587,14 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             onHitResult = { node, _ ->
                 placeModelButton.isGone = !node.isTracking
                 Log.w("AR TEST","onHit")
+                sceneView.selectedNode = node
             }
             onTap = { motion,render ->
                 productAddToCart.setText("Add to Cart")
                 productAddToCart.isClickable=true
                 getProductInfo(model)
                 Log.w("AR TEST","onTap")
+
             }
         }
         sceneView.addChild(modelNode!!)

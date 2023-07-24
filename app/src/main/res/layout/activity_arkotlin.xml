@@ -160,6 +160,14 @@
                 android:layout_height="wrap_content"
                 android:text="Checkout" />
 
+            <Button
+                android:id="@+id/removeKT"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FF0000"
+                android:text="Remove"
+                app:icon="@drawable/baseline_delete_24" />
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
