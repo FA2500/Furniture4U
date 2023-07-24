@@ -85,10 +85,21 @@ public class EmailRegisterActivity extends AppCompatActivity {
         {
             Toast.makeText(this, "Password is not the same as Confirm Password", Toast.LENGTH_SHORT).show();
         }
+        else if(ETPhone.getText().toString().length() != 10 && ETPhone.getText().toString().length() != 11)
+        {
+            Toast.makeText(this, "Phone Field must have 10 or 11 digits only", Toast.LENGTH_SHORT).show();
+        }
+        else if(ETPhone.getText().toString().charAt(0) != '0')
+        {
+            Toast.makeText(this, "Phone Field must start with 0", Toast.LENGTH_SHORT).show();
+        }
+        else if(ETPass.getText().length() < 6)
+        {
+            Toast.makeText(this, "Password length must be more than 6", Toast.LENGTH_SHORT).show();
+        }
         else
         {
             createEmailAccount();
-
         }
     }
 
@@ -133,6 +144,7 @@ public class EmailRegisterActivity extends AppCompatActivity {
         UserInfo.setName(ETName.getText().toString());
         UserInfo.setEmail(ETEmail.getText().toString());
         UserInfo.setPhone(ETPhone.getText().toString());
+        UserInfo.setProvider("Email");
         UserInfo.setRole("Customer");
 
         Map<String, Object> userinfo = new HashMap<>();

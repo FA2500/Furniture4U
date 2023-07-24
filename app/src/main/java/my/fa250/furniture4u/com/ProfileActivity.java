@@ -30,19 +30,17 @@ import java.util.List;
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.UserInfo;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
-import my.fa250.furniture4u.comAdapter.CartAdapter;
 import my.fa250.furniture4u.comAdapter.ProfileAdapter;
 import my.fa250.furniture4u.ml.ContextActivity;
-import my.fa250.furniture4u.model.CartModel;
 import my.fa250.furniture4u.model.ProfileModel;
 
 public class ProfileActivity extends AppCompatActivity {
 
     //UI
     Toolbar toolbar;
-    TextView usernameTV,registeredTV;
+    TextView usernameTV,registeredTV, textCartItemCount;
 
-    Button AccountSettingBtn, FavouriteBtn, HelpBtn, LogoutBtn;
+    Button AccountSettingBtn, AccountBtn, HelpBtn, LogoutBtn;
 
     RecyclerView recyclerView;
     List<ProfileModel> profileModelList;
@@ -51,7 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
-
+    int cartIndex = 0;
 
     //counter
     private int payCounter = 0;
@@ -96,14 +94,21 @@ public class ProfileActivity extends AppCompatActivity {
 
         //Button
         AccountSettingBtn = findViewById(R.id.pro_setting_btn);
-        FavouriteBtn = findViewById(R.id.pro_fav_btn);
-        HelpBtn = findViewById(R.id.pro_help_btn);
+        AccountBtn = findViewById(R.id.pro_add_btn);
         LogoutBtn = findViewById(R.id.pro_logout_btn);
 
         AccountSettingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                //Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(ProfileActivity.this, UIProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+        AccountBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, AddressActivity.class);
                 startActivity(intent);
             }
         });
@@ -158,9 +163,30 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("ONRESUME","ONRESUME");
+        cartIndex=0;
+        setupBadge();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.menu_cart);
+
+        View actionView = menuItem.getActionView();
+        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.action_profile);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -214,5 +240,44 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return true;
+    }
+
+    private void setupBadge() {
+
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
+                    Log.w("cartIndex","CART = "+cartIndex);
+                    cartIndex++;
+                    if(textCartItemCount == null)
+                    {
+                        cartIndex = 0;
+                        setupBadge();
+                        break;
+                    }
+                    if (textCartItemCount != null) {
+                        if (cartIndex == 0) {
+                            if (textCartItemCount.getVisibility() != View.GONE) {
+                                textCartItemCount.setVisibility(View.GONE);
+                            }
+                        } else {
+                            textCartItemCount.setText(String.valueOf(cartIndex));
+                            if (textCartItemCount.getVisibility() != View.VISIBLE) {
+                                textCartItemCount.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading cart data", error.toException());
+            }
+        });
+
+
     }
 }

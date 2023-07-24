@@ -157,12 +157,16 @@ public class PaymentActivity extends AppCompatActivity {
                                     }
                                     Log.d("GOTO","SUCCESS");
                                     Intent intent = new Intent(PaymentActivity.this, PaymentStatus.class);
+                                    intent.putExtra("status","success");
                                     startActivity(intent);
                                     //nav( "True",url);
                                 }
-                                else if(url.contains("failed"))
+                                else if(url.contains("redirect?billplz[id]"))
                                 {
                                     Log.d("GOTO","FAILED");
+                                    Intent intent = new Intent(PaymentActivity.this, PaymentStatus.class);
+                                    intent.putExtra("status","failed");
+                                    startActivity(intent);
                                     //nav( "False",url);
                                 }
                             }

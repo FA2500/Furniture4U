@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -18,7 +20,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.ar.core.ArCoreApk;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +45,9 @@ public class NotificationActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     List<NotificationModel> notificationModels;
     private NotificationAdapter notificationAdapter;
+
+    TextView textCartItemCount;
+    int cartIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +81,14 @@ public class NotificationActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("ONRESUME","ONRESUME");
+        cartIndex=0;
+        setupBadge();
+    }
+
     private void getData()
     {
         database.getReference("user").child(mAuth.getUid()).child("notification").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -97,6 +112,19 @@ public class NotificationActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.menu_cart);
+
+        View actionView = menuItem.getActionView();
+        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NotificationActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.action_notifications);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -150,5 +178,44 @@ public class NotificationActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return true;
+    }
+
+    private void setupBadge() {
+
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
+                    Log.w("cartIndex","CART = "+cartIndex);
+                    cartIndex++;
+                    if(textCartItemCount == null)
+                    {
+                        cartIndex = 0;
+                        setupBadge();
+                        break;
+                    }
+                    if (textCartItemCount != null) {
+                        if (cartIndex == 0) {
+                            if (textCartItemCount.getVisibility() != View.GONE) {
+                                textCartItemCount.setVisibility(View.GONE);
+                            }
+                        } else {
+                            textCartItemCount.setText(String.valueOf(cartIndex));
+                            if (textCartItemCount.getVisibility() != View.VISIBLE) {
+                                textCartItemCount.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading cart data", error.toException());
+            }
+        });
+
+
     }
 }

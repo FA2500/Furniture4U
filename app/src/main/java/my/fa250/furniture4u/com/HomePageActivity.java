@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import my.fa250.furniture4u.UserInfo;
 import my.fa250.furniture4u.auth.MultipleSignInActivity;
 import my.fa250.furniture4u.comAdapter.CategoryAdapter;
 import my.fa250.furniture4u.comAdapter.PopAdapter;
@@ -95,19 +96,22 @@ public class HomePageActivity extends AppCompatActivity {
     Toolbar toolbar;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
+    int cartIndex = 0;
+
 
     //Database
     //FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
     //TextView
-    TextView productShowAll, popShowAll;
+    TextView productShowAll, popShowAll,textCartItemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         initUI();
+        checkUserData();
         readData();
         askNotificationPermission();
     }
@@ -384,6 +388,15 @@ public class HomePageActivity extends AppCompatActivity {
 
     }
 
+    private void checkUserData()
+    {
+        if(UserInfo.getEmail() == null || UserInfo.getName() == null || UserInfo.getPhone() == null )
+        {
+            Intent intent = new Intent(HomePageActivity.this, UIEditProfileActivity.class );
+            startActivity(intent);
+        }
+    }
+
     public void goToSearch(View v)
     {
         Intent intent = new Intent(this, SearchActivity.class);
@@ -474,6 +487,18 @@ public class HomePageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+
+        final MenuItem menuItem = menu.findItem(R.id.menu_cart);
+
+        View actionView = menuItem.getActionView();
+        textCartItemCount = (TextView) actionView.findViewById(R.id.cart_badge);
+        actionView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomePageActivity.this, CartActivity.class);
+                startActivity(intent);
+            }
+        });
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setSelectedItemId(R.id.action_home);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
@@ -514,6 +539,7 @@ public class HomePageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
     {
         int id = item.getItemId();
+        Log.d("MENU",id+" GO TO CART");
         /*if(id == R.id.menu_chat)
         {
             //mAuth.signOut();
@@ -523,11 +549,60 @@ public class HomePageActivity extends AppCompatActivity {
         }*/
         if(id==R.id.menu_cart)
         {
+            Log.d("MENU","GO TO CART");
             Intent intent = new Intent(HomePageActivity.this, CartActivity.class);
             startActivity(intent);
         }
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("ONRESUME","ONRESUME");
+        cartIndex=0;
+        setupBadge();
+    }
 
+
+
+
+    private void setupBadge() {
+
+        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot dataSnapshot: snapshot.getChildren())
+                {
+                    Log.w("cartIndex","CART = "+cartIndex);
+                    cartIndex++;
+                    if(textCartItemCount == null)
+                    {
+                        cartIndex = 0;
+                        setupBadge();
+                        break;
+                    }
+                    if (textCartItemCount != null) {
+                        if (cartIndex == 0) {
+                            if (textCartItemCount.getVisibility() != View.GONE) {
+                                textCartItemCount.setVisibility(View.GONE);
+                            }
+                        } else {
+                            textCartItemCount.setText(String.valueOf(cartIndex));
+                            if (textCartItemCount.getVisibility() != View.VISIBLE) {
+                                textCartItemCount.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("Database", "Error reading cart data", error.toException());
+            }
+        });
+
+
+    }
 }

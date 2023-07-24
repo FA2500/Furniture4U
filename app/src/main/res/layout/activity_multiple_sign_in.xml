@@ -7,7 +7,7 @@
     tools:context="my.fa250.furniture4u.auth.MultipleSignInActivity">
 
     <Button
-        android:id="@+id/button22"
+        android:id="@+id/MEmailLoginBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
@@ -15,7 +15,6 @@
         android:layout_marginEnd="160dp"
         android:drawableLeft="@drawable/baseline_login_24"
         android:drawableTint="#FFFFFF"
-        android:onClick="BtnLoginEmail"
         android:text="Login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,9 +36,7 @@
         android:id="@+id/editTextTextEmailAddress3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="101dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="100dp"
         android:background="@android:drawable/editbox_background"
         android:ems="10"
         android:hint="Email"
@@ -53,9 +50,7 @@
         android:id="@+id/editTextTextPassword2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="99dp"
         android:layout_marginTop="30dp"
-        android:layout_marginEnd="102dp"
         android:background="@android:drawable/editbox_background"
         android:ems="10"
         android:hint="Password"
@@ -148,7 +143,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button22" />
+        app:layout_constraintTop_toBottomOf="@+id/MEmailLoginBtn" />
 
     <com.facebook.login.widget.LoginButton
         android:id="@+id/login_button"

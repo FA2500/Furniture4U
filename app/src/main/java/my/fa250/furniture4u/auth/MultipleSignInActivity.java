@@ -9,6 +9,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -81,6 +82,8 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private LoginButton loginButton;
 
+    private Button EmailBtn;
+
     //FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
 
@@ -140,8 +143,15 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     private void initUI()
     {
-        emailET = findViewById(R.id.editTextTextEmailAddress);
-        passET = findViewById(R.id.editTextTextPassword);
+        emailET = findViewById(R.id.editTextTextEmailAddress3);
+        passET = findViewById(R.id.editTextTextPassword2);
+        EmailBtn = findViewById(R.id.MEmailLoginBtn);
+        EmailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BtnLoginEmail();
+            }
+        });
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions(Arrays.asList("email","public_profile","user_friends"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -494,10 +504,7 @@ public class MultipleSignInActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<String> task) {
                 FCMtoken = task.getResult();
-                UserInfo.setName(user.getDisplayName());
-                UserInfo.setRole("Customer");
-                UserInfo.setToken(FCMtoken);
-                UserInfo.setProvider("Google");
+
 
                 Map<String, Object> userinfo = new HashMap<>();
                 userinfo.put("name", user.getDisplayName());
@@ -514,6 +521,11 @@ public class MultipleSignInActivity extends AppCompatActivity {
                                 if(dataSnapshot.exists())
                                 {
                                     Log.d("Database", "Data successfully retrieved!");
+                                    UserInfo.setName(dataSnapshot.child("name").getValue(String.class));
+                                    UserInfo.setRole("Customer");
+                                    UserInfo.setToken(FCMtoken);
+                                    UserInfo.setProvider("Google");
+                                    UserInfo.setPhone(dataSnapshot.child("phone").getValue(String.class));
                                     Log.d("Database", user.getProviderData().toString());
                                     Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
                                     startActivity(intent);
@@ -545,34 +557,51 @@ public class MultipleSignInActivity extends AppCompatActivity {
 
     }
 
-    public void BtnLoginEmail(View v)
+    public void BtnLoginEmail()
     {
-        mAuth.signInWithEmailAndPassword(emailET.getText().toString(),passET.getText().toString())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        user = mAuth.getCurrentUser();
-                        database.getReference("user").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot.exists()) {
-                                    UserInfo.setName(snapshot.child("name").getValue(String.class));
-                                    UserInfo.setEmail(snapshot.child("email").getValue(String.class));
-                                    UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
-                                    UserInfo.setRole("Customer");
-                                    Log.d("Database", "Data successfully retrieved!");
-                                    Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
-                                    startActivity(intent);
-                                } else {
+        if(emailET.getText().toString().isEmpty())
+        {
+            Toast.makeText(this, "Email field is empty", Toast.LENGTH_SHORT).show();
+        }
+        else if(passET.getText().toString().isEmpty())
+        {
+            Toast.makeText(this, "Password field is empty", Toast.LENGTH_SHORT).show();
+        }
+        else if(passET.getText().toString().length() < 6)
+        {
+            Toast.makeText(this, "Password length must be more than 6", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            mAuth.signInWithEmailAndPassword(emailET.getText().toString(),passET.getText().toString())
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            user = mAuth.getCurrentUser();
+                            database.getReference("user").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        UserInfo.setName(snapshot.child("name").getValue(String.class));
+                                        UserInfo.setEmail(snapshot.child("email").getValue(String.class));
+                                        UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
+                                        UserInfo.setProvider(snapshot.child("provider").getValue(String.class));
+                                        UserInfo.setRole("Customer");
+                                        Log.d("Database", "Data successfully retrieved!");
+                                        Intent intent = new Intent(MultipleSignInActivity.this, HomePageActivity.class);
+                                        startActivity(intent);
+                                    } else {
+                                        Toast.makeText(MultipleSignInActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
                                     Toast.makeText(MultipleSignInActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
                                 }
-                            }
+                            });
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Toast.makeText(MultipleSignInActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();
-                            }
-                        });
 
 
                                 /*db.collection("user").document(user.getUid())
@@ -592,9 +621,9 @@ public class MultipleSignInActivity extends AppCompatActivity {
                                         });*/
 
 
-                    }
-                });
 
+                });
+        }
 
     }
 

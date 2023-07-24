@@ -31,6 +31,15 @@
         android:theme="@style/Theme.Furniture4U"
         tools:targetApi="31">
         <activity
+            android:name=".com.EditAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".com.UIEditProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".com.UIProfileActivity"
+            android:exported="false" />
+        <activity
             android:name=".com.InvoiceActivity"
             android:exported="false" />
         <activity

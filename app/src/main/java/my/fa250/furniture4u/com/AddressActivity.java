@@ -79,13 +79,30 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if(total <= 0)
+                {
+                    Intent intent = new Intent(AddressActivity.this,ProfileActivity.class);
+                    startActivity(intent);
+                }
+                else if(total > 0)
+                {
+                    Intent intent = new Intent(AddressActivity.this,CartActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {
+                    finish();
+                }
             }
         });
 
         addAddress = findViewById(R.id.add_address_btn);
         recyclerView = findViewById(R.id.address_recycler);
         paymentBtn = findViewById(R.id.payment_btn);
+        if(total <= 0)
+        {
+            paymentBtn.setVisibility(View.GONE);
+        }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         addressModelList = new ArrayList<>();
@@ -130,6 +147,7 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
                 {
                     AddressModel addressModel = addressSnapshot.getValue(AddressModel.class);
                     addressModel.setID(addressSnapshot.getKey());
+                    addressModel.setTotal(total);
                     addressModelList.add(addressModel);
                     addressAdapter.notifyDataSetChanged();
                 }

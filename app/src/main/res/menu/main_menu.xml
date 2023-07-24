@@ -13,6 +13,7 @@
         android:id="@+id/menu_cart"
         android:title="My Cart"
         android:icon="@drawable/cart"
+        app:actionLayout="@layout/custom_cart_layout"
         app:showAsAction="always"/>
 
     <!--<item

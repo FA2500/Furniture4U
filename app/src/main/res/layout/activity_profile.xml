@@ -153,23 +153,14 @@
                         app:icon="@drawable/baseline_person_24" />
 
                     <Button
-                        android:id="@+id/pro_fav_btn"
+                        android:id="@+id/pro_add_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:insetTop="2dp"
                         android:insetBottom="2dp"
                         android:pointerIcon="none"
-                        android:text="Favourite Items"
-                        app:icon="@drawable/baseline_favorite_border_24" />
-
-                    <Button
-                        android:id="@+id/pro_help_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:insetTop="2dp"
-                        android:insetBottom="2dp"
-                        android:text="Help Center"
-                        app:icon="@drawable/baseline_help_outline_24" />
+                        android:text="ACCOUNT ADDRESS"
+                        app:icon="@drawable/baseline_location_on_24" />
 
                     <Button
                         android:id="@+id/pro_logout_btn"

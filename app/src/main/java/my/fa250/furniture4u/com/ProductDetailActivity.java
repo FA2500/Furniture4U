@@ -387,8 +387,6 @@ public class ProductDetailActivity extends AppCompatActivity {
                     buyNow.setEnabled(false);
                 }
             }
-
-
             baseprice = cartModel.getProductPrice();
             img_url = cartModel.getImg_url();
             isInCart = cartModel.getIsInCart();
@@ -406,10 +404,54 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void varianceCheckCart(String varName)
+    {
+        isInCart = false;
+        database.getReference("user").child(mAuth.getUid()).child("cart").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for(DataSnapshot dataSnapshot: task.getResult().getChildren())
+                    {
+                        CartModel cm = dataSnapshot.getValue(CartModel.class);
+                        if(Objects.equals(cm.getProductName(), name.getText().toString()) && Objects.equals(cm.getColour(), varName))
+                        {
+                            isInCart = true;
+                            addToCart.setText("View in Cart");
+                            addToCart.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
+                            break;
+                        }
+                    }
+                    if(!isInCart)
+                    {
+                        addToCart.setText("ADD TO CART");
+                        addToCart.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addToCart();
+                            }
+                        });
+                    }
+                }
+            }
+        });
+
+
+    }
+
     private void changeImage(String name)
     {
         varianceChosen = name;
         productColour= name;
+        totalQuantity = 1;
+        quantity.setText(String.valueOf(totalQuantity));
 
         if(productModel != null)
         {
@@ -483,7 +525,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void getInCart(String productName)
     {
-        database.getReference("user").child(mAuth.getUid()).child("cart").limitToFirst(1).get()
+        database.getReference("user").child(mAuth.getUid()).child("cart").get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -732,6 +774,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             Log.d("VARIANCE BROADCAST", "item "+itemName+" from "+btnID);
 
             changeImage(itemName);
+            varianceCheckCart(itemName);
 
             addToCart.setClickable(true);
             addToCart.setEnabled(true);
@@ -739,6 +782,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             buyNow.setEnabled(true);
 
             price.setText(DF.format(intent.getDoubleExtra("itemPrice",0.00)));
+            baseprice = intent.getDoubleExtra("itemPrice",0.00);
             Intent intent2 = new Intent("VarianceButtonClick2");
             intent2.putExtra("btnName",itemName);
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent2);

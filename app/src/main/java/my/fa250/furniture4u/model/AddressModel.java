@@ -12,6 +12,8 @@ public class AddressModel {
     String state ;
     boolean isPrimary;
 
+    double total;
+
     public AddressModel() {
     }
 
@@ -84,5 +86,13 @@ public class AddressModel {
 
     public void setisPrimary(boolean primary) {
         isPrimary = primary;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }

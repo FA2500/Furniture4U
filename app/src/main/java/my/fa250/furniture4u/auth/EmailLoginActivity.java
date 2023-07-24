@@ -66,6 +66,7 @@ public class EmailLoginActivity extends AppCompatActivity {
                                             UserInfo.setName(snapshot.child("name").getValue(String.class));
                                             UserInfo.setEmail(snapshot.child("email").getValue(String.class));
                                             UserInfo.setPhone(snapshot.child("phone").getValue(String.class));
+                                            UserInfo.setProvider(snapshot.child("provider").getValue(String.class));
                                             UserInfo.setRole("Customer");
                                             Log.d("Database", "Data successfully retrieved!");
                                             Intent intent = new Intent(EmailLoginActivity.this, HomePageActivity.class);
