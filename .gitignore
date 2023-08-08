@@ -14,3 +14,7 @@
 .cxx
 local.properties
 /vision/firebaseCLI.exe
+*.apk
+*.apk
+app/release/app-release.apk
+app/release/app-release.apk

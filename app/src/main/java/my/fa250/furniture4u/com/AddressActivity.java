@@ -106,7 +106,7 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         addressModelList = new ArrayList<>();
-        addressAdapter = new AddressAdapter(this, addressModelList, this);
+        addressAdapter = new AddressAdapter(this, addressModelList, this, total);
         recyclerView.setAdapter(addressAdapter);
 
         paymentBtn.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +133,7 @@ public class AddressActivity extends AppCompatActivity implements Serializable, 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AddressActivity.this, AddAddressActivity.class);
+                intent.putExtra("total",total);
                 startActivity(intent);
             }
         });

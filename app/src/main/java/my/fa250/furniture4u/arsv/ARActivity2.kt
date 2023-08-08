@@ -4,16 +4,19 @@ import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -26,6 +29,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.ar.core.Config
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -53,7 +57,6 @@ import java.util.Locale
 
 
 class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
-
     lateinit var sceneView: ArSceneView
     lateinit var loadingView: View
     lateinit var statusText: TextView
@@ -62,6 +65,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var productCardView: CardView
     lateinit var productKotlinName: TextView
     lateinit var productKotlinPrice: TextView
+    lateinit var nodestatus: TextView
     lateinit var productAddToCart: Button
     lateinit var productCheckout: Button
     lateinit var productKotlinColour: TextView
@@ -119,6 +123,8 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         {
             roomColour = "Grey"
         }
+
+        createCustomAlertDialog(this@ARActivity2);
 
         database.getReference("product").addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot)
@@ -274,10 +280,19 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                     it.destroy()
                     productCardView.isGone = true
                 }*/
-                sceneView.selectedNode?.let {
-                    sceneView.removeChild(it)
-                    productCardView.isGone = true
+                if(sceneView.selectedNode?.isSelected == true)
+                {
+                    sceneView.selectedNode?.let {
+                        sceneView.removeChild(it)
+                        productCardView.isGone = true
+                        nodestatus.text = "Current selected model = None"
+                    }
                 }
+                else
+                {
+                    Toast.makeText(this@ARActivity2,"Drag the model a bit to delete it and reclick the button",Toast.LENGTH_SHORT).show()
+                }
+
             }
         }
     }
@@ -299,8 +314,14 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             title = ""
 
         })
+        nodestatus = findViewById(R.id.multiNodeStat)
         statusText = findViewById(R.id.statusText)
         sceneView = findViewById<ArSceneView?>(R.id.sceneView).apply {
+            lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
+            depthEnabled = true
+            cameraNode.isScaleEditable = false
+            instantPlacementEnabled = true
+
             onArTrackingFailureChanged = { reason ->
                 statusText.text = reason?.getDescription(context)
                 statusText.isGone = reason == null
@@ -438,6 +459,29 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         builder.create().show()
     }
 
+    fun createCustomAlertDialog(context: Context) {
+        val dialogView: View = LayoutInflater.from(context).inflate(R.layout.context_alert_dialog_layout, null)
+
+        val imageView1: ImageView = dialogView.findViewById(R.id.onDragIV)
+        val textView1: TextView = dialogView.findViewById(R.id.onDragTV)
+
+        val imageView2: ImageView = dialogView.findViewById(R.id.onTouchIV)
+        val textView2: TextView = dialogView.findViewById(R.id.onTouchTV)
+
+        val imageView3: ImageView = dialogView.findViewById(R.id.onRotateIV)
+        val textView3: TextView = dialogView.findViewById(R.id.onRotateTV)
+
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setView(dialogView)
+        alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
     fun addMoreVar(a: CharSequence)
     {
         for( k in models.indices)
@@ -525,13 +569,15 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
 
     fun newModelNode() {
         isLoading = true
-        modelNode?.takeIf { !it.isAnchored }?.let {
+        modelNode?.takeIf { !it.isAnchored || it.isAnchored }?.let {
             sceneView.removeChild(it)
             it.destroy()
         }
         val model = models[modelIndex]
         modelIndex = (modelIndex + 1) % models.size
-        modelNode = ArModelNode(model.placementMode).apply {
+        modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
+            isSmoothPoseEnable = true
+            isScaleEditable = false
             applyPoseRotation = model.applyPoseRotation
             name = model.name
             loadModelGlbAsync(
@@ -547,49 +593,63 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             onAnchorChanged = { anchor ->
                 placeModelButton.isGone = anchor != null
                 Log.w("AR TEST","onAnchor")
-            }
-            onHitResult = { node, _ ->
-                placeModelButton.isGone = !node.isTracking
-                Log.w("AR TEST","onHit")
-            }
-            onTap = { motion,render ->
-                productAddToCart.setText("Add to Cart")
-                productAddToCart.isClickable=true
-                getProductInfo(model)
-                Log.w("AR TEST","onTap")
-            }
-        }
-        sceneView.addChild(modelNode!!)
-        // Select the model node by default (the model node is also selected on tap)
-        sceneView.selectedNode = modelNode
-    }
-
-    fun newModelNode2(v: View) {
-        isLoading = true
-        val model = models[v.contentDescription.toString().toInt()]
-        modelNode = ArModelNode(model.placementMode).apply {
-            applyPoseRotation = model.applyPoseRotation
-            name = model.name
-            loadModelGlbAsync(
-                glbFileLocation = model.fileLocation,
-                autoAnimate = true,
-                scaleToUnits = model.scaleUnits,
-                // Place the model origin at the bottom center
-                centerOrigin = Position(y = -1.0f),
-            ) {
-                sceneView.planeRenderer.isVisible = true
-                isLoading = false
-            }
-            onAnchorChanged = { anchor ->
-                placeModelButton.isGone = anchor != null
-                Log.w("AR TEST","onAnchor")
+                sceneView.planeRenderer.isVisible = anchor == null
             }
             onHitResult = { node, _ ->
                 placeModelButton.isGone = !node.isTracking
                 Log.w("AR TEST","onHit")
                 sceneView.selectedNode = node
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
             }
             onTap = { motion,render ->
+                sceneView.selectedNode = this
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+                productAddToCart.setText("Add to Cart")
+                productAddToCart.isClickable=true
+                getProductInfo(model)
+                Log.w("AR TEST","onTap")
+            }
+            //onRotate
+        }
+        sceneView.addChild(modelNode!!)
+        // Select the model node by default (the model node is also selected on tap)
+        sceneView.selectedNode = modelNode
+        nodestatus.isGone=false;
+        nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+    }
+
+    fun newModelNode2(v: View) {
+        isLoading = true
+        val model = models[v.contentDescription.toString().toInt()]
+        modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
+            isSmoothPoseEnable = true
+            isScaleEditable = false
+            applyPoseRotation = model.applyPoseRotation
+            name = model.name
+            loadModelGlbAsync(
+                glbFileLocation = model.fileLocation,
+                autoAnimate = true,
+                scaleToUnits = model.scaleUnits,
+                // Place the model origin at the bottom center
+                centerOrigin = Position(y = -1.0f),
+            ) {
+                sceneView.planeRenderer.isVisible = true
+                isLoading = false
+            }
+            onAnchorChanged = { anchor ->
+                placeModelButton.isGone = anchor != null
+                Log.w("AR TEST","onAnchor")
+                sceneView.planeRenderer.isVisible = anchor == null
+            }
+            onHitResult = { node, _ ->
+                placeModelButton.isGone = !node.isTracking
+                Log.w("AR TEST","onHit")
+                sceneView.selectedNode = node
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+            }
+            onTap = { motion,render ->
+                sceneView.selectedNode = this
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
                 productAddToCart.setText("Add to Cart")
                 productAddToCart.isClickable=true
                 getProductInfo(model)
@@ -600,6 +660,8 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         sceneView.addChild(modelNode!!)
         // Select the model node by default (the model node is also selected on tap)
         sceneView.selectedNode = modelNode
+        nodestatus.isGone=false;
+        nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
     }
 
 

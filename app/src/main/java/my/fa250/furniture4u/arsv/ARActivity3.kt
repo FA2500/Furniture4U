@@ -1,18 +1,22 @@
 package my.fa250.furniture4u.arsv;
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.Notification
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +27,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.ar.core.Config
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -53,6 +58,7 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
     lateinit var sceneView: ArSceneView
     lateinit var loadingView: View
     lateinit var statusText: TextView
+    lateinit var nodestatus: TextView
     lateinit var placeModelButton: ExtendedFloatingActionButton
     lateinit var newModelButton: ExtendedFloatingActionButton
     lateinit var productCardView: CardView
@@ -94,6 +100,8 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val intent = intent
+
+        createCustomAlertDialog(this@ARActivity3)
 
         val productID = intent.getStringExtra("ID")
         val productColor = intent.getStringExtra("color")
@@ -162,6 +170,7 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
 
     fun initUI()
     {
+        nodestatus = findViewById(R.id.NodeStat)
         productCardView = findViewById<CardView>(R.id.productCardViewKT)
         productKotlinName = findViewById(R.id.productKotlinName)
         productKotlinPrice = findViewById(R.id.productKotlinPrice)
@@ -214,6 +223,11 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
         })
         statusText = findViewById(R.id.statusText)
         sceneView = findViewById<ArSceneView?>(R.id.sceneView).apply {
+            lightEstimationMode = Config.LightEstimationMode.ENVIRONMENTAL_HDR
+            depthEnabled = true
+            cameraNode.isScaleEditable = false
+            instantPlacementEnabled = true
+
             onArTrackingFailureChanged = { reason ->
                 statusText.text = reason?.getDescription(context)
                 statusText.isGone = reason == null
@@ -243,10 +257,10 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
         item.isChecked = !item.isChecked
         modelNode?.detachAnchor()
         modelNode?.placementMode = when (item.itemId) {
-            R.id.menuPlanePlacement -> PlacementMode.PLANE_HORIZONTAL_AND_VERTICAL
+            R.id.menuBestPlacement -> PlacementMode.BEST_AVAILABLE
             R.id.menuInstantPlacement -> PlacementMode.INSTANT
             R.id.menuDepthPlacement -> PlacementMode.DEPTH
-            R.id.menuBestPlacement -> PlacementMode.BEST_AVAILABLE
+            R.id.menuPlanePlacement -> PlacementMode.PLANE_HORIZONTAL_AND_VERTICAL
             else -> PlacementMode.DISABLED
         }
         return super.onOptionsItemSelected(item)
@@ -291,6 +305,27 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
         productKotlinColour.setText(model.PKM.colour)
         productToCart(pkm = model.PKM)
 
+    }
+
+    fun createCustomAlertDialog(context: Context) {
+        val dialogView: View = LayoutInflater.from(context).inflate(R.layout.context_alert_dialog_layout, null)
+
+        val imageView1: ImageView = dialogView.findViewById(R.id.onDragIV)
+        val textView1: TextView = dialogView.findViewById(R.id.onDragTV)
+
+        val imageView2: ImageView = dialogView.findViewById(R.id.onTouchIV)
+        val textView2: TextView = dialogView.findViewById(R.id.onTouchTV)
+
+        val imageView3: ImageView = dialogView.findViewById(R.id.onRotateIV)
+        val textView3: TextView = dialogView.findViewById(R.id.onRotateTV)
+
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setView(dialogView)
+        alertDialogBuilder.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
     fun productToCart(pkm: ProductKotlinModel)
@@ -387,7 +422,9 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
         }
         val model = models[modelIndex]
         modelIndex = (modelIndex + 1) % models.size
-        modelNode = ArModelNode(model.placementMode).apply {
+        modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
+            isSmoothPoseEnable = true
+            isScaleEditable = false
             applyPoseRotation = model.applyPoseRotation
             name = model.name
             loadModelGlbAsync(
@@ -395,29 +432,36 @@ class ARActivity3 : AppCompatActivity(R.layout.activity_arkotlin2) {
                 autoAnimate = true,
                 scaleToUnits = model.scaleUnits,
                 // Place the model origin at the bottom center
-                centerOrigin = Position(y = -1.0f),
+                centerOrigin = Position(y = -1.0f),// Position(x = 0.0f, y = 0.0f, z = 0.0f)
             ) {
                 sceneView.planeRenderer.isVisible = true
                 isLoading = false
             }
             onAnchorChanged = { anchor ->
                 placeModelButton.isGone = anchor != null
-                Log.w("AR TEST","onAnchor")
+                sceneView.planeRenderer.isVisible = anchor == null
             }
             onHitResult = { node, _ ->
                 placeModelButton.isGone = !node.isTracking
-                Log.w("AR TEST","onHit")
+                sceneView.selectedNode = node
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
             }
             onTap = { motion,render ->
+                sceneView.selectedNode = this
                 productAddToCart.setText("Add to Cart")
                 productAddToCart.isClickable=true
                 getProductInfo(model)
                 Log.w("AR TEST","onTap")
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
             }
+            //onRotate
+
         }
         sceneView.addChild(modelNode!!)
         // Select the model node by default (the model node is also selected on tap)
         sceneView.selectedNode = modelNode
+        nodestatus.isGone=false;
+        nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
     }
 
 

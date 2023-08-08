@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.ShowAllAdapter;
@@ -49,6 +51,12 @@ public class SearchResultActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.show_all_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         type = getIntent().getStringExtra("query");
 
@@ -87,7 +95,7 @@ public class SearchResultActivity extends AppCompatActivity {
     {
         for(int i = 0 ; i < showAllModelList2.size() ; i++)
         {
-            if(showAllModelList2.get(i).getName().contains(query))
+            if(showAllModelList2.get(i).getName().toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT)) || showAllModelList2.get(i).getType().toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT)))
             {
                 ShowAllModel sm = showAllModelList2.get(i);
                 showAllModelList.add(sm);

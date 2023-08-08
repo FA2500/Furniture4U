@@ -3,8 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/menuPlanePlacement"
-            android:title="@string/plane_placement" />
+            android:id="@+id/menuBestPlacement"
+            android:checked="false"
+            android:title="@string/best_placement" />
         <item
             android:id="@+id/menuInstantPlacement"
             android:title="@string/instant_placement" />
@@ -12,8 +13,8 @@
             android:id="@+id/menuDepthPlacement"
             android:title="@string/depth_placement" />
         <item
-            android:id="@+id/menuBestPlacement"
+            android:id="@+id/menuPlanePlacement"
             android:checked="true"
-            android:title="@string/best_placement" />
+            android:title="@string/plane_placement" />
     </group>
 </menu>

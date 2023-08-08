@@ -151,7 +151,6 @@ public class HomePageActivity extends AppCompatActivity {
 
         //TV setOnClickListener
 
-
         productShowAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,9 +199,6 @@ public class HomePageActivity extends AppCompatActivity {
         popModelList = new ArrayList<>();
         popAdapter = new PopAdapter(HomePageActivity.this, popModelList);
         popRecyclerview.setAdapter(popAdapter);
-
-
-
     }
 
 

@@ -37,12 +37,15 @@ public class AddAddressActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
+    double total;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_address);
 
+        total = getIntent().getDoubleExtra("total",0.0);
         initUI();
     }
 
@@ -124,22 +127,22 @@ public class AddAddressActivity extends AppCompatActivity {
                     HashMap<String,Object> a = new HashMap<String, Object>() ;
                     a.put("isPrimary",false);
 
-
-
-                    database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                    if(task.isSuccessful())
+                    if(setAsPrimary.isChecked())
+                    {
+                        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                if(task.isSuccessful())
+                                {
+                                    for(DataSnapshot dataSnapshot: task.getResult().getChildren())
                                     {
-                                        for(DataSnapshot dataSnapshot: task.getResult().getChildren())
-                                        {
-                                            AddressModel addressModel = dataSnapshot.getValue(AddressModel.class);
-                                            database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address/"+dataSnapshot.getKey()).updateChildren(a);
-                                        }
+                                        AddressModel addressModel = dataSnapshot.getValue(AddressModel.class);
+                                        database.getReference("user/"+mAuth.getCurrentUser().getUid()+"/address/"+dataSnapshot.getKey()).updateChildren(a);
                                     }
                                 }
-                            });
-
+                            }
+                        });
+                    }
 
                     database.getReference("user/" + mAuth.getCurrentUser().getUid() + "/address")
                             .push()
@@ -150,6 +153,7 @@ public class AddAddressActivity extends AppCompatActivity {
                                     if(task.isSuccessful()) {
                                         Toast.makeText(AddAddressActivity.this, "Address successfully saved", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(AddAddressActivity.this, AddressActivity.class);
+                                        intent.putExtra("total",total);
                                         startActivity(intent);
                                     } else {
                                         Toast.makeText(AddAddressActivity.this, "Error, please try again.", Toast.LENGTH_SHORT).show();

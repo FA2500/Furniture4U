@@ -8,11 +8,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.SearchView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,20 +23,20 @@ import java.util.Locale;
 
 import my.fa250.furniture4u.R;
 import my.fa250.furniture4u.comAdapter.SearchAdapter;
-import my.fa250.furniture4u.model.PopModel;
-import my.fa250.furniture4u.model.ProductModel;
 import my.fa250.furniture4u.model.SearchModel;
 
 public class SearchActivity extends AppCompatActivity {
     private SearchView Sv;
+    private String queryString;
 
     //Search
     RecyclerView seaRecyclerView;
     SearchAdapter searchAdapter;
     List<SearchModel> searchModelList;
-
     List<SearchModel> searchModelList2;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
+
+    ImageButton searchBtn,cancelBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,8 @@ public class SearchActivity extends AppCompatActivity {
     private void initUI()
     {
         Sv = findViewById(R.id.SearchView);
+        searchBtn = findViewById(R.id.searchBtn);
+        cancelBtn = findViewById(R.id.searchCancelBtn);
         seaRecyclerView = findViewById(R.id.sea_rv);
         seaRecyclerView.setLayoutManager(new LinearLayoutManager(SearchActivity.this, RecyclerView.VERTICAL,false));
         searchModelList = new ArrayList<>();
@@ -62,6 +63,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
                 intent.putExtra("query",query);
+                queryString = query;
                 startActivity(intent);
                 return true;
             }
@@ -74,7 +76,25 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 Log.w("SEARCH",newText);
                 searchQuery(newText);
+                queryString = newText;
                 return false;
+            }
+        });
+
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SearchActivity.this, SearchResultActivity.class);
+                intent.putExtra("query",queryString);
+                startActivity(intent);
+            }
+        });
+
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SearchActivity.this, HomePageActivity.class);;
+                startActivity(intent);
             }
         });
     }

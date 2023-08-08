@@ -1,0 +1,97 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- First LinearLayout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/onDragIV"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ondrag" />
+
+        <TextView
+            android:id="@+id/onDragTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Drag : Move the AR model around by dragging with 1 finger"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Second LinearLayout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/onTouchIV"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ontouch" />
+
+        <TextView
+            android:id="@+id/onTouchTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Touch : Get the product details/change colour by touching the model with 1 finger "
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Third LinearLayout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <ImageView
+            android:id="@+id/onRotateIV"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/onrotate" />
+
+        <TextView
+            android:id="@+id/onRotateTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rotate : Rotate the AR model by putting 2 fingers on the screen, use either finger to rotate around the model."
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!--<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            tools:srcCompat="@drawable/baseline_view_in_ar_24" />
+
+        <TextView
+            android:id="@+id/textView60"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Wait for the white tiles to appear before placing your model for better accuracy and view"
+            android:textColor="#000000"
+            android:textStyle="bold" />
+    </LinearLayout>-->
+
+</LinearLayout>

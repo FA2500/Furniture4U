@@ -38,13 +38,16 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
 
     private RadioButton selectedRadioBtn;
 
+    double total;
+
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://furniture4u-93724-default-rtdb.asia-southeast1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    public AddressAdapter(Context context, List<AddressModel> list, SelectedAddress selectedAddress) {
+    public AddressAdapter(Context context, List<AddressModel> list, SelectedAddress selectedAddress, double total) {
         this.context = context;
         this.list = list;
         this.selectedAddress = selectedAddress;
+        this.total = total;
     }
 
     @NonNull
@@ -115,6 +118,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.ViewHold
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 Intent intent = new Intent(context, AddressActivity.class);
+                                intent.putExtra("total",total);
                                 startActivity(context,intent,null);
                             }
                         });
