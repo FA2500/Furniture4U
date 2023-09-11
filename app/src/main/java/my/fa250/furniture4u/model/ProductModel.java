@@ -19,13 +19,16 @@ public class ProductModel implements Serializable {
     String colour;
     int stock;
     String url_3d;
+    double length;
+    double width;
+    double height;
 
     public ProductModel()
     {
 
     }
 
-    public ProductModel(String ID, String desc, String name, double rate, double price, List<String> url, String category, String type, List<String> variance, String colour, Map<String,Object> varianceList,int stock, String url_3d)
+    public ProductModel(String ID, String desc, String name, double rate, double price, List<String> url, String category, String type, List<String> variance, String colour, Map<String,Object> varianceList,int stock, String url_3d, double length, double width, double height)
     {
         this.ID = ID;
         this.description = desc;
@@ -40,6 +43,9 @@ public class ProductModel implements Serializable {
         this.varianceList = varianceList;
         this.stock = stock;
         this.url_3d = url_3d;
+        this.length = length;
+        this.width = width;
+        this.height = height;
     }
 
     public String getID() {return ID;}
@@ -125,5 +131,29 @@ public class ProductModel implements Serializable {
     public String getUrl_3d() {return url_3d;}
 
     public void setUrl_3d(String url_3d) {this.url_3d=url_3d;}
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
 }
 

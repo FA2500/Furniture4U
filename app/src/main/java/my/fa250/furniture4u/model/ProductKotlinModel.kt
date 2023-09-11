@@ -17,6 +17,9 @@ class ProductKotlinModel : Serializable {
     var colour: String? = null
     var stock = 0
     var url_3d: String? = null
+    var length = 0.0
+    var width = 0.0
+    var height = 0.0
 
     constructor() {}
     constructor(
@@ -31,7 +34,10 @@ class ProductKotlinModel : Serializable {
         varianceList: Map<String, Any>?,
         colour: String?,
         stock: Int,
-        url_3d: String?
+        url_3d: String?,
+        length: Double,
+        width: Double,
+        height: Double,
     ) {
         this.ID = ID
         this.description = desc
@@ -45,6 +51,9 @@ class ProductKotlinModel : Serializable {
         this.colour = colour
         this.stock = stock
         this.url_3d = url_3d
+        this.length = length
+        this.width = width
+        this.height = height
     }
 
 

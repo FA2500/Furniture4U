@@ -54,7 +54,12 @@ import my.fa250.furniture4u.model.ProductKotlinModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
-
+import android.content.res.Resources
+import io.github.sceneview.math.Rotation
+import io.github.sceneview.math.Scale
+import io.github.sceneview.model.model
+import my.fa250.furniture4u.com.HomePageActivity
+import kotlin.math.abs
 
 class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var sceneView: ArSceneView
@@ -75,6 +80,14 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     lateinit var ll: LinearLayout
     lateinit var productRemove: Button
 
+    var counter = 0
+    var quadrant = 0
+    var anchor1 = false
+    var anchor1Pos = Position()
+    var anchor2 = false
+    var anchor2Pos = Position()
+    var removeAnc = false
+
     var indTemp = 0;
     var llm = LinearLayout.LayoutParams(150, 150)
 
@@ -90,7 +103,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         val scaleUnits: Float? = null,
         val placementMode: PlacementMode = PlacementMode.PLANE_HORIZONTAL,
         val applyPoseRotation: Boolean = true,
-        val PKM: ProductKotlinModel,
+        val PKM: ProductKotlinModel?,
     )
 
     var models = mutableListOf<Model>()
@@ -211,7 +224,10 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                             mapOf("null" to "null"),
                             "Black",
                             1,
-                            "https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair/lilly/black/chair_lilly_black.gltf"
+                            "https://furniture4u.s3.ap-southeast-1.amazonaws.com/chair/lilly/black/chair_lilly_black.gltf",
+                            0.52,
+                            0.56,
+                            0.83,
                         ),
                     ))
                     Toast.makeText(
@@ -219,7 +235,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                         "No Model in stores are suitable for this room. Showing default model.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    newModelNode()
+                    //newModelNode()
                 }
                 else
                 {
@@ -228,7 +244,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                         ""+models.size+" models are suitable for this room. Loading model.",
                         Toast.LENGTH_SHORT
                     ).show()
-                    newModelNode()
+                    //newModelNode()
                 }
 
             }
@@ -238,6 +254,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             }
         })
         initUI2()
+        measureModelNode()
     }
 
     fun initUI()
@@ -335,11 +352,44 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                 (layoutParams as ViewGroup.MarginLayoutParams).bottomMargin =
                     systemBarsInsets.bottom + bottomMargin
             }
-            setOnClickListener { newModelNode() }
+            setOnClickListener {
+                if(counter == 1 && !anchor1)
+                {
+                    Toast.makeText(this@ARActivity2,"Place anchor 1 first", Toast.LENGTH_SHORT ).show()
+                }
+                else if(counter == 2 && !anchor2)
+                {
+                    Toast.makeText(this@ARActivity2,"Place anchor 1 first", Toast.LENGTH_SHORT ).show()
+                }
+                else
+                {
+                    newModelNode()
+                }
+            }
         }
         placeModelButton = findViewById<ExtendedFloatingActionButton>(R.id.placeModelButton).apply {
-            setOnClickListener { placeModelNode() }
+            setOnClickListener {
+                placeModelNode()
+                if(counter==1)
+                {
+                    anchor1 = true;
+                    anchor1Pos = sceneView.selectedNode!!.position
+                    measureModelNode()
+                }
+                else if(counter==2)
+                {
+                    placeModelNode()
+                    counter++
+                    anchor2 = true;
+                    anchor2Pos = sceneView.selectedNode!!.position
+                    calcPos()
+                    placeModelButton.text = "Place Object"
+
+                    //newModelNode()
+                }
+            }
         }
+        placeModelButton.text = "Place anchor"
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -361,9 +411,113 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
     }
 
     fun placeModelNode() {
-        modelNode?.anchor()
-        placeModelButton.isVisible = false
-        sceneView.planeRenderer.isVisible = false
+        if(counter <= 2)
+        {
+            modelNode?.anchor()
+            placeModelButton.isVisible = false
+            sceneView.planeRenderer.isVisible = false
+        }
+        else
+        {
+            Log.w("Counter","Model Pos = "+modelNode!!.position)
+            if(quadrant == 1)
+            {
+                if(sceneView.selectedNode!!.position.x > anchor2Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the left about "+(sceneView.selectedNode!!.position.x - anchor2Pos.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.x < anchor1Pos.x )
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the right about "+(anchor1Pos.x - sceneView.selectedNode!!.position.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z > anchor2Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it further from device about "+(sceneView.selectedNode!!.position.z - anchor2Pos.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z < anchor1Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it closer to device about "+(anchor1Pos.z - sceneView.selectedNode!!.position.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+            }
+            else if(quadrant == 2)
+            {
+                if(sceneView.selectedNode!!.position.x > anchor1Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the left about "+(sceneView.selectedNode!!.position.x - anchor1Pos.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.x < anchor2Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the right about "+(anchor2Pos.x - sceneView.selectedNode!!.position.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z > anchor2Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it further from device about "+(sceneView.selectedNode!!.position.z - anchor2Pos.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z < anchor1Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it closer to device about "+(anchor1Pos.z - sceneView.selectedNode!!.position.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+            }
+            else if(quadrant == 3)
+            {
+                if(sceneView.selectedNode!!.position.x > anchor1Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the left about "+(sceneView.selectedNode!!.position.x - anchor1Pos.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.x < anchor2Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the right about "+(anchor2Pos.x - sceneView.selectedNode!!.position.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z > anchor1Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it further from device about "+(sceneView.selectedNode!!.position.z - anchor1Pos.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z < anchor2Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it closer to device about "+(anchor2Pos.z - sceneView.selectedNode!!.position.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+
+            }
+            else if(quadrant == 4)
+            {
+                if(sceneView.selectedNode!!.position.x > anchor2Pos.x)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the left about "+(sceneView.selectedNode!!.position.x - anchor2Pos.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.x < anchor1Pos.x )
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it to the right about "+(anchor1Pos.x - sceneView.selectedNode!!.position.x)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z > anchor1Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it further from device about "+(sceneView.selectedNode!!.position.z - anchor1Pos.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                else if(sceneView.selectedNode!!.position.z < anchor2Pos.z)
+                {
+                    Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it closer to device about "+(anchor2Pos.z - sceneView.selectedNode!!.position.z)+" meter", Toast.LENGTH_SHORT).show()
+                    return
+                }
+            }
+            modelNode?.anchor()
+            placeModelButton.isVisible = false
+            sceneView.planeRenderer.isVisible = false
+        }
     }
 
     fun getProductInfo(model: Model)
@@ -394,14 +548,14 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         database.getReference("user").child(auth.uid.toString()).child("cart").addValueEventListener(cartListener)
 
         productCardView.isGone = false
-        if (model.PKM.varianceList!!.size>1)
+        if (model.PKM?.varianceList!!.size>1)
         {
             productvar.visibility = View.VISIBLE
         }
-        productKotlinName.setText(model.PKM.name)
-        productKotlinPrice.setText("RM"+model.PKM.price)
-        productKotlinColour.setText(model.PKM.colour)
-        productToCart(pkm = model.PKM)
+        productKotlinName.text = model.PKM.name
+        productKotlinPrice.text = "RM"+ model.PKM.price
+        productKotlinColour.text = model.PKM.colour
+        model.PKM.let { productToCart(pkm = it) }
 
     }
 
@@ -475,6 +629,29 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         alertDialogBuilder.setView(dialogView)
         alertDialogBuilder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
+        }
+
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    fun onItemnotFit(context: Context)
+    {
+        val dialogView: View = LayoutInflater.from(context).inflate(R.layout.context_alert_product_unfit, null)
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setView(dialogView)
+        alertDialogBuilder.setPositiveButton("Resize designated space ")
+        { dialog, _ ->
+            dialog.dismiss()
+            finish();
+            startActivity(intent);
+        }
+        alertDialogBuilder.setNegativeButton("Browse other items")
+        { dialog, _ ->
+            dialog.dismiss()
+            val intent = Intent(this@ARActivity2, HomePageActivity::class.java)
+            startActivity(intent)
         }
 
 
@@ -574,6 +751,12 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             it.destroy()
         }
         val model = models[modelIndex]
+        if(!removeAnc)
+        {
+            models.clear()
+            models.add(model)
+            removeAnc=true
+        }
         modelIndex = (modelIndex + 1) % models.size
         modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
             isSmoothPoseEnable = true
@@ -599,15 +782,16 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                 placeModelButton.isGone = !node.isTracking
                 Log.w("AR TEST","onHit")
                 sceneView.selectedNode = node
-                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "")
             }
             onTap = { motion,render ->
                 sceneView.selectedNode = this
-                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "")
                 productAddToCart.setText("Add to Cart")
                 productAddToCart.isClickable=true
                 getProductInfo(model)
                 Log.w("AR TEST","onTap")
+                //this.position.xyz
             }
             //onRotate
         }
@@ -615,7 +799,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         // Select the model node by default (the model node is also selected on tap)
         sceneView.selectedNode = modelNode
         nodestatus.isGone=false;
-        nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+        nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name +" position = " + (sceneView.selectedNode?.position ?: "")?: "");
     }
 
     fun newModelNode2(v: View) {
@@ -645,11 +829,11 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                 placeModelButton.isGone = !node.isTracking
                 Log.w("AR TEST","onHit")
                 sceneView.selectedNode = node
-                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name +" position = " + (sceneView.selectedNode?.position ?: "")?: "");
             }
             onTap = { motion,render ->
                 sceneView.selectedNode = this
-                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
+                nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name +" position = " + (sceneView.selectedNode?.position ?: "")?: "");
                 productAddToCart.setText("Add to Cart")
                 productAddToCart.isClickable=true
                 getProductInfo(model)
@@ -664,5 +848,144 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         nodestatus.text = "Current selected model = "+ (sceneView.selectedNode?.name ?: "");
     }
 
+    fun measureModelNode() {
+        ++counter
+        Log.w("Counter",counter.toString())
+        isLoading = true
+        val model = Model(
+            "Anchor $counter",
+            fileLocation = "models/pin.gltf",
+            scaleUnits = 0.5f,
+            placementMode = PlacementMode.PLANE_HORIZONTAL,
+            applyPoseRotation = true,
+            PKM = null,
+        )
+        modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
+            isSmoothPoseEnable = true
+            isScaleEditable = false
+            applyPoseRotation = model.applyPoseRotation
+            name = model.name
+            loadModelGlbAsync(
+                glbFileLocation = model.fileLocation,
+                autoAnimate = false,
+                scaleToUnits = model.scaleUnits,
+                centerOrigin = Position(),// Position(x = 0.0f, y = 0.0f, z = 0.0f)
+            ) {
+                sceneView.planeRenderer.isVisible = true
+                isLoading = false
+            }
+            onAnchorChanged = { anchor ->
+                placeModelButton.isGone = anchor != null
+                sceneView.planeRenderer.isVisible = anchor == null
+            }
+            onHitResult = { node, _ ->
+                placeModelButton.isGone = !node.isTracking
+                sceneView.selectedNode = node
+                nodestatus.text = "Current "+model.name +" position = " + (sceneView.selectedNode?.position ?: "")
+            }
+            onTap = { motion,render ->
+                sceneView.selectedNode = this
+                nodestatus.text = "Current "+model.name +" position = " + (sceneView.selectedNode?.position ?: "")
+            }
+        }
 
+        sceneView.addChild(modelNode!!)
+        sceneView.selectedNode = modelNode
+        nodestatus.isGone=false;
+        nodestatus.text = "Current "+model.name +" position = " + (sceneView.selectedNode?.position ?: "")
+    }
+
+    fun calcPos() {
+        Log.w("Counter 1", anchor1Pos.toString())
+        Log.w("Counter 2", anchor2Pos.toString())
+        var tempL = 0f
+        var tempW = 0f
+        if (anchor2Pos.x > anchor1Pos.x && anchor2Pos.z > anchor1Pos.z) {
+            //first quadrant
+            //x +ve z +ve
+            tempL = anchor2Pos.x - anchor1Pos.x
+            tempW = anchor2Pos.z - anchor1Pos.z
+            quadrant = 1
+            Log.w("Counter", "1st Quadrant")
+        } else if (anchor2Pos.x > anchor1Pos.x && anchor2Pos.z < anchor1Pos.z) {
+            //second quadrant
+            //x +ve z -ve
+            tempL = anchor1Pos.x - anchor2Pos.x
+            tempW = anchor2Pos.z - anchor1Pos.z
+            quadrant = 2
+            Log.w("Counter", "2nd Quadrant")
+        } else if (anchor2Pos.x < anchor1Pos.x && anchor2Pos.z < anchor1Pos.z) {
+            //third quadrant
+            //x -ve z -ve
+            tempL = anchor1Pos.x - anchor2Pos.x
+            tempW = anchor1Pos.z - anchor2Pos.z
+            quadrant = 3
+            Log.w("Counter", "3rd Quadrant")
+        } else if (anchor2Pos.x < anchor1Pos.x && anchor2Pos.z > anchor1Pos.z) {
+            //fourth quadrant
+            //x -ve z +ve
+            tempL = anchor2Pos.x - anchor1Pos.x
+            tempW = anchor1Pos.z - anchor2Pos.z
+            quadrant = 4
+            Log.w("Counter", "4th Quadrant")
+        }
+        Log.w("Counter", "Anchor Length = $tempL")
+        Log.w("Counter", "Anchor Width = $tempW")
+        if (isFit(abs(tempL), abs(tempW))) {
+            Toast.makeText(
+                this@ARActivity2,
+                "Place object inside the anchor parameter",
+                Toast.LENGTH_SHORT
+            ).show()
+            newModelNode()
+        } else {
+            onItemnotFit(this@ARActivity2)
+        }
+    }
+
+    fun isFit(l:Float , w:Float): Boolean
+    {
+        Log.w("Counter", "Product Length = "+models[0].PKM!!.length)
+        Log.w("Counter", "Product Width = "+models[0].PKM!!.width)
+        if(models[0].PKM!!.length > l)
+        {
+            return false
+        }
+        else if(models[0].PKM!!.width > w)
+        {
+            return false
+        }
+        return true
+    }
+
+    fun lineNode(x:Float , y:Float, z:Float, rotate:Float) {
+        isLoading = true
+        val model = Model(
+            "Line",
+            fileLocation = "models/line.gltf",
+            scaleUnits = 0.5f*z,
+            placementMode = PlacementMode.PLANE_HORIZONTAL,
+            applyPoseRotation = true,
+            PKM = null,
+        )
+        modelNode = ArModelNode(sceneView.engine, PlacementMode.BEST_AVAILABLE).apply {
+            isSmoothPoseEnable = true
+            isScaleEditable = false
+            applyPoseRotation = model.applyPoseRotation
+            name = model.name
+            loadModelGlbAsync(
+                glbFileLocation = model.fileLocation,
+                autoAnimate = true,
+                scaleToUnits = model.scaleUnits,
+                centerOrigin = Position(x,y,z),// Position(x = 0.0f, y = 0.0f, z = 0.0f)
+            ) {
+                isLoading = false
+                placeModelButton.isVisible = false
+                sceneView.planeRenderer.isVisible = false
+            }
+        }
+        sceneView.addChild(modelNode!!)
+        placeModelNode()
+        modelNode!!.rotation = Rotation(rotate,0f,0f)
+    }
 }
