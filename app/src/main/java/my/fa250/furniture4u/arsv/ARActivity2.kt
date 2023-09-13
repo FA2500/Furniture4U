@@ -419,6 +419,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
         }
         else
         {
+            /*
             Log.w("Counter","Model Pos = "+modelNode!!.position)
             if(quadrant == 1)
             {
@@ -513,7 +514,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
                     Toast.makeText(this@ARActivity2, "The object doesn't fit here, try move it closer to device about "+(anchor2Pos.z - sceneView.selectedNode!!.position.z)+" meter", Toast.LENGTH_SHORT).show()
                     return
                 }
-            }
+            }*/
             modelNode?.anchor()
             placeModelButton.isVisible = false
             sceneView.planeRenderer.isVisible = false
@@ -813,7 +814,7 @@ class ARActivity2 : AppCompatActivity(R.layout.activity_arkotlin) {
             loadModelGlbAsync(
                 glbFileLocation = model.fileLocation,
                 autoAnimate = true,
-                scaleToUnits = model.scaleUnits,
+                scaleToUnits = null,//model.scaleUnits,
                 // Place the model origin at the bottom center
                 centerOrigin = Position(y = -1.0f),
             ) {
